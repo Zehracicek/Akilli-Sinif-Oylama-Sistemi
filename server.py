@@ -41,12 +41,31 @@ async def handler(websocket):
                 websockets.broadcast(diger_istemciler, giris_bildirimi)
 
             else:
-                response = {
-                    "from": client_info.get(websocket, {}).get("isim", client_ip),
-                    "data": data,
-                    "time": datetime.now().strftime("%H:%M:%S")
-                }
-                websockets.broadcast(connected_clients, json.dumps(response))
+                # Öğretmenden gelen SORU paketi mi?
+                if data.get("tip") == "soru":
+                    zaman = datetime.now().strftime("%H:%M:%S")
+                    soru_paketi = {
+                        "tip": "soru",
+                        "soru": data.get("soru"),
+                        "secenekler": data.get("secenekler"),
+                        "time": zaman
+                    }
+                    # Sadece öğrencilere broadcast et
+                    ogrenciler = {
+                        ws for ws, bilgi in client_info.items()
+                        if bilgi.get("rol") == "ogrenci"
+                    }
+                    print(f"\n[SORU] Öğretmen soru gönderdi → {len(ogrenciler)} öğrenciye iletiliyor")
+                    print(f"       Soru: {data.get('soru')}")
+                    websockets.broadcast(ogrenciler, json.dumps(soru_paketi))
+                else:
+                    # Normal mesaj → herkese
+                    response = {
+                        "from": client_info.get(websocket, {}).get("isim", client_ip),
+                        "data": data,
+                        "time": datetime.now().strftime("%H:%M:%S")
+                    }
+                    websockets.broadcast(connected_clients, json.dumps(response))
 
     except websockets.exceptions.ConnectionClosed:
         pass
@@ -77,3 +96,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+    
