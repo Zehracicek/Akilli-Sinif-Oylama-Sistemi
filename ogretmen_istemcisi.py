@@ -55,9 +55,26 @@ async def ogretmen_baglan():
             print("⏳ Sistem hazır. İşlem yapmak veya öğrenci bağlantılarını görmek için bekleniyor...")
             print("="*40)
             
-            # Bağlantıyı açık tutma döngüsü
+            # while True döngüsünü şununla değiştir:
             while True:
-                await asyncio.sleep(1) 
+                soru_metni = input("\nSoru girin (çıkmak için 'q'): ").strip()
+                if soru_metni == "q":
+                    break
+    
+                secenekler = ["A) seçenek", "B) seçenek", "C) seçenek", "D) seçenek"]
+                print("Şıkları girin (A B C D sırasıyla):")
+                secenekler = []
+                for harf in ["A", "B", "C", "D"]:
+                    s = input(f"  {harf}: ").strip()
+                    secenekler.append(f"{harf}) {s}")
+    
+                paket = {
+                    "tip": "soru",
+                    "soru": soru_metni,
+                    "secenekler": secenekler
+                }
+                await websocket.send(json.dumps(paket))
+                print("✅ Soru gönderildi!")
 
     except ConnectionRefusedError:
         print("\n❌ HATA: Sunucuya bağlanılamadı!")
