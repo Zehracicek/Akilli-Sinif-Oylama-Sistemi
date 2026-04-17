@@ -62,7 +62,17 @@ async def ogrenci_baglan():
                 try:
                     # Gelen bir mesaj (örn. oylama başlaması) olursa almak için
                     mesaj = await asyncio.wait_for(websocket.recv(), timeout=1.0)
-                    print(f"📥 Yeni Mesaj: {mesaj}")
+                    data = json.loads(mesaj)
+
+                    if data.get("tip") == "soru":
+                        print("\n" + "="*40)
+                        print("📋 YENİ SORU GELDİ!")
+                        print(f"❓ {data['soru']}")
+                        for secenek in data.get("secenekler", []):
+                            print(f"   {secenek}")
+                        print("="*40)
+                    else:
+                        print(f"📥 Mesaj: {mesaj}")
                 except asyncio.TimeoutError:
                     # Zaman aşımında sadece döngü devam edip bağlantıyı açık tutar
                     pass
