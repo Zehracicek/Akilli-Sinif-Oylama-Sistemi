@@ -2,6 +2,8 @@ import asyncio
 import websockets
 import json
 import socket
+import webbrowser
+import os
 
 def ip_adresimi_bul():
     """Bilgisayarın yerel ağdaki (LAN) IPv4 adresini otomatik bulur."""
@@ -14,6 +16,9 @@ def ip_adresimi_bul():
     finally:
         s.close()
     return ip
+# Öğretmen panelini otomatik aç
+dosya = os.path.abspath("ogretmen.html")
+webbrowser.open("file://" + dosya)
 
 async def ogretmen_baglan():
     # --- PROFESYONEL KARŞILAMA VE VERİ GİRİŞİ ---

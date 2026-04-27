@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Öğretmen Quiz Paneli</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg,#0f172a,#1e293b,#334155);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:30px;
+}
+
+.panel{
+    width:900px;
+    background:rgba(255,255,255,0.96);
+    border-radius:24px;
+    overflow:hidden;
+    box-shadow:0 25px 60px rgba(0,0,0,0.35);
+}
+
+.topbar{
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:white;
+    padding:28px 35px;
+}
+
+.topbar h1{
+    font-size:30px;
+    font-weight:700;
+}
+
+.topbar p{
+    margin-top:8px;
+    opacity:0.92;
+    font-size:15px;
+}
+
+.content{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+}
+
+.left{
+    padding:35px;
+}
+
+.right{
+    background:#f8fafc;
+    padding:35px;
+    border-left:1px solid #e2e8f0;
+}
+
+.label{
+    font-size:14px;
+    font-weight:600;
+    color:#334155;
+    margin-bottom:8px;
+    display:block;
+}
+
+input{
+    width:100%;
+    padding:14px 16px;
+    border:1px solid #cbd5e1;
+    border-radius:12px;
+    margin-bottom:18px;
+    font-size:15px;
+    outline:none;
+    transition:0.2s;
+}
+
+input:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,0.12);
+}
+
+button{
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,#22c55e,#16a34a);
+    color:white;
+    font-size:17px;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.25s;
+    margin-top:8px;
+}
+
+button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 15px 25px rgba(34,197,94,0.25);
+}
+
+.card{
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:18px;
+    padding:22px;
+    margin-bottom:18px;
+}
+
+.stat{
+    font-size:28px;
+    font-weight:800;
+    color:#2563eb;
+    margin-top:10px;
+}
+
+.status{
+    padding:10px 14px;
+    border-radius:12px;
+    font-weight:600;
+    background:#dcfce7;
+    color:#166534;
+    display:inline-block;
+    margin-top:10px;
+}
+
+.footer-note{
+    margin-top:12px;
+    font-size:13px;
+    color:#64748b;
+}
+
+#sonuc{
+    margin-top:18px;
+    font-weight:700;
+    color:#16a34a;
+}
+
+@media(max-width:950px){
+    .panel{ width:100%; }
+    .content{ grid-template-columns:1fr; }
+    .right{
+        border-left:none;
+        border-top:1px solid #e2e8f0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="panel">
+
+    <div class="topbar">
+        <h1>Öğretmen Quiz Paneli</h1>
+    </div>
+
+    <div class="content">
+
+        <div class="left">
+
+            <label class="label">Soru</label>
+            <input id="soru" placeholder="Örn: Kablosuz ağlar nelerdir ?">
+
+            <button onclick="gonder()"> Gönder </button>
+
+            <div id="sonuc"></div>
+
+        </div>
+
+        <div class="right">
+
+            <div class="card">
+                <div>Bağlantı Durumu</div>
+                <div class="status" id="durum">Bağlanıyor...</div>
+            </div>
+
+            <div class="card">
+                <div>Panel Sahibi</div>
+                <div class="stat">Öğretmen</div>
+                <div class="footer-note">Sunucuya yetkili kullanıcı olarak bağlı.</div>
+            </div>
+
+            <div class="card">
+                <div>Canlı Yayın</div>
+                <div class="footer-note">
+                    Sorular öğrencilere gerçek zamanlı iletilir.
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const ws = new WebSocket("ws://localhost:8765");
+
+ws.onopen = () => {
+    document.getElementById("durum").innerText = "Bağlandı";
+    ws.send(JSON.stringify({
+        rol:"ogretmen",
+        isim:"İrem"
+    }));
+};
+
+ws.onclose = () => {
+    document.getElementById("durum").innerText = "Bağlantı Kesildi";
+};
+
+ws.onerror = () => {
+    document.getElementById("durum").innerText = "Hata";
+};
+
+function gonder(){
+
+    const soru = document.getElementById("soru").value.trim();
+
+    if(soru === ""){
+        alert("Lütfen soru giriniz.");
+        return;
+    }
+
+    const paket = {
+        tip: "soru",
+        soru: soru
+    };
+
+    ws.send(JSON.stringify(paket));
+
+    document.getElementById("sonuc").innerText = "✅ Soru gönderildi.";
+}
+
+</script>
+
+</body>
+</html>
