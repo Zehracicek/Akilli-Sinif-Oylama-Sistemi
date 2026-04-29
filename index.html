@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akıllı Sınıf Oylama Sistemi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e2e8f0
+        }
+
+        .main {
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+            padding: 40px 20px
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 16px
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 40px;
+            line-height: 1.6
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap
+        }
+
+        .role-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 20px;
+            padding: 30px 20px;
+            width: 100%;
+            max-width: 220px;
+            cursor: pointer;
+            transition: .3s;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+            color: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .role-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(148, 163, 184, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3)
+        }
+
+        .role-card .icon {
+            font-size: 40px;
+            margin-bottom: 14px
+        }
+
+        .role-card h2 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 6px
+        }
+
+        .role-card p {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.5
+        }
+
+        .role-card.teacher:hover {
+            border-color: rgba(96, 165, 250, 0.5);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15)
+        }
+
+        .role-card.student:hover {
+            border-color: rgba(167, 139, 250, 0.5);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.15)
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 11px;
+            color: #475569
+        }
+        
+        .qr-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(148, 163, 184, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .qr-section p {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+        
+        #qrcode img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 24px; }
+            .subtitle { font-size: 13px; margin-bottom: 30px; }
+            .role-card { max-width: 100%; padding: 24px; }
+            #qr-url { font-size: 11px; word-break: break-all; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <div class="logo"></div>
+        <h1>Akıllı Sınıf Oylama Sistemi</h1>
+        <p class="subtitle">Kablosuz Ağlar Dersi — Gerçek Zamanlı Eğitim Platformu<br>Giriş yapmak için rolünüzü seçin
+        </p>
+        <div class="cards">
+            <a href="./ogretmen.html" class="role-card teacher">
+                <div class="icon"></div>
+                <h2>Öğretmen</h2>
+                <p>Soru oluştur, oylama başlat ve sınıfı yönet</p>
+            </a>
+            <a href="./ogrenci.html" class="role-card student">
+                <div class="icon"></div>
+                <h2>Öğrenci</h2>
+                <p>Derse katıl, soruları cevapla ve sonuçları gör</p>
+            </a>
+        </div>
+
+        <div class="qr-section">
+            <p>Diğer cihazlardan katılmak için kameranızla bu kodu okutun:</p>
+            <div id="qrcode"></div>
+            <p id="qr-url" style="margin-top:12px; font-weight:600; color:#60a5fa;"></p>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        // Geçerli sayfanın URL'sini al
+        const currentUrl = window.location.href;
+        
+        // Ekranda bağlantıyı metin olarak da göster
+        document.getElementById('qr-url').innerText = currentUrl;
+        
+        // Kütüphane yüklendiğinde QR kodu oluştur
+        window.onload = function() {
+            try {
+                new QRCode(document.getElementById("qrcode"), {
+                    text: currentUrl,
+                    width: 140,
+                    height: 140,
+                    colorDark : "#0f172a",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.M
+                });
+            } catch (e) {
+                console.log("QR Kod oluşturulamadı, internet bağlantısı olmayabilir.");
+            }
+        };
+    </script>
+</body>
+
+</html>
