@@ -3,266 +3,333 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Öğrenci Quiz Paneli</title>
-
+<title>Öğrenci Paneli</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#0f172a,#1e293b);min-height:100vh;color:#e2e8f0;padding:20px}
+.header{display:flex;justify-content:space-between;align-items:center;padding:10px 0 20px;border-bottom:1px solid rgba(148,163,184,0.1);margin-bottom:20px;max-width:700px;margin-left:auto;margin-right:auto}
+.header-left h1{font-size:24px;font-weight:800;background:linear-gradient(135deg,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header-left p{color:#94a3b8;font-size:13px;margin-top:4px}
+.container{max-width:700px;margin:0 auto}
+.card{background:rgba(30,41,59,0.8);border:1px solid rgba(148,163,184,0.15);border-radius:16px;padding:24px;backdrop-filter:blur(10px);margin-bottom:16px}
+.card h3{font-size:14px;color:#94a3b8;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+.badge{display:inline-block;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600}
+.badge-green{background:rgba(34,197,94,0.15);color:#4ade80}
+.badge-red{background:rgba(239,68,68,0.15);color:#f87171}
+.btn{padding:12px 20px;border:none;border-radius:12px;font-weight:600;font-size:15px;cursor:pointer;transition:.25s;font-family:inherit;width:100%;text-align:left}
+.btn:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.1)}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.btn-outline{background:transparent;border:1px solid rgba(148,163,184,0.3);color:#94a3b8;width:auto;padding:8px 16px;text-align:center;font-size:13px}
+.option-btn{background:rgba(15,23,42,0.6);border:2px solid rgba(148,163,184,0.2);color:#e2e8f0;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.option-btn:hover:not(:disabled){border-color:#a78bfa;background:rgba(167,139,250,0.1)}
+.option-btn.selected{border-color:#a78bfa;background:rgba(167,139,250,0.15)}
+.option-btn.correct{border-color:#22c55e!important;background:rgba(34,197,94,0.15)!important;color:#4ade80!important}
+.option-btn.wrong{border-color:#ef4444!important;background:rgba(239,68,68,0.15)!important;color:#f87171!important}
+.option-letter{width:32px;height:32px;border-radius:8px;background:rgba(148,163,184,0.1);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+textarea{width:100%;padding:14px;background:#0f172a;border:2px solid rgba(148,163,184,0.2);border-radius:12px;color:#e2e8f0;font-size:14px;font-family:inherit;outline:none;resize:vertical;min-height:80px;transition:.2s}
+textarea:focus{border-color:#a78bfa;box-shadow:0 0 0 3px rgba(167,139,250,0.15)}
+.submit-btn{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;text-align:center;margin-top:10px}
+.timer-bar{height:6px;background:#1e293b;border-radius:6px;overflow:hidden;margin-bottom:16px}
+.timer-fill{height:100%;background:linear-gradient(90deg,#f59e0b,#ef4444);border-radius:6px;transition:width 1s linear}
+.timer-text{text-align:center;font-size:28px;font-weight:800;color:#f59e0b;margin-bottom:8px}
+.feedback{padding:14px;border-radius:12px;text-align:center;font-weight:600;margin-top:12px;font-size:15px}
+.feedback-correct{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3)}
+.feedback-wrong{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3)}
+.feedback-info{background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.3)}
+.waiting-box{text-align:center;padding:40px 20px;color:#64748b}
+.pulse{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a,#1e293b);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+.login-box{background:rgba(30,41,59,0.9);border:1px solid rgba(148,163,184,0.15);border-radius:20px;padding:40px 30px;width:100%;max-width:380px;text-align:center;backdrop-filter:blur(10px)}
+.login-box h2{font-size:22px;margin-bottom:6px;color:#f1f5f9}
+.login-box p{color:#94a3b8;font-size:13px;margin-bottom:20px}
+.login-box input{width:100%;padding:12px 14px;background:#0f172a;border:1px solid rgba(148,163,184,0.2);border-radius:10px;color:#e2e8f0;font-size:14px;font-family:inherit;outline:none;margin-bottom:14px}
+.login-box input:focus{border-color:#a78bfa}
+.login-btn{width:100%;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;font-weight:600;font-size:15px;cursor:pointer;font-family:inherit}
+.tab-bar{display:flex;gap:4px;margin-bottom:16px}
+.tab{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:#94a3b8;background:transparent;border:none;font-family:inherit;transition:.2s}
+.tab.active{background:rgba(167,139,250,0.15);color:#a78bfa}
+.hidden{display:none!important}
+.gecmis-item{background:rgba(15,23,42,0.6);border-radius:12px;padding:16px;margin-bottom:16px;border:1px solid rgba(148,163,184,0.15);box-shadow:0 4px 6px rgba(0,0,0,0.1)}
+.gecmis-item h4{color:#e2e8f0;font-size:15px;margin-bottom:8px;font-weight:600}
+.gecmis-meta{display:flex;gap:12px;font-size:12px;color:#94a3b8;margin-bottom:4px;flex-wrap:wrap;align-items:center}
+.gecmis-meta span{background:rgba(255,255,255,0.05);padding:4px 8px;border-radius:6px}
+.progress-wrap{margin:8px 0;background:rgba(15,23,42,0.5);padding:10px;border-radius:10px;border:1px solid rgba(148,163,184,0.1)}
+.progress-label{display:flex;justify-content:space-between;font-size:13px;color:#e2e8f0;margin-bottom:6px;font-weight:500}
+.progress-bar{height:10px;background:#1e293b;border-radius:6px;overflow:hidden}
+.progress-fill{height:100%;border-radius:6px;transition:width .4s}
 
-body{
-    font-family: "Segoe UI", Arial, sans-serif;
-    background: linear-gradient(135deg,#0f172a,#1e293b,#334155);
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:30px;
-}
-
-.panel{
-    width:900px;
-    background:rgba(255,255,255,0.96);
-    border-radius:24px;
-    overflow:hidden;
-    box-shadow:0 25px 60px rgba(0,0,0,0.35);
-}
-
-.topbar{
-    background:linear-gradient(135deg,#ec4899,#be185d);
-    color:white;
-    padding:28px 35px;
-}
-
-.topbar h1{
-    font-size:30px;
-    font-weight:700;
-}
-
-.topbar p{
-    margin-top:8px;
-    opacity:0.92;
-    font-size:15px;
-}
-
-.content{
-    display:grid;
-    grid-template-columns:2fr 1fr;
-}
-
-.left{
-    padding:35px;
-}
-
-.right{
-    background:#f8fafc;
-    padding:35px;
-    border-left:1px solid #e2e8f0;
-}
-
-.label{
-    font-size:14px;
-    font-weight:600;
-    color:#334155;
-    margin-bottom:8px;
-    display:block;
-}
-
-.card{
-    background:white;
-    border:1px solid #e2e8f0;
-    border-radius:18px;
-    padding:22px;
-    margin-bottom:18px;
-}
-
-.stat{
-    font-size:28px;
-    font-weight:800;
-    color:#ec4899;
-    margin-top:10px;
-}
-
-.status{
-    padding:10px 14px;
-    border-radius:12px;
-    font-weight:600;
-    background:#dcfce7;
-    color:#166534;
-    display:inline-block;
-    margin-top:10px;
-}
-
-.footer-note{
-    margin-top:12px;
-    font-size:13px;
-    color:#64748b;
-}
-
-.question-box {
-    background: #f1f5f9;
-    border: 2px dashed #cbd5e1;
-    border-radius: 16px;
-    padding: 30px;
-    text-align: center;
-    min-height: 200px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.question-text {
-    font-size: 20px;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-.options-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.option-btn {
-    padding: 14px 18px;
-    border: 1px solid #cbd5e1;
-    border-radius: 12px;
-    background: white;
-    font-size: 16px;
-    font-weight: 500;
-    color: #334155;
-    cursor: pointer;
-    transition: 0.2s;
-    text-align: left;
-}
-
-.option-btn:hover {
-    background: #fdf2f8;
-    border-color: #ec4899;
-    color: #be185d;
-}
-
-.waiting-text {
-    color: #64748b;
-    font-size: 16px;
-    font-weight: 500;
-}
-
-@media(max-width:950px){
-    .panel{ width:100%; }
-    .content{ grid-template-columns:1fr; }
-    .right{ border-left:none; border-top:1px solid #e2e8f0; }
+@media (max-width: 600px) {
+    .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .header-left h1 { font-size: 20px; }
+    .card { padding: 16px; }
+    .btn { font-size: 14px; padding: 10px 16px; }
+    .tab-bar { flex-wrap: wrap; }
+    .tab { flex: 1; text-align: center; }
 }
 </style>
 </head>
-
 <body>
 
-<div class="panel">
+<!-- GİRİŞ -->
+<div id="login-screen">
+<div class="login-box">
+<h2>Öğrenci Girişi</h2>
+<p>Öğrenci Paneli</p>
+<input type="text" id="student-name" placeholder="Adınızı ve soyadınızı giriniz...">
+<button class="login-btn" onclick="login()">Derse Katıl</button>
+<p id="login-error" style="color:#f87171;margin-top:10px;font-size:12px"></p>
+<a href="index.html" style="display:inline-block;margin-top:16px;color:#94a3b8;font-size:13px;text-decoration:none">Ana Ekrana Dön</a>
+</div>
+</div>
 
-    <div class="topbar">
-        <h1>Öğrenci Quiz Paneli</h1>
-    </div>
+<!-- ANA PANEL -->
+<div id="main-panel" class="hidden">
+<div class="header">
+<div class="header-left">
+<h1>Öğrenci Paneli</h1>
+<p><span id="student-label"></span> | <span class="badge badge-green" id="conn-badge">Bağlanıyor...</span></p>
+</div>
+<div>
+<button class="btn btn-outline" onclick="window.location.href='index.html'">Çıkış Yap</button>
+</div>
+</div>
 
-    <div class="content">
+<div class="container">
+<div style="font-size:13px;color:#94a3b8;margin-bottom:16px;text-align:right">
+Öğretmen: <span id="ogretmen-adi" style="color:#a78bfa;font-weight:600">--</span>
+</div>
 
-        <div class="left">
-            <label class="label">Gelen Soru</label>
-            
-            <div class="question-box" id="questionBox">
-                <div class="waiting-text">Bekleniyor...<br><br>Öğretmenin soru göndermesi bekleniyor.</div>
-            </div>
+<div class="tab-bar">
+<button class="tab active" onclick="showTab('soru')">Aktif Soru</button>
+<button class="tab" onclick="showTab('gecmis')">Geçmişim</button>
+</div>
 
-        </div>
+<!-- AKTİF SORU -->
+<div id="tab-soru">
+<div class="card" id="soru-card">
+<div class="waiting-box" id="waiting-area">
+<div class="pulse" style="font-size:36px;margin-bottom:12px">⏳</div>
+<p style="font-size:14px">Öğretmenin soru göndermesi bekleniyor...</p>
+</div>
+<div id="soru-area" class="hidden">
+<div id="timer-section" class="hidden">
+<div class="timer-text" id="timer-text">--</div>
+<div class="timer-bar"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
+</div>
+<h3 id="soru-text-display" style="font-size:18px;color:#f1f5f9;margin-bottom:16px"></h3>
+<div id="options-area"></div>
+<div id="acik-uclu-area" class="hidden">
+<textarea id="acik-cevap" placeholder="Cevabınızı buraya yazın..."></textarea>
+<button class="btn submit-btn" onclick="acikCevapGonder()">Cevabı Gönder</button>
+</div>
+<div id="feedback-area"></div>
+</div>
+</div>
+</div>
 
-        <div class="right">
-
-            <div class="card">
-                <div>Bağlantı Durumu</div>
-                <div class="status" id="durum">Bağlanıyor...</div>
-            </div>
-
-            <div class="card">
-                <div>Panel Sahibi</div>
-                <div class="stat">İlknur</div>
-                <div class="footer-note">Sisteme öğrenci olarak bağlı.</div>
-            </div>
-
-            <div class="card">
-                <div>Canlı Bağlantı</div>
-                <div class="footer-note">
-                    Sorular ve şıklar anında ekranda görünür.
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-
+<!-- GEÇMİŞ -->
+<div id="tab-gecmis" class="hidden">
+<div class="card">
+<h3>Geçmiş Yanıtlarım</h3>
+<div id="gecmis-list"><div style="color:#475569;font-size:13px;text-align:center;padding:20px">Henüz geçmiş yok.</div></div>
+</div>
+</div>
+</div>
 </div>
 
 <script>
+let ws,studentName='',aktivSoruId=null,seciliCevap='',soruKilitli=false,toplamSure=0;
+const barColors=['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981','#06b6d4'];
 
-const ws = new WebSocket("ws://localhost:8765");
+function login(){
+  studentName=document.getElementById('student-name').value.trim();
+  if(!studentName){document.getElementById('login-error').textContent='Lütfen adınızı girin.';return}
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('main-panel').classList.remove('hidden');
+  document.getElementById('student-label').textContent=studentName;
+  initWS();
+}
+document.getElementById('student-name').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 
-ws.onopen = () => {
-    document.getElementById("durum").innerText = "Bağlandı";
-    ws.send(JSON.stringify({
-        rol: "ogrenci",
-        isim: "İlknur"
-    }));
-};
+function initWS(){
+  const wsUrl = 'ws://' + window.location.hostname + ':8765';
+  ws=new WebSocket(wsUrl);
+  ws.onopen=()=>{
+    document.getElementById('conn-badge').textContent='Bağlı';
+    document.getElementById('conn-badge').className='badge badge-green';
+    ws.send(JSON.stringify({rol:'ogrenci',isim:studentName}));
+  };
+  ws.onclose=()=>{
+    document.getElementById('conn-badge').textContent='Bağlantı Kesildi';
+    document.getElementById('conn-badge').className='badge badge-red';
+    setTimeout(()=>{
+      alert("Bağlantı koptu. Lütfen sayfayı yenileyin veya tekrar giriş yapın.");
+      window.location.href="index.html";
+    }, 1000);
+  };
+  ws.onerror=()=>{
+    document.getElementById('conn-badge').textContent='Hata';
+    document.getElementById('conn-badge').className='badge badge-red';
+  };
+  ws.onmessage=(e)=>{
+    const d=JSON.parse(e.data);
 
-ws.onclose = () => {
-    const durumEl = document.getElementById("durum");
-    durumEl.innerText = "Bağlantı Kesildi";
-    durumEl.style.background = "#fee2e2";
-    durumEl.style.color = "#991b1b";
-};
+    if(d.tip==='ogretmen_bilgi'){
+      document.getElementById('ogretmen-adi').textContent=d.ogretmen_ismi;
+    }
+    else if(d.tip==='giris'&&d.rol==='ogretmen'){
+      document.getElementById('ogretmen-adi').textContent=d.isim;
+    }
+    else if(d.tip==='cikis'&&d.rol==='ogretmen'){
+      document.getElementById('ogretmen-adi').textContent='Bağlı değil';
+    }
+    else if(d.tip==='soru'){
+      aktivSoruId=d.soru_id;
+      seciliCevap='';
+      soruKilitli=false;
+      toplamSure=d.sure||0;
+      document.getElementById('waiting-area').classList.add('hidden');
+      document.getElementById('soru-area').classList.remove('hidden');
+      document.getElementById('soru-text-display').textContent=d.soru;
+      document.getElementById('feedback-area').innerHTML='';
+      
+      const optArea=document.getElementById('options-area');
+      const acikArea=document.getElementById('acik-uclu-area');
+      optArea.innerHTML='';
+      acikArea.classList.add('hidden');
 
-ws.onerror = () => {
-    const durumEl = document.getElementById("durum");
-    durumEl.innerText = "Hata Oluştu";
-    durumEl.style.background = "#fee2e2";
-    durumEl.style.color = "#991b1b";
-};
-
-ws.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    
-    // Öğretmenden "soru" paketi gelirse
-    if (data.tip === "soru") {
-        const questionBox = document.getElementById("questionBox");
-        
-        // Görsel stilleri sıfırla
-        questionBox.style.background = "transparent";
-        questionBox.style.border = "none";
-        questionBox.style.padding = "0";
-        questionBox.style.justifyContent = "flex-start";
-        
-        let htmlContent = `<div class="question-text">${data.soru}</div>`;
-        
-        if (data.secenekler && data.secenekler.length > 0) {
-            htmlContent += `<div class="options-container">`;
-            data.secenekler.forEach((secenek, index) => {
-                const harf = String.fromCharCode(65 + index); // A, B, C, D...
-                htmlContent += `<button class="option-btn"><b>${harf})</b> ${secenek}</button>`;
-            });
-            htmlContent += `</div>`;
+      if(d.soru_tipi==='acik_uclu'){
+        acikArea.classList.remove('hidden');
+        document.getElementById('acik-cevap').value='';
+        document.getElementById('acik-cevap').disabled=false;
+        acikArea.querySelector('.submit-btn').disabled=false;
+      } else {
+        const secenekler=d.secenekler||[];
+        secenekler.forEach((s,i)=>{
+          const harf=String.fromCharCode(65+i);
+          const btn=document.createElement('button');
+          btn.className='btn option-btn';
+          btn.innerHTML=`<span class="option-letter">${harf}</span><span>${s}</span>`;
+          btn.dataset.cevap=harf;
+          btn.onclick=()=>secenekSec(btn,harf);
+          optArea.appendChild(btn);
+        });
+      }
+      if(d.sure&&d.sure>0){
+        document.getElementById('timer-section').classList.remove('hidden');
+        document.getElementById('timer-text').textContent=d.sure+'s';
+        document.getElementById('timer-fill').style.width='100%';
+        document.getElementById('timer-text').style.color='#f59e0b';
+      } else {
+        document.getElementById('timer-section').classList.add('hidden');
+      }
+    }
+    else if(d.tip==='zamanlayici'){
+      document.getElementById('timer-text').textContent=d.kalan_sure+'s';
+      if(toplamSure>0)document.getElementById('timer-fill').style.width=((d.kalan_sure/toplamSure)*100)+'%';
+      document.getElementById('timer-text').style.color=d.kalan_sure<=5?'#ef4444':'#f59e0b';
+    }
+    else if(d.tip==='sure_doldu'){
+      soruKilitli=true;
+      document.getElementById('timer-section').classList.add('hidden');
+      kilitle();
+    }
+    else if(d.tip==='cevap_onay'){
+      // Öğrenci cevabı gönderince "gönderildi" yazısı çıksın (Madde 3)
+      document.getElementById('feedback-area').innerHTML=`<div class="feedback feedback-info">${d.mesaj}</div>`;
+    }
+    else if(d.tip==='uyari'){
+      document.getElementById('feedback-area').innerHTML=`<div class="feedback feedback-wrong">${d.mesaj}</div>`;
+    }
+    else if(d.tip==='sonuc'){
+      soruKilitli=true;
+      kilitle();
+      let html='';
+      if(d.dogru_cevap){
+        // Madde 2: Öğrenci doğru cevaplarsa sadece Tebrikler! yazsın
+        if(d.dogru_mu===true){
+          html+='<div class="feedback feedback-correct">Tebrikler!</div>';
+        } else if(d.dogru_mu===false){
+          html+=`<div class="feedback feedback-wrong">Yanlış! Doğru cevap: ${d.dogru_cevap}</div>`;
         } else {
-            // Şık gönderilmediğinde veya veri eksik geldiğinde sadece soru eklensin
-            htmlContent += `<div class="waiting-text" style="margin-top:20px; text-align:left;">*Bu soru için şık gönderilmedi.</div>`;
+          html+=`<div class="feedback feedback-info">Doğru cevap: ${d.dogru_cevap}</div>`;
         }
         
-        questionBox.innerHTML = htmlContent;
+        document.querySelectorAll('.option-btn').forEach(b=>{
+          if(b.dataset.cevap===d.dogru_cevap)b.classList.add('correct');
+          else if(b.classList.contains('selected')&&b.dataset.cevap!==d.dogru_cevap)b.classList.add('wrong');
+        });
+      }
+      document.getElementById('feedback-area').innerHTML=html;
     }
-};
+    else if(d.tip==='gecmis'){
+      renderGecmis(d.sorular);
+    }
+  };
+}
 
+function secenekSec(btn,cevap){
+  if(soruKilitli)return;
+  seciliCevap=cevap;
+  document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  ws.send(JSON.stringify({tip:'cevap',soru_id:aktivSoruId,cevap:cevap}));
+}
+
+function acikCevapGonder(){
+  if(soruKilitli)return;
+  const cevap=document.getElementById('acik-cevap').value.trim();
+  if(!cevap){alert('Lütfen cevabınızı yazın.');return}
+  ws.send(JSON.stringify({tip:'cevap',soru_id:aktivSoruId,cevap:cevap}));
+}
+
+function kilitle(){
+  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+  const ta=document.getElementById('acik-cevap');
+  if(ta)ta.disabled=true;
+  const sb=document.querySelector('.submit-btn');
+  if(sb)sb.disabled=true;
+}
+
+function showTab(t){
+  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-soru').classList.add('hidden');
+  document.getElementById('tab-gecmis').classList.add('hidden');
+  document.getElementById('tab-'+t).classList.remove('hidden');
+  event.target.classList.add('active');
+  if(t==='gecmis')ws.send(JSON.stringify({tip:'gecmis_talep'}));
+}
+
+function renderGecmis(sorular){
+  const el=document.getElementById('gecmis-list');
+  if(!sorular||sorular.length===0){el.innerHTML='<div style="color:#475569;font-size:13px;text-align:center;padding:20px">Henüz geçmiş yok.</div>';return}
+  
+  const tersSorular = [...sorular].reverse();
+  
+  let html='';
+  tersSorular.forEach(s=>{
+    let durum='';
+    if(s.dogru_cevap){
+      if(s.dogru_mu===true)durum='<span class="badge badge-green" style="margin-left:auto">Doğru ✓</span>';
+      else if(s.dogru_mu===false)durum='<span class="badge badge-red" style="margin-left:auto">Yanlış ✗</span>';
+    }
+    html+=`<div class="gecmis-item">
+      <h4>${s.soru}</h4>
+      <div class="gecmis-meta">
+        <span>Tarih: ${s.zaman}</span>
+        ${s.dogru_cevap ? `<span style="color:#4ade80">Doğru Yanıt: ${s.dogru_cevap}</span>` : ''}
+        ${durum}
+      </div>
+      <div style="background:rgba(15,23,42,0.5);padding:10px;border-radius:8px;margin-top:8px">
+        <span style="color:#94a3b8;font-size:12px">Sizin Yanıtınız:</span> 
+        <span style="color:#e2e8f0;font-weight:600;margin-left:4px">${s.kendi_cevabi||'Cevaplanmadı'}</span>
+      </div>
+    </div>`;
+  });
+  el.innerHTML=html;
+}
 </script>
-
 </body>
 </html>
