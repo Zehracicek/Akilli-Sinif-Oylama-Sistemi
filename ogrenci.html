@@ -2,333 +2,755 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Öğrenci Paneli</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Öğrenci — Akıllı Sınıf</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#0f172a,#1e293b);min-height:100vh;color:#e2e8f0;padding:20px}
-.header{display:flex;justify-content:space-between;align-items:center;padding:10px 0 20px;border-bottom:1px solid rgba(148,163,184,0.1);margin-bottom:20px;max-width:700px;margin-left:auto;margin-right:auto}
-.header-left h1{font-size:24px;font-weight:800;background:linear-gradient(135deg,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.header-left p{color:#94a3b8;font-size:13px;margin-top:4px}
-.container{max-width:700px;margin:0 auto}
-.card{background:rgba(30,41,59,0.8);border:1px solid rgba(148,163,184,0.15);border-radius:16px;padding:24px;backdrop-filter:blur(10px);margin-bottom:16px}
-.card h3{font-size:14px;color:#94a3b8;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
-.badge{display:inline-block;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600}
-.badge-green{background:rgba(34,197,94,0.15);color:#4ade80}
-.badge-red{background:rgba(239,68,68,0.15);color:#f87171}
-.btn{padding:12px 20px;border:none;border-radius:12px;font-weight:600;font-size:15px;cursor:pointer;transition:.25s;font-family:inherit;width:100%;text-align:left}
-.btn:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.1)}
-.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
-.btn-outline{background:transparent;border:1px solid rgba(148,163,184,0.3);color:#94a3b8;width:auto;padding:8px 16px;text-align:center;font-size:13px}
-.option-btn{background:rgba(15,23,42,0.6);border:2px solid rgba(148,163,184,0.2);color:#e2e8f0;margin-bottom:8px;display:flex;align-items:center;gap:12px}
-.option-btn:hover:not(:disabled){border-color:#a78bfa;background:rgba(167,139,250,0.1)}
-.option-btn.selected{border-color:#a78bfa;background:rgba(167,139,250,0.15)}
-.option-btn.correct{border-color:#22c55e!important;background:rgba(34,197,94,0.15)!important;color:#4ade80!important}
-.option-btn.wrong{border-color:#ef4444!important;background:rgba(239,68,68,0.15)!important;color:#f87171!important}
-.option-letter{width:32px;height:32px;border-radius:8px;background:rgba(148,163,184,0.1);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
-textarea{width:100%;padding:14px;background:#0f172a;border:2px solid rgba(148,163,184,0.2);border-radius:12px;color:#e2e8f0;font-size:14px;font-family:inherit;outline:none;resize:vertical;min-height:80px;transition:.2s}
-textarea:focus{border-color:#a78bfa;box-shadow:0 0 0 3px rgba(167,139,250,0.15)}
-.submit-btn{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;text-align:center;margin-top:10px}
-.timer-bar{height:6px;background:#1e293b;border-radius:6px;overflow:hidden;margin-bottom:16px}
-.timer-fill{height:100%;background:linear-gradient(90deg,#f59e0b,#ef4444);border-radius:6px;transition:width 1s linear}
-.timer-text{text-align:center;font-size:28px;font-weight:800;color:#f59e0b;margin-bottom:8px}
-.feedback{padding:14px;border-radius:12px;text-align:center;font-weight:600;margin-top:12px;font-size:15px}
-.feedback-correct{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3)}
-.feedback-wrong{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3)}
-.feedback-info{background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.3)}
-.waiting-box{text-align:center;padding:40px 20px;color:#64748b}
-.pulse{animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a,#1e293b);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
-.login-box{background:rgba(30,41,59,0.9);border:1px solid rgba(148,163,184,0.15);border-radius:20px;padding:40px 30px;width:100%;max-width:380px;text-align:center;backdrop-filter:blur(10px)}
-.login-box h2{font-size:22px;margin-bottom:6px;color:#f1f5f9}
-.login-box p{color:#94a3b8;font-size:13px;margin-bottom:20px}
-.login-box input{width:100%;padding:12px 14px;background:#0f172a;border:1px solid rgba(148,163,184,0.2);border-radius:10px;color:#e2e8f0;font-size:14px;font-family:inherit;outline:none;margin-bottom:14px}
-.login-box input:focus{border-color:#a78bfa}
-.login-btn{width:100%;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;font-weight:600;font-size:15px;cursor:pointer;font-family:inherit}
-.tab-bar{display:flex;gap:4px;margin-bottom:16px}
-.tab{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:#94a3b8;background:transparent;border:none;font-family:inherit;transition:.2s}
-.tab.active{background:rgba(167,139,250,0.15);color:#a78bfa}
-.hidden{display:none!important}
-.gecmis-item{background:rgba(15,23,42,0.6);border-radius:12px;padding:16px;margin-bottom:16px;border:1px solid rgba(148,163,184,0.15);box-shadow:0 4px 6px rgba(0,0,0,0.1)}
-.gecmis-item h4{color:#e2e8f0;font-size:15px;margin-bottom:8px;font-weight:600}
-.gecmis-meta{display:flex;gap:12px;font-size:12px;color:#94a3b8;margin-bottom:4px;flex-wrap:wrap;align-items:center}
-.gecmis-meta span{background:rgba(255,255,255,0.05);padding:4px 8px;border-radius:6px}
-.progress-wrap{margin:8px 0;background:rgba(15,23,42,0.5);padding:10px;border-radius:10px;border:1px solid rgba(148,163,184,0.1)}
-.progress-label{display:flex;justify-content:space-between;font-size:13px;color:#e2e8f0;margin-bottom:6px;font-weight:500}
-.progress-bar{height:10px;background:#1e293b;border-radius:6px;overflow:hidden}
-.progress-fill{height:100%;border-radius:6px;transition:width .4s}
+:root{
+  --p:#7c3aed;--p2:#a78bfa;--blue:#2563eb;--pink:#ec4899;
+  --amber:#f59e0b;--green:#10b981;--red:#ef4444;
+  --bg:#0d0221;--card:#1a0f2e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;color:#fff;overflow-x:hidden;}
 
-@media (max-width: 600px) {
-    .header { flex-direction: column; align-items: flex-start; gap: 12px; }
-    .header-left h1 { font-size: 20px; }
-    .card { padding: 16px; }
-    .btn { font-size: 14px; padding: 10px 16px; }
-    .tab-bar { flex-wrap: wrap; }
-    .tab { flex: 1; text-align: center; }
+/* ── BG ANIM ── */
+.bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);animation:orbF 12s ease-in-out infinite;}
+.o1{width:500px;height:500px;background:rgba(124,58,237,.25);top:-150px;left:-150px;}
+.o2{width:350px;height:350px;background:rgba(236,72,153,.2);bottom:-80px;right:-80px;animation-delay:-4s;}
+.o3{width:300px;height:300px;background:rgba(37,99,235,.2);top:40%;left:35%;animation-delay:-8s;}
+@keyframes orbF{0%,100%{transform:translate(0,0)scale(1)}33%{transform:translate(20px,-20px)scale(1.07)}66%{transform:translate(-15px,18px)scale(.93)}}
+.star{position:fixed;border-radius:50%;pointer-events:none;z-index:1;animation:twinkle linear infinite;}
+@keyframes twinkle{0%,100%{opacity:.8}50%{opacity:.1}}
+
+/* ── SCREENS ── */
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;z-index:10;transition:opacity .4s,transform .4s;}
+.screen.hidden{opacity:0;pointer-events:none;transform:scale(.96);}
+
+/* ── LOGIN ── */
+#s-login{flex-direction:column;align-items:center;}
+.login-card{
+  background:rgba(26,15,46,.9);border:1px solid rgba(167,139,250,.25);
+  border-radius:28px;padding:44px 36px;width:100%;max-width:420px;
+  text-align:center;backdrop-filter:blur(20px);
+  box-shadow:0 24px 80px rgba(124,58,237,.3);
+  animation:cardEntry .7s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes cardEntry{from{transform:translateY(60px) scale(.85);opacity:0}to{transform:none;opacity:1}}
+.login-logo{font-size:64px;margin-bottom:16px;animation:logoBounce 2s ease-in-out infinite;}
+@keyframes logoBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.login-card h2{font-family:'Fredoka One',sans-serif;font-size:28px;margin-bottom:6px;background:linear-gradient(135deg,#c084fc,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.login-card p{color:rgba(255,255,255,.5);font-size:14px;margin-bottom:28px;}
+.input-wrap{position:relative;margin-bottom:16px;}
+.input-wrap input{
+  width:100%;padding:14px 18px;background:rgba(255,255,255,.07);
+  border:2px solid rgba(167,139,250,.2);border-radius:14px;
+  color:#fff;font-size:15px;font-family:'Nunito',sans-serif;outline:none;transition:.25s;
+}
+.input-wrap input:focus{border-color:var(--p2);background:rgba(167,139,250,.1);box-shadow:0 0 0 4px rgba(124,58,237,.2);}
+.input-wrap input::placeholder{color:rgba(255,255,255,.3);}
+.btn-join{
+  width:100%;padding:14px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#7c3aed,#ec4899);
+  color:#fff;font-size:17px;font-weight:900;font-family:'Nunito',sans-serif;
+  cursor:pointer;transition:.25s;letter-spacing:.5px;
+  box-shadow:0 8px 30px rgba(124,58,237,.5);
+}
+.btn-join:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(124,58,237,.7);}
+.btn-join:active{transform:translateY(0);}
+.err{color:#f87171;font-size:13px;margin-top:8px;min-height:20px;}
+.back-link{display:inline-block;margin-top:20px;color:rgba(255,255,255,.35);font-size:13px;text-decoration:none;transition:.2s;}
+.back-link:hover{color:rgba(255,255,255,.6);}
+
+/* ── AVATAR ── */
+#s-avatar{flex-direction:column;align-items:center;}
+.av-card{
+  background:rgba(26,15,46,.9);border:1px solid rgba(167,139,250,.25);
+  border-radius:28px;padding:36px 28px;width:100%;max-width:520px;
+  text-align:center;backdrop-filter:blur(20px);
+  box-shadow:0 24px 80px rgba(124,58,237,.3);
+}
+.av-card h2{font-family:'Fredoka One',sans-serif;font-size:26px;margin-bottom:4px;color:#fff;}
+.av-card p{color:rgba(255,255,255,.45);font-size:13px;margin-bottom:24px;}
+.avatar-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px;}
+.av-btn{
+  aspect-ratio:1;border-radius:18px;border:3px solid transparent;
+  background:rgba(255,255,255,.06);font-size:36px;cursor:pointer;
+  transition:.25s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;justify-content:center;
+}
+.av-btn:hover{transform:scale(1.15);background:rgba(167,139,250,.15);border-color:rgba(167,139,250,.4);}
+.av-btn.selected{border-color:var(--p2);background:rgba(124,58,237,.25);transform:scale(1.12);box-shadow:0 0 20px rgba(124,58,237,.5);}
+.btn-continue{
+  width:100%;padding:14px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#7c3aed,#2563eb);
+  color:#fff;font-size:16px;font-weight:900;font-family:'Nunito',sans-serif;
+  cursor:pointer;transition:.25s;
+  box-shadow:0 8px 24px rgba(124,58,237,.45);
+}
+.btn-continue:hover:not(:disabled){transform:translateY(-3px);}
+.btn-continue:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ── LOBBY ── */
+#s-lobby{flex-direction:column;align-items:center;text-align:center;}
+.lobby-avatar{font-size:80px;animation:avatarFloat 2.5s ease-in-out infinite;margin-bottom:12px;}
+@keyframes avatarFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.player-name{font-family:'Fredoka One',sans-serif;font-size:28px;color:#fff;margin-bottom:6px;}
+.player-name span{color:var(--p2);}
+.conn-status{display:inline-flex;align-items:center;gap:8px;background:rgba(16,185,129,.12);border:1.5px solid rgba(16,185,129,.3);border-radius:30px;padding:6px 16px;font-size:13px;font-weight:700;color:#34d399;margin-bottom:24px;}
+.cd{width:8px;height:8px;background:#34d399;border-radius:50%;animation:liveDot 1.2s ease infinite;}
+@keyframes liveDot{0%,100%{opacity:1}50%{opacity:.2}}
+.waiting-text{color:rgba(255,255,255,.45);font-size:15px;line-height:1.7;animation:waitPulse 2s ease-in-out infinite;}
+@keyframes waitPulse{0%,100%{opacity:1}50%{opacity:.4}}
+.wait-icon{font-size:48px;margin-bottom:16px;animation:waitSpin 4s linear infinite;}
+@keyframes waitSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.lobby-card{background:rgba(26,15,46,.85);border:1px solid rgba(167,139,250,.2);border-radius:24px;padding:40px 32px;max-width:400px;width:100%;backdrop-filter:blur(16px);}
+.teacher-badge{background:rgba(37,99,235,.15);border:1px solid rgba(96,165,250,.25);border-radius:12px;padding:10px 16px;font-size:14px;color:#60a5fa;margin-bottom:20px;}
+.teacher-badge span{font-weight:800;}
+
+/* ── QUESTION INCOMING ── */
+#s-incoming{flex-direction:column;align-items:center;text-align:center;}
+.incoming-icon{font-size:100px;animation:incomingBounce .6s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes incomingBounce{from{transform:scale(0) rotate(-30deg)}to{transform:none}}
+.incoming-text{font-family:'Fredoka One',sans-serif;font-size:36px;margin-top:16px;animation:fadeUp .5s .2s both;}
+.incoming-sub{color:rgba(255,255,255,.5);font-size:16px;margin-top:8px;animation:fadeUp .5s .35s both;}
+@keyframes fadeUp{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+
+/* ── QUESTION ── */
+#s-question{flex-direction:column;padding:16px;}
+.q-wrap{width:100%;max-width:680px;margin:0 auto;}
+
+/* Timer */
+.timer-ring-wrap{display:flex;justify-content:center;margin-bottom:14px;}
+.timer-ring{position:relative;width:72px;height:72px;}
+.timer-ring svg{transform:rotate(-90deg);}
+.timer-circle-bg{fill:none;stroke:rgba(255,255,255,.1);stroke-width:6;}
+.timer-circle-fill{fill:none;stroke:var(--amber);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s;}
+.timer-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',sans-serif;font-size:22px;color:var(--amber);}
+
+/* Question card */
+.q-card{
+  background:rgba(26,15,46,.9);border:1px solid rgba(167,139,250,.2);
+  border-radius:22px;padding:24px 22px;margin-bottom:16px;
+  backdrop-filter:blur(16px);
+  animation:qSlideIn .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes qSlideIn{from{transform:translateY(-30px) scale(.95);opacity:0}to{transform:none;opacity:1}}
+.q-num{font-size:12px;font-weight:900;color:var(--p2);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;}
+.q-text{font-size:20px;font-weight:800;color:#fff;line-height:1.4;}
+
+/* Answer options */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.opt-btn{
+  position:relative;border:none;border-radius:18px;padding:18px 16px;
+  cursor:pointer;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;
+  color:#fff;transition:.2s cubic-bezier(.34,1.56,.64,1);
+  display:flex;align-items:center;gap:12px;text-align:left;overflow:hidden;
+  animation:optIn .45s cubic-bezier(.34,1.56,.64,1) both;
+}
+.opt-btn:nth-child(1){animation-delay:.1s}
+.opt-btn:nth-child(2){animation-delay:.18s}
+.opt-btn:nth-child(3){animation-delay:.26s}
+.opt-btn:nth-child(4){animation-delay:.34s}
+@keyframes optIn{from{transform:translateY(24px) scale(.9);opacity:0}to{transform:none;opacity:1}}
+.opt-btn:hover:not(:disabled):not(.selected):not(.correct):not(.wrong){transform:scale(1.04) translateY(-2px);}
+.opt-btn:active:not(:disabled){transform:scale(.97);}
+.opt-btn:disabled{cursor:not-allowed;}
+.opt-btn.o0{background:linear-gradient(135deg,#e53935,#c62828);}
+.opt-btn.o1{background:linear-gradient(135deg,#1565c0,#0d47a1);}
+.opt-btn.o2{background:linear-gradient(135deg,#2e7d32,#1b5e20);}
+.opt-btn.o3{background:linear-gradient(135deg,#f9a825,#e65100);}
+.opt-btn.o4{background:linear-gradient(135deg,#6a1b9a,#4a148c);}
+.opt-btn.o5{background:linear-gradient(135deg,#00838f,#006064);}
+.opt-letter{
+  width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:900;flex-shrink:0;
+}
+.opt-btn.selected{transform:scale(1.04)!important;box-shadow:0 0 0 4px rgba(255,255,255,.6),0 8px 30px rgba(0,0,0,.4);}
+.opt-btn.correct{background:linear-gradient(135deg,#22c55e,#16a34a)!important;box-shadow:0 0 0 4px rgba(34,197,94,.6),0 8px 30px rgba(34,197,94,.4);}
+.opt-btn.wrong{background:linear-gradient(135deg,#ef4444,#dc2626)!important;opacity:.6;}
+.opt-btn .shimmer{position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transform:translateX(-100%);animation:shimmerSlide 2s ease infinite;}
+@keyframes shimmerSlide{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}
+
+/* Open answer */
+.open-area{animation:qSlideIn .45s .1s both;}
+.open-area textarea{
+  width:100%;padding:16px;background:rgba(255,255,255,.07);
+  border:2px solid rgba(167,139,250,.2);border-radius:16px;
+  color:#fff;font-size:15px;font-family:'Nunito',sans-serif;
+  outline:none;resize:vertical;min-height:100px;transition:.25s;
+}
+.open-area textarea:focus{border-color:var(--p2);box-shadow:0 0 0 4px rgba(124,58,237,.2);}
+.btn-submit{
+  width:100%;margin-top:12px;padding:14px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#7c3aed,#ec4899);
+  color:#fff;font-size:16px;font-weight:900;font-family:'Nunito',sans-serif;
+  cursor:pointer;transition:.25s;box-shadow:0 8px 24px rgba(124,58,237,.4);
+}
+.btn-submit:hover:not(:disabled){transform:translateY(-2px);}
+.btn-submit:disabled{opacity:.4;cursor:not-allowed;}
+
+/* Feedback */
+.feedback-area{margin-top:14px;text-align:center;}
+.fb-pill{
+  display:inline-flex;align-items:center;gap:10px;
+  border-radius:50px;padding:12px 24px;font-size:15px;font-weight:800;
+  animation:fbPop .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes fbPop{from{transform:scale(0)}to{transform:scale(1)}}
+.fb-sent{background:rgba(59,130,246,.2);border:2px solid rgba(96,165,250,.4);color:#93c5fd;}
+.fb-correct{background:rgba(34,197,94,.2);border:2px solid rgba(34,197,94,.4);color:#86efac;}
+.fb-wrong{background:rgba(239,68,68,.2);border:2px solid rgba(239,68,68,.4);color:#fca5a5;}
+
+/* Score popup */
+.score-popup{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
+  background:linear-gradient(135deg,#7c3aed,#ec4899);
+  border-radius:24px;padding:32px 40px;text-align:center;z-index:100;
+  box-shadow:0 24px 80px rgba(124,58,237,.6);
+  transition:transform .5s cubic-bezier(.34,1.56,.64,1),opacity .3s;
+  opacity:0;pointer-events:none;
+}
+.score-popup.show{transform:translate(-50%,-50%) scale(1);opacity:1;}
+.score-popup .sp-icon{font-size:64px;margin-bottom:12px;}
+.score-popup h3{font-family:'Fredoka One',sans-serif;font-size:28px;margin-bottom:6px;}
+.score-popup p{color:rgba(255,255,255,.7);font-size:14px;}
+
+/* History tab styles */
+.hist-item{background:rgba(26,15,46,.7);border:1px solid rgba(167,139,250,.15);border-radius:16px;padding:16px;margin-bottom:12px;}
+.hist-item h4{font-size:15px;font-weight:700;color:#e2e8f0;margin-bottom:8px;}
+.hist-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
+.hist-badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.hb-correct{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.25);}
+.hb-wrong{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.25);}
+.hb-neutral{background:rgba(255,255,255,.07);color:#94a3b8;}
+
+/* Top bar */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  background:rgba(13,2,33,.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(167,139,250,.1);
+  padding:10px 20px;display:flex;align-items:center;justify-content:space-between;
+}
+.tb-left{display:flex;align-items:center;gap:10px;}
+.tb-avatar{font-size:26px;}
+.tb-name{font-size:14px;font-weight:800;color:#fff;}
+.tb-teacher{font-size:12px;color:rgba(255,255,255,.4);margin-top:1px;}
+.tb-right{display:flex;align-items:center;gap:10px;}
+.conn-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.cb-on{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#34d399;}
+.cb-off{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#f87171;}
+
+/* Tabs */
+.tab-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:20;
+  background:rgba(13,2,33,.9);backdrop-filter:blur(12px);
+  border-top:1px solid rgba(167,139,250,.12);
+  display:flex;padding:8px 16px 12px;gap:8px;
+}
+.tab-btn{flex:1;padding:10px 8px;border:none;border-radius:14px;background:transparent;color:rgba(255,255,255,.4);font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;transition:.2s;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.tab-btn.active{background:rgba(167,139,250,.15);color:#a78bfa;}
+.tab-btn span:first-child{font-size:20px;}
+
+.screen-with-tabs{padding-top:64px;padding-bottom:72px;}
+.screen-with-tabs>div{width:100%;max-width:680px;overflow-y:auto;max-height:calc(100vh - 140px);}
+
+.hidden{display:none!important;}
+
+/* Celebration confetti */
+.celeb{position:fixed;pointer-events:none;z-index:200;}
+.celeb-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:celebFall 1.5s ease-out forwards;}
+@keyframes celebFall{
+  0%{transform:translateY(0) rotate(0) scale(1);opacity:1;}
+  100%{transform:translateY(200px) rotate(720deg) scale(0);opacity:0;}
 }
 </style>
 </head>
 <body>
-
-<!-- GİRİŞ -->
-<div id="login-screen">
-<div class="login-box">
-<h2>Öğrenci Girişi</h2>
-<p>Öğrenci Paneli</p>
-<input type="text" id="student-name" placeholder="Adınızı ve soyadınızı giriniz...">
-<button class="login-btn" onclick="login()">Derse Katıl</button>
-<p id="login-error" style="color:#f87171;margin-top:10px;font-size:12px"></p>
-<a href="index.html" style="display:inline-block;margin-top:16px;color:#94a3b8;font-size:13px;text-decoration:none">Ana Ekrana Dön</a>
-</div>
+<div class="bg">
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
 </div>
 
-<!-- ANA PANEL -->
-<div id="main-panel" class="hidden">
-<div class="header">
-<div class="header-left">
-<h1>Öğrenci Paneli</h1>
-<p><span id="student-label"></span> | <span class="badge badge-green" id="conn-badge">Bağlanıyor...</span></p>
-</div>
-<div>
-<button class="btn btn-outline" onclick="window.location.href='index.html'">Çıkış Yap</button>
-</div>
-</div>
-
-<div class="container">
-<div style="font-size:13px;color:#94a3b8;margin-bottom:16px;text-align:right">
-Öğretmen: <span id="ogretmen-adi" style="color:#a78bfa;font-weight:600">--</span>
+<!-- SCREEN 1: GİRİŞ -->
+<div class="screen" id="s-login">
+  <div class="login-card">
+    <div class="login-logo">🎮</div>
+    <h2>Derse Katıl!</h2>
+    <p>Adını yaz ve sınıfa gir</p>
+    <div class="input-wrap">
+      <input type="text" id="input-name" placeholder="Adın ve soyadın..." maxlength="40">
+    </div>
+    <button class="btn-join" onclick="goToAvatar()">Devam Et →</button>
+    <div class="err" id="login-err"></div>
+    <a href="index.html" class="back-link">← Ana Sayfaya Dön</a>
+  </div>
 </div>
 
-<div class="tab-bar">
-<button class="tab active" onclick="showTab('soru')">Aktif Soru</button>
-<button class="tab" onclick="showTab('gecmis')">Geçmişim</button>
+<!-- SCREEN 2: AVATAR SEÇİMİ -->
+<div class="screen hidden" id="s-avatar">
+  <div class="av-card">
+    <h2>Avatar Seç! 🎨</h2>
+    <p>Seni temsil edecek emojini seç</p>
+    <div class="avatar-grid" id="avatar-grid"></div>
+    <button class="btn-continue" id="btn-continue" onclick="doLogin()" disabled>Sınıfa Gir! 🚀</button>
+  </div>
 </div>
 
-<!-- AKTİF SORU -->
-<div id="tab-soru">
-<div class="card" id="soru-card">
-<div class="waiting-box" id="waiting-area">
-<div class="pulse" style="font-size:36px;margin-bottom:12px">⏳</div>
-<p style="font-size:14px">Öğretmenin soru göndermesi bekleniyor...</p>
-</div>
-<div id="soru-area" class="hidden">
-<div id="timer-section" class="hidden">
-<div class="timer-text" id="timer-text">--</div>
-<div class="timer-bar"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
-</div>
-<h3 id="soru-text-display" style="font-size:18px;color:#f1f5f9;margin-bottom:16px"></h3>
-<div id="options-area"></div>
-<div id="acik-uclu-area" class="hidden">
-<textarea id="acik-cevap" placeholder="Cevabınızı buraya yazın..."></textarea>
-<button class="btn submit-btn" onclick="acikCevapGonder()">Cevabı Gönder</button>
-</div>
-<div id="feedback-area"></div>
-</div>
-</div>
+<!-- SCREEN 3: LOBBY / BEKLE -->
+<div class="screen hidden" id="s-lobby">
+  <div class="lobby-card">
+    <div class="lobby-avatar" id="lb-avatar">🎓</div>
+    <div class="player-name">Merhaba, <span id="lb-name">—</span>!</div>
+    <div style="margin:10px 0;">
+      <div class="conn-status" id="lb-conn"><div class="cd"></div>Bağlanıyor...</div>
+    </div>
+    <div class="teacher-badge" id="lb-teacher">Öğretmen: <span>Bekleniyor...</span></div>
+    <div class="wait-icon">⏳</div>
+    <p class="waiting-text">Öğretmenin soru göndermesi<br>bekleniyor...</p>
+  </div>
 </div>
 
-<!-- GEÇMİŞ -->
-<div id="tab-gecmis" class="hidden">
-<div class="card">
-<h3>Geçmiş Yanıtlarım</h3>
-<div id="gecmis-list"><div style="color:#475569;font-size:13px;text-align:center;padding:20px">Henüz geçmiş yok.</div></div>
+<!-- SCREEN 4: SORU GELİYOR (flash) -->
+<div class="screen hidden" id="s-incoming">
+  <div class="incoming-icon" id="ic-icon">❓</div>
+  <div class="incoming-text">Yeni Soru!</div>
+  <div class="incoming-sub">Hazır mısın? 🎯</div>
 </div>
+
+<!-- TOP BAR (main panel) -->
+<div class="topbar hidden" id="topbar">
+  <div class="tb-left">
+    <div class="tb-avatar" id="tb-avatar">🎓</div>
+    <div>
+      <div class="tb-name" id="tb-name">—</div>
+      <div class="tb-teacher" id="tb-teacher">Öğretmen: —</div>
+    </div>
+  </div>
+  <div class="tb-right">
+    <div class="conn-badge cb-on" id="tb-conn">● Bağlı</div>
+  </div>
 </div>
+
+<!-- SCREEN 5: SORU (main game) -->
+<div class="screen hidden screen-with-tabs" id="s-question">
+  <div>
+    <!-- Timer -->
+    <div id="timer-wrap" class="hidden" style="text-align:center;margin-bottom:10px;">
+      <div class="timer-ring-wrap">
+        <div class="timer-ring">
+          <svg width="72" height="72" viewBox="0 0 72 72">
+            <circle class="timer-circle-bg" cx="36" cy="36" r="30"/>
+            <circle class="timer-circle-fill" id="timer-circle" cx="36" cy="36" r="30"
+              stroke-dasharray="188.4" stroke-dashoffset="0"/>
+          </svg>
+          <div class="timer-num" id="timer-num">--</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question card -->
+    <div class="q-card" id="q-card">
+      <div class="q-num" id="q-num">SORU</div>
+      <div class="q-text" id="q-text">Soru yükleniyor...</div>
+    </div>
+
+    <!-- Options -->
+    <div class="options-grid" id="options-grid"></div>
+
+    <!-- Open ended -->
+    <div class="open-area hidden" id="open-area">
+      <textarea id="open-input" placeholder="Cevabınızı buraya yazın..."></textarea>
+      <button class="btn-submit" id="btn-open-submit" onclick="sendOpen()">Cevabı Gönder ✓</button>
+    </div>
+
+    <!-- Feedback -->
+    <div class="feedback-area" id="feedback-area"></div>
+  </div>
 </div>
+
+<!-- TAB BAR (for question/history) -->
+<div class="tab-bar hidden" id="tab-bar">
+  <button class="tab-btn active" id="tab-soru-btn" onclick="showTab('soru')">
+    <span>❓</span><span>Soru</span>
+  </button>
+  <button class="tab-btn" id="tab-gecmis-btn" onclick="showTab('gecmis')">
+    <span>📋</span><span>Geçmişim</span>
+  </button>
+</div>
+
+<!-- SCREEN 6: GEÇMİŞ -->
+<div class="screen hidden screen-with-tabs" id="s-gecmis">
+  <div>
+    <div style="padding:0 4px;">
+      <h3 style="font-family:'Fredoka One',sans-serif;font-size:22px;margin-bottom:16px;color:var(--p2);">📋 Geçmiş Yanıtlarım</h3>
+      <div id="gecmis-list"><p style="color:rgba(255,255,255,.4);text-align:center;padding:30px 0;">Henüz geçmiş yok.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- Score popup -->
+<div class="score-popup" id="score-popup">
+  <div class="sp-icon" id="sp-icon">🎉</div>
+  <h3 id="sp-title">Süper!</h3>
+  <p id="sp-sub">Cevabın kaydedildi</p>
 </div>
 
 <script>
-let ws,studentName='',aktivSoruId=null,seciliCevap='',soruKilitli=false,toplamSure=0;
-const barColors=['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981','#06b6d4'];
+// ── STATE ──
+let ws, playerName='', playerAvatar='🎓', aktivSoruId=null, soruKilitli=false, toplamSure=0, qNum=0;
+const CIRCUMFERENCE = 188.4; // 2πr = 2*π*30
 
-function login(){
-  studentName=document.getElementById('student-name').value.trim();
-  if(!studentName){document.getElementById('login-error').textContent='Lütfen adınızı girin.';return}
-  document.getElementById('login-screen').classList.add('hidden');
-  document.getElementById('main-panel').classList.remove('hidden');
-  document.getElementById('student-label').textContent=studentName;
+const AVATARS = ['🦊','🐯','🐻','🐼','🦁','🐸','🦄','🐙','🐺','🦋',
+                  '🦉','🐳','🦊','🐢','🐬','🦀','🐝','🦅','🐲','🦖'];
+
+// ── INIT ──
+document.getElementById('input-name').addEventListener('keydown', e => { if(e.key==='Enter') goToAvatar(); });
+
+// Stars
+for(let i=0;i<60;i++){
+  const s=document.createElement('div');s.className='star';
+  const sz=1+Math.random()*2;
+  s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:#fff;animation-duration:${2+Math.random()*4}s;animation-delay:${-Math.random()*5}s;`;
+  document.body.appendChild(s);
+}
+
+// ── AVATAR GRID ──
+function buildAvatarGrid(){
+  const grid = document.getElementById('avatar-grid');
+  grid.innerHTML = '';
+  AVATARS.forEach(em => {
+    const btn = document.createElement('button');
+    btn.className = 'av-btn';
+    btn.textContent = em;
+    btn.onclick = () => {
+      document.querySelectorAll('.av-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      playerAvatar = em;
+      document.getElementById('btn-continue').disabled = false;
+    };
+    grid.appendChild(btn);
+  });
+}
+buildAvatarGrid();
+
+// ── SCREENS ──
+function showScreen(id){
+  ['s-login','s-avatar','s-lobby','s-incoming'].forEach(s => {
+    document.getElementById(s).classList.add('hidden');
+  });
+  const mainScreens = ['s-question','s-gecmis'];
+  const isMain = mainScreens.includes(id);
+  mainScreens.forEach(s => document.getElementById(s).classList.add('hidden'));
+  
+  const topbar = document.getElementById('topbar');
+  const tabbar = document.getElementById('tab-bar');
+  
+  if(id === 's-login' || id === 's-avatar' || id === 's-lobby' || id === 's-incoming'){
+    document.getElementById(id).classList.remove('hidden');
+    topbar.classList.add('hidden');
+    tabbar.classList.add('hidden');
+  } else {
+    document.getElementById(id).classList.remove('hidden');
+    topbar.classList.remove('hidden');
+    tabbar.classList.remove('hidden');
+  }
+}
+
+// ── FLOW ──
+function goToAvatar(){
+  const name = document.getElementById('input-name').value.trim();
+  if(!name){ document.getElementById('login-err').textContent='Lütfen adınızı girin!'; return; }
+  playerName = name;
+  showScreen('s-avatar');
+}
+
+function doLogin(){
+  document.getElementById('lb-name').textContent = playerName;
+  document.getElementById('lb-avatar').textContent = playerAvatar;
+  document.getElementById('tb-avatar').textContent = playerAvatar;
+  document.getElementById('tb-name').textContent = playerName;
+  showScreen('s-lobby');
   initWS();
 }
-document.getElementById('student-name').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 
+// ── WEBSOCKET ──
 function initWS(){
   const wsUrl = 'ws://' + window.location.hostname + ':8765';
-  ws=new WebSocket(wsUrl);
-  ws.onopen=()=>{
-    document.getElementById('conn-badge').textContent='Bağlı';
-    document.getElementById('conn-badge').className='badge badge-green';
-    ws.send(JSON.stringify({rol:'ogrenci',isim:studentName}));
-  };
-  ws.onclose=()=>{
-    document.getElementById('conn-badge').textContent='Bağlantı Kesildi';
-    document.getElementById('conn-badge').className='badge badge-red';
-    setTimeout(()=>{
-      alert("Bağlantı koptu. Lütfen sayfayı yenileyin veya tekrar giriş yapın.");
-      window.location.href="index.html";
-    }, 1000);
-  };
-  ws.onerror=()=>{
-    document.getElementById('conn-badge').textContent='Hata';
-    document.getElementById('conn-badge').className='badge badge-red';
-  };
-  ws.onmessage=(e)=>{
-    const d=JSON.parse(e.data);
+  ws = new WebSocket(wsUrl);
 
-    if(d.tip==='ogretmen_bilgi'){
-      document.getElementById('ogretmen-adi').textContent=d.ogretmen_ismi;
-    }
-    else if(d.tip==='giris'&&d.rol==='ogretmen'){
-      document.getElementById('ogretmen-adi').textContent=d.isim;
-    }
-    else if(d.tip==='cikis'&&d.rol==='ogretmen'){
-      document.getElementById('ogretmen-adi').textContent='Bağlı değil';
-    }
-    else if(d.tip==='soru'){
-      aktivSoruId=d.soru_id;
-      seciliCevap='';
-      soruKilitli=false;
-      toplamSure=d.sure||0;
-      document.getElementById('waiting-area').classList.add('hidden');
-      document.getElementById('soru-area').classList.remove('hidden');
-      document.getElementById('soru-text-display').textContent=d.soru;
-      document.getElementById('feedback-area').innerHTML='';
-      
-      const optArea=document.getElementById('options-area');
-      const acikArea=document.getElementById('acik-uclu-area');
-      optArea.innerHTML='';
-      acikArea.classList.add('hidden');
-
-      if(d.soru_tipi==='acik_uclu'){
-        acikArea.classList.remove('hidden');
-        document.getElementById('acik-cevap').value='';
-        document.getElementById('acik-cevap').disabled=false;
-        acikArea.querySelector('.submit-btn').disabled=false;
-      } else {
-        const secenekler=d.secenekler||[];
-        secenekler.forEach((s,i)=>{
-          const harf=String.fromCharCode(65+i);
-          const btn=document.createElement('button');
-          btn.className='btn option-btn';
-          btn.innerHTML=`<span class="option-letter">${harf}</span><span>${s}</span>`;
-          btn.dataset.cevap=harf;
-          btn.onclick=()=>secenekSec(btn,harf);
-          optArea.appendChild(btn);
-        });
-      }
-      if(d.sure&&d.sure>0){
-        document.getElementById('timer-section').classList.remove('hidden');
-        document.getElementById('timer-text').textContent=d.sure+'s';
-        document.getElementById('timer-fill').style.width='100%';
-        document.getElementById('timer-text').style.color='#f59e0b';
-      } else {
-        document.getElementById('timer-section').classList.add('hidden');
-      }
-    }
-    else if(d.tip==='zamanlayici'){
-      document.getElementById('timer-text').textContent=d.kalan_sure+'s';
-      if(toplamSure>0)document.getElementById('timer-fill').style.width=((d.kalan_sure/toplamSure)*100)+'%';
-      document.getElementById('timer-text').style.color=d.kalan_sure<=5?'#ef4444':'#f59e0b';
-    }
-    else if(d.tip==='sure_doldu'){
-      soruKilitli=true;
-      document.getElementById('timer-section').classList.add('hidden');
-      kilitle();
-    }
-    else if(d.tip==='cevap_onay'){
-      // Öğrenci cevabı gönderince "gönderildi" yazısı çıksın (Madde 3)
-      document.getElementById('feedback-area').innerHTML=`<div class="feedback feedback-info">${d.mesaj}</div>`;
-    }
-    else if(d.tip==='uyari'){
-      document.getElementById('feedback-area').innerHTML=`<div class="feedback feedback-wrong">${d.mesaj}</div>`;
-    }
-    else if(d.tip==='sonuc'){
-      soruKilitli=true;
-      kilitle();
-      let html='';
-      if(d.dogru_cevap){
-        // Madde 2: Öğrenci doğru cevaplarsa sadece Tebrikler! yazsın
-        if(d.dogru_mu===true){
-          html+='<div class="feedback feedback-correct">Tebrikler!</div>';
-        } else if(d.dogru_mu===false){
-          html+=`<div class="feedback feedback-wrong">Yanlış! Doğru cevap: ${d.dogru_cevap}</div>`;
-        } else {
-          html+=`<div class="feedback feedback-info">Doğru cevap: ${d.dogru_cevap}</div>`;
-        }
-        
-        document.querySelectorAll('.option-btn').forEach(b=>{
-          if(b.dataset.cevap===d.dogru_cevap)b.classList.add('correct');
-          else if(b.classList.contains('selected')&&b.dataset.cevap!==d.dogru_cevap)b.classList.add('wrong');
-        });
-      }
-      document.getElementById('feedback-area').innerHTML=html;
-    }
-    else if(d.tip==='gecmis'){
-      renderGecmis(d.sorular);
-    }
+  ws.onopen = () => {
+    updateConn(true);
+    ws.send(JSON.stringify({ rol:'ogrenci', isim:playerName }));
+  };
+  ws.onclose = () => {
+    updateConn(false);
+  };
+  ws.onerror = () => {
+    updateConn(false);
+  };
+  ws.onmessage = (e) => {
+    const d = JSON.parse(e.data);
+    handleMsg(d);
   };
 }
 
-function secenekSec(btn,cevap){
-  if(soruKilitli)return;
-  seciliCevap=cevap;
-  document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
+function updateConn(on){
+  const lb = document.getElementById('lb-conn');
+  const tb = document.getElementById('tb-conn');
+  if(on){
+    lb.innerHTML = '<div class="cd"></div>Bağlandı ✓';
+    lb.style.color = '#34d399';
+    tb.textContent = '● Bağlı';
+    tb.className = 'conn-badge cb-on';
+  } else {
+    lb.innerHTML = '<div style="width:8px;height:8px;background:#f87171;border-radius:50%;"></div>Bağlantı Kesildi';
+    lb.style.color = '#f87171';
+    tb.textContent = '● Koptu';
+    tb.className = 'conn-badge cb-off';
+  }
+}
+
+function handleMsg(d){
+  if(d.tip === 'ogretmen_bilgi' || (d.tip === 'giris' && d.rol === 'ogretmen')){
+    const adi = d.ogretmen_ismi || d.isim || '?';
+    document.getElementById('lb-teacher').innerHTML = `Öğretmen: <span>${adi}</span>`;
+    document.getElementById('tb-teacher').textContent = 'Öğretmen: ' + adi;
+  }
+  else if(d.tip === 'cikis' && d.rol === 'ogretmen'){
+    document.getElementById('lb-teacher').innerHTML = 'Öğretmen: <span>Bağlı değil</span>';
+    document.getElementById('tb-teacher').textContent = 'Öğretmen: Bağlı değil';
+  }
+  else if(d.tip === 'soru'){
+    receiveSoru(d);
+  }
+  else if(d.tip === 'zamanlayici'){
+    updateTimer(d.kalan_sure);
+  }
+  else if(d.tip === 'sure_doldu'){
+    soruKilitli = true;
+    lockOptions();
+    stopTimer();
+  }
+  else if(d.tip === 'cevap_onay'){
+    showFeedback('sent', '✓ Cevabın gönderildi!');
+    showScorePopup('✅','Gönderildi!','Parmakların çapraz!');
+  }
+  else if(d.tip === 'sonuc'){
+    handleSonuc(d);
+  }
+  else if(d.tip === 'gecmis'){
+    renderGecmis(d.sorular);
+  }
+}
+
+// ── SORU ──
+function receiveSoru(d){
+  aktivSoruId = d.soru_id;
+  soruKilitli = false;
+  toplamSure = d.sure || 0;
+  qNum++;
+
+  // Flash screen
+  showScreen('s-incoming');
+  const icons = ['❓','🧠','🎯','⚡','🔥','💡','🎲','🚀'];
+  document.getElementById('ic-icon').textContent = icons[Math.floor(Math.random()*icons.length)];
+  document.getElementById('ic-icon').style.animation = 'none';
+  void document.getElementById('ic-icon').offsetWidth;
+  document.getElementById('ic-icon').style.animation = '';
+
+  setTimeout(() => {
+    buildQuestion(d);
+    showScreen('s-question');
+  }, 1000);
+}
+
+function buildQuestion(d){
+  document.getElementById('q-num').textContent = 'SORU ' + qNum;
+  document.getElementById('q-text').textContent = d.soru;
+  document.getElementById('feedback-area').innerHTML = '';
+
+  // q-card re-animate
+  const qc = document.getElementById('q-card');
+  qc.style.animation = 'none'; void qc.offsetWidth; qc.style.animation = '';
+
+  const optGrid = document.getElementById('options-grid');
+  const openArea = document.getElementById('open-area');
+  optGrid.innerHTML = '';
+  openArea.classList.add('hidden');
+
+  const colors = ['o0','o1','o2','o3','o4','o5'];
+
+  if(d.soru_tipi === 'acik_uclu'){
+    openArea.classList.remove('hidden');
+    document.getElementById('open-input').value = '';
+    document.getElementById('open-input').disabled = false;
+    document.getElementById('btn-open-submit').disabled = false;
+  } else {
+    const secenekler = d.secenekler || [];
+    secenekler.forEach((s, i) => {
+      const harf = String.fromCharCode(65+i);
+      const btn = document.createElement('button');
+      btn.className = `opt-btn ${colors[i % colors.length]}`;
+      btn.dataset.cevap = harf;
+      btn.innerHTML = `<div class="shimmer"></div><div class="opt-letter">${harf}</div><span>${s}</span>`;
+      btn.onclick = () => selectOpt(btn, harf);
+      optGrid.appendChild(btn);
+    });
+  }
+
+  // Timer
+  if(toplamSure > 0){
+    document.getElementById('timer-wrap').classList.remove('hidden');
+    updateTimer(toplamSure);
+  } else {
+    document.getElementById('timer-wrap').classList.add('hidden');
+  }
+}
+
+function selectOpt(btn, cevap){
+  if(soruKilitli) return;
+  document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
-  ws.send(JSON.stringify({tip:'cevap',soru_id:aktivSoruId,cevap:cevap}));
+  ws.send(JSON.stringify({ tip:'cevap', soru_id:aktivSoruId, cevap }));
 }
 
-function acikCevapGonder(){
-  if(soruKilitli)return;
-  const cevap=document.getElementById('acik-cevap').value.trim();
-  if(!cevap){alert('Lütfen cevabınızı yazın.');return}
-  ws.send(JSON.stringify({tip:'cevap',soru_id:aktivSoruId,cevap:cevap}));
+function sendOpen(){
+  if(soruKilitli) return;
+  const val = document.getElementById('open-input').value.trim();
+  if(!val){ return; }
+  ws.send(JSON.stringify({ tip:'cevap', soru_id:aktivSoruId, cevap:val }));
+  document.getElementById('open-input').disabled = true;
+  document.getElementById('btn-open-submit').disabled = true;
 }
 
-function kilitle(){
-  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
-  const ta=document.getElementById('acik-cevap');
-  if(ta)ta.disabled=true;
-  const sb=document.querySelector('.submit-btn');
-  if(sb)sb.disabled=true;
+function lockOptions(){
+  document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  document.getElementById('open-input').disabled = true;
+  document.getElementById('btn-open-submit').disabled = true;
 }
 
-function showTab(t){
-  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
-  document.getElementById('tab-soru').classList.add('hidden');
-  document.getElementById('tab-gecmis').classList.add('hidden');
-  document.getElementById('tab-'+t).classList.remove('hidden');
-  event.target.classList.add('active');
-  if(t==='gecmis')ws.send(JSON.stringify({tip:'gecmis_talep'}));
-}
+function handleSonuc(d){
+  soruKilitli = true;
+  lockOptions();
+  stopTimer();
 
-function renderGecmis(sorular){
-  const el=document.getElementById('gecmis-list');
-  if(!sorular||sorular.length===0){el.innerHTML='<div style="color:#475569;font-size:13px;text-align:center;padding:20px">Henüz geçmiş yok.</div>';return}
-  
-  const tersSorular = [...sorular].reverse();
-  
-  let html='';
-  tersSorular.forEach(s=>{
-    let durum='';
-    if(s.dogru_cevap){
-      if(s.dogru_mu===true)durum='<span class="badge badge-green" style="margin-left:auto">Doğru ✓</span>';
-      else if(s.dogru_mu===false)durum='<span class="badge badge-red" style="margin-left:auto">Yanlış ✗</span>';
+  if(d.dogru_cevap){
+    // Color options
+    document.querySelectorAll('.opt-btn').forEach(b => {
+      if(b.dataset.cevap === d.dogru_cevap) b.classList.add('correct');
+      else if(b.classList.contains('selected') && b.dataset.cevap !== d.dogru_cevap) b.classList.add('wrong');
+    });
+
+    if(d.dogru_mu === true){
+      showFeedback('correct', '🎉 Doğru! Harika iş!');
+      showScorePopup('🎉','Doğru!','Süpersin! Devam et!');
+      triggerCelebration();
+    } else if(d.dogru_mu === false){
+      showFeedback('wrong', `❌ Yanlış! Doğru: ${d.dogru_cevap}`);
+      showScorePopup('😔','Yanlış!',`Doğru cevap: ${d.dogru_cevap}`);
     }
-    html+=`<div class="gecmis-item">
+  }
+}
+
+// ── TIMER ──
+function updateTimer(kalan){
+  const num = document.getElementById('timer-num');
+  const circle = document.getElementById('timer-circle');
+  num.textContent = kalan;
+  const pct = toplamSure > 0 ? kalan / toplamSure : 1;
+  const offset = CIRCUMFERENCE * (1 - pct);
+  circle.style.strokeDashoffset = offset;
+  const color = kalan <= 5 ? '#ef4444' : kalan <= 10 ? '#f97316' : '#f59e0b';
+  circle.style.stroke = color;
+  num.style.color = color;
+}
+function stopTimer(){
+  document.getElementById('timer-wrap').classList.add('hidden');
+}
+
+// ── FEEDBACK ──
+function showFeedback(type, msg){
+  const area = document.getElementById('feedback-area');
+  const cls = type === 'correct' ? 'fb-correct' : type === 'wrong' ? 'fb-wrong' : 'fb-sent';
+  area.innerHTML = `<div class="fb-pill ${cls}">${msg}</div>`;
+}
+
+// ── SCORE POPUP ──
+function showScorePopup(icon, title, sub){
+  const popup = document.getElementById('score-popup');
+  document.getElementById('sp-icon').textContent = icon;
+  document.getElementById('sp-title').textContent = title;
+  document.getElementById('sp-sub').textContent = sub;
+  popup.classList.add('show');
+  setTimeout(() => popup.classList.remove('show'), 2200);
+}
+
+// ── CELEBRATION ──
+function triggerCelebration(){
+  const colors = ['#7c3aed','#ec4899','#fbbf24','#34d399','#60a5fa','#f87171'];
+  const wrap = document.createElement('div');
+  wrap.className = 'celeb';
+  wrap.style.cssText = 'top:0;left:0;right:0;bottom:0;overflow:hidden;';
+  for(let i=0;i<40;i++){
+    const piece = document.createElement('div');
+    piece.className = 'celeb-piece';
+    piece.style.cssText = `
+      left:${Math.random()*100}%;top:${20+Math.random()*40}%;
+      background:${colors[i%colors.length]};
+      animation-delay:${Math.random()*0.5}s;
+      animation-duration:${1+Math.random()*0.8}s;
+      transform:rotate(${Math.random()*360}deg);
+      width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+    `;
+    wrap.appendChild(piece);
+  }
+  document.body.appendChild(wrap);
+  setTimeout(() => wrap.remove(), 2500);
+}
+
+// ── TABS ──
+function showTab(t){
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if(t === 'soru'){
+    document.getElementById('s-question').classList.remove('hidden');
+    document.getElementById('s-gecmis').classList.add('hidden');
+    document.getElementById('tab-soru-btn').classList.add('active');
+  } else {
+    document.getElementById('s-gecmis').classList.remove('hidden');
+    document.getElementById('s-question').classList.add('hidden');
+    document.getElementById('tab-gecmis-btn').classList.add('active');
+    if(ws && ws.readyState === 1) ws.send(JSON.stringify({ tip:'gecmis_talep' }));
+  }
+}
+
+// ── GEÇMİŞ ──
+function renderGecmis(sorular){
+  const el = document.getElementById('gecmis-list');
+  if(!sorular || sorular.length === 0){
+    el.innerHTML = '<p style="color:rgba(255,255,255,.4);text-align:center;padding:30px 0;">Henüz geçmiş yok.</p>';
+    return;
+  }
+  const ters = [...sorular].reverse();
+  el.innerHTML = ters.map(s => {
+    const badge = s.dogru_mu === true
+      ? '<span class="hist-badge hb-correct">Doğru ✓</span>'
+      : s.dogru_mu === false
+      ? '<span class="hist-badge hb-wrong">Yanlış ✗</span>'
+      : '';
+    return `<div class="hist-item">
       <h4>${s.soru}</h4>
-      <div class="gecmis-meta">
-        <span>Tarih: ${s.zaman}</span>
-        ${s.dogru_cevap ? `<span style="color:#4ade80">Doğru Yanıt: ${s.dogru_cevap}</span>` : ''}
-        ${durum}
+      <div class="hist-meta">
+        ${badge}
+        ${s.dogru_cevap ? `<span class="hist-badge hb-neutral">Doğru: ${s.dogru_cevap}</span>` : ''}
+        <span class="hist-badge hb-neutral">${s.zaman}</span>
       </div>
-      <div style="background:rgba(15,23,42,0.5);padding:10px;border-radius:8px;margin-top:8px">
-        <span style="color:#94a3b8;font-size:12px">Sizin Yanıtınız:</span> 
-        <span style="color:#e2e8f0;font-weight:600;margin-left:4px">${s.kendi_cevabi||'Cevaplanmadı'}</span>
+      <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:8px 12px;font-size:13px;color:rgba(255,255,255,.6);">
+        Cevabın: <strong style="color:#fff">${s.kendi_cevabi || 'Cevaplanmadı'}</strong>
       </div>
     </div>`;
-  });
-  el.innerHTML=html;
+  }).join('');
 }
 </script>
 </body>
