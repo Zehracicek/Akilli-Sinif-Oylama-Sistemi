@@ -4,13 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Akıllı Sınıf Oylama Sistemi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900;1000&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --purple: #7c3aed;
+            --blue: #2563eb;
+            --pink: #ec4899;
+            --amber: #f59e0b;
+            --green: #10b981;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Nunito', sans-serif;
-            background: #1a0533;
+            background: #0d0221;
             min-height: 100vh;
             overflow-x: hidden;
             display: flex;
@@ -20,181 +26,182 @@
             padding: 20px;
         }
 
-        .bg-shapes { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
-        .shape { position: absolute; border-radius: 50%; filter: blur(70px); animation: floatShape 8s ease-in-out infinite; }
-        .shape-1 { width: 500px; height: 500px; background: rgba(124,58,237,0.35); top: -150px; left: -150px; animation-delay: 0s; }
-        .shape-2 { width: 350px; height: 350px; background: rgba(37,99,235,0.3); top: 60%; right: -100px; animation-delay: -2.5s; }
-        .shape-3 { width: 400px; height: 400px; background: rgba(219,39,119,0.25); bottom: -100px; left: 25%; animation-delay: -5s; }
-        .shape-4 { width: 250px; height: 250px; background: rgba(217,119,6,0.2); top: 15%; left: 45%; animation-delay: -7s; }
-        @keyframes floatShape {
+        /* Animated background */
+        .bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .bg-orb { position: absolute; border-radius: 50%; filter: blur(80px); animation: orbFloat 10s ease-in-out infinite; }
+        .orb1 { width: 600px; height: 600px; background: rgba(124,58,237,0.3); top: -200px; left: -200px; }
+        .orb2 { width: 400px; height: 400px; background: rgba(37,99,235,0.25); bottom: -100px; right: -100px; animation-delay: -3s; }
+        .orb3 { width: 300px; height: 300px; background: rgba(236,72,153,0.2); top: 40%; left: 40%; animation-delay: -6s; }
+        @keyframes orbFloat {
             0%, 100% { transform: translate(0,0) scale(1); }
-            33% { transform: translate(25px,-25px) scale(1.06); }
-            66% { transform: translate(-20px,20px) scale(0.94); }
+            33% { transform: translate(30px,-30px) scale(1.08); }
+            66% { transform: translate(-20px,25px) scale(0.92); }
         }
 
-        .particle { position: fixed; border-radius: 3px; pointer-events: none; z-index: 1; animation: fallP linear infinite; }
-        @keyframes fallP {
-            0% { transform: translateY(-30px) rotate(0deg); opacity: 0.8; }
-            100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+        /* Stars */
+        .star { position: fixed; border-radius: 50%; pointer-events: none; z-index: 1; animation: twinkle linear infinite; }
+        @keyframes twinkle { 0%,100%{opacity:0.8} 50%{opacity:0.1} }
+
+        /* Confetti */
+        .confetti { position: fixed; border-radius: 3px; pointer-events: none; z-index: 1; animation: confettiFall linear infinite; }
+        @keyframes confettiFall {
+            0% { transform: translateY(-30px) rotate(0deg); opacity: 0.7; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
         }
 
-        .main { position: relative; z-index: 10; text-align: center; width: 100%; max-width: 560px; }
+        .main { position: relative; z-index: 10; text-align: center; width: 100%; max-width: 580px; }
 
-        .logo-wrap { margin-bottom: 20px; animation: dropIn 0.7s cubic-bezier(0.34,1.56,0.64,1); }
-        @keyframes dropIn {
-            0% { transform: translateY(-80px) scale(0.5); opacity: 0; }
-            100% { transform: translateY(0) scale(1); opacity: 1; }
-        }
-        .logo-ring {
+        /* Logo */
+        .logo-wrap { margin-bottom: 16px; animation: logoEntry 0.8s cubic-bezier(0.34,1.56,0.64,1) both; }
+        @keyframes logoEntry { from { transform: translateY(-60px) scale(0.4) rotate(-20deg); opacity: 0; } to { transform: none; opacity: 1; } }
+        .logo {
             display: inline-flex; align-items: center; justify-content: center;
-            width: 96px; height: 96px;
-            background: linear-gradient(135deg, #7c3aed, #2563eb);
-            border-radius: 28px;
-            box-shadow: 0 8px 32px rgba(124,58,237,0.6), 0 0 0 4px rgba(167,139,250,0.2);
-            font-size: 52px;
-            animation: ringPulse 3s ease-in-out infinite;
+            width: 100px; height: 100px;
+            background: linear-gradient(135deg, #7c3aed, #ec4899);
+            border-radius: 30px;
+            box-shadow: 0 0 0 6px rgba(124,58,237,0.2), 0 10px 40px rgba(124,58,237,0.6);
+            font-size: 56px;
+            animation: logoPulse 3s ease-in-out infinite;
         }
-        @keyframes ringPulse {
-            0%, 100% { box-shadow: 0 8px 32px rgba(124,58,237,0.6), 0 0 0 4px rgba(167,139,250,0.2); transform: rotate(-3deg); }
-            50% { box-shadow: 0 12px 48px rgba(124,58,237,0.8), 0 0 0 8px rgba(167,139,250,0.15); transform: rotate(3deg); }
+        @keyframes logoPulse {
+            0%,100% { box-shadow: 0 0 0 6px rgba(124,58,237,0.2), 0 10px 40px rgba(124,58,237,0.6); transform: rotate(-3deg); }
+            50% { box-shadow: 0 0 0 12px rgba(124,58,237,0.1), 0 16px 60px rgba(124,58,237,0.8); transform: rotate(3deg); }
         }
 
-        .live-badge {
-            display: inline-flex; align-items: center; gap: 7px;
-            background: rgba(16,185,129,0.15); border: 1.5px solid rgba(16,185,129,0.4);
-            border-radius: 30px; padding: 5px 14px;
-            font-size: 12px; font-weight: 800; color: #34d399;
-            margin-bottom: 18px; letter-spacing: 1px;
-            animation: slideUp 0.5s ease 0.2s both;
+        .live-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(16,185,129,0.12); border: 1.5px solid rgba(16,185,129,0.35);
+            border-radius: 30px; padding: 5px 16px;
+            font-size: 11px; font-weight: 900; color: #34d399;
+            margin-bottom: 14px; letter-spacing: 2px; text-transform: uppercase;
+            animation: fadeSlide 0.5s 0.2s both;
         }
-        .live-dot-anim { width: 8px; height: 8px; background: #34d399; border-radius: 50%; animation: blinkDot 1.2s ease infinite; }
-        @keyframes blinkDot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(0.6)} }
+        .live-dot { width: 8px; height: 8px; background: #34d399; border-radius: 50%; animation: liveDot 1.2s ease infinite; }
+        @keyframes liveDot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.2;transform:scale(0.5)} }
 
         h1 {
-            font-size: 36px; font-weight: 1000; letter-spacing: -1px; color: #fff;
-            margin-bottom: 8px; line-height: 1.1;
-            animation: slideUp 0.5s ease 0.3s both;
+            font-family: 'Fredoka One', sans-serif;
+            font-size: 42px; letter-spacing: -0.5px;
+            color: #fff; margin-bottom: 8px; line-height: 1.05;
+            animation: fadeSlide 0.5s 0.3s both;
         }
-        .title-color {
-            background: linear-gradient(135deg, #c084fc, #ec4899, #fbbf24);
+        .gradient-text {
+            background: linear-gradient(135deg, #c084fc 0%, #ec4899 50%, #fbbf24 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-size: 300%; animation: gradShift 4s ease infinite;
+            background-clip: text; background-size: 200%;
+            animation: gradMove 3s ease infinite;
         }
-        @keyframes gradShift { 0%,100%{background-position:0%} 50%{background-position:100%} }
+        @keyframes gradMove { 0%,100%{background-position:0%} 50%{background-position:100%} }
 
-        .subtitle { color: rgba(255,255,255,0.55); font-size: 14px; margin-bottom: 36px; line-height: 1.7; animation: slideUp 0.5s ease 0.4s both; }
-        @keyframes slideUp { from{transform:translateY(24px);opacity:0} to{transform:translateY(0);opacity:1} }
+        .subtitle { color: rgba(255,255,255,0.45); font-size: 14px; line-height: 1.7; margin-bottom: 38px; animation: fadeSlide 0.5s 0.4s both; }
 
-        .cards { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; animation: slideUp 0.5s ease 0.55s both; }
+        @keyframes fadeSlide { from{transform:translateY(20px);opacity:0} to{transform:none;opacity:1} }
 
+        /* Role cards */
+        .cards { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; animation: fadeSlide 0.5s 0.55s both; }
         .role-card {
-            position: relative; border-radius: 24px; width: 100%; max-width: 240px;
+            position: relative; border-radius: 24px; width: 100%; max-width: 246px;
             cursor: pointer; text-decoration: none; color: #fff; overflow: hidden;
-            transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
+            transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s;
         }
-        .role-card:hover { transform: translateY(-10px) scale(1.03); }
+        .role-card:hover { transform: translateY(-12px) scale(1.04); }
         .role-card:active { transform: translateY(-2px) scale(0.97); transition: transform 0.1s; }
 
-        .role-card.teacher {
-            background: linear-gradient(145deg, #1d4ed8, #1e40af, #1e3a8a);
-            box-shadow: 0 6px 30px rgba(29,78,216,0.5);
-        }
-        .role-card.teacher:hover { box-shadow: 0 20px 60px rgba(29,78,216,0.75), 0 0 0 2px rgba(96,165,250,0.4); }
-        .role-card.student {
-            background: linear-gradient(145deg, #7c3aed, #6d28d9, #5b21b6);
-            box-shadow: 0 6px 30px rgba(124,58,237,0.5);
-        }
-        .role-card.student:hover { box-shadow: 0 20px 60px rgba(124,58,237,0.75), 0 0 0 2px rgba(167,139,250,0.4); }
+        .card-teacher { background: linear-gradient(145deg, #1d4ed8, #1e40af, #172554); box-shadow: 0 6px 30px rgba(29,78,216,0.5); }
+        .card-teacher:hover { box-shadow: 0 24px 64px rgba(29,78,216,0.8), 0 0 0 2px rgba(96,165,250,0.4); }
+        .card-student { background: linear-gradient(145deg, #7c3aed, #6d28d9, #4c1d95); box-shadow: 0 6px 30px rgba(124,58,237,0.5); }
+        .card-student:hover { box-shadow: 0 24px 64px rgba(124,58,237,0.8), 0 0 0 2px rgba(167,139,250,0.4); }
 
-        .role-card::after {
-            content: ''; position: absolute; top: -50%; left: -75%; width: 50%; height: 200%;
+        .card-shine {
+            position: absolute; top: -50%; left: -75%; width: 50%; height: 200%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
-            transform: skewX(-20deg); animation: cardShimmer 3.5s ease-in-out infinite; z-index: 1;
+            transform: skewX(-20deg); animation: shine 3.5s ease-in-out infinite; z-index: 1;
         }
-        .role-card.student::after { animation-delay: -1.75s; }
-        @keyframes cardShimmer { 0%{left:-75%} 55%,100%{left:160%} }
+        .card-student .card-shine { animation-delay: -1.75s; }
+        @keyframes shine { 0%{left:-75%} 55%,100%{left:160%} }
 
-        .card-bg-circle {
-            position: absolute; border-radius: 50%; background: rgba(255,255,255,0.07);
+        .deco-circle { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.07); }
+        .dc1 { width: 140px; height: 140px; bottom: -45px; right: -45px; }
+        .dc2 { width: 80px; height: 80px; top: -28px; left: -28px; }
+
+        .card-body { padding: 38px 26px 30px; position: relative; z-index: 2; }
+        .card-icon { font-size: 58px; display: block; margin-bottom: 14px; transition: transform 0.3s; }
+        .role-card:hover .card-icon { animation: iconBounce 0.45s ease; }
+        @keyframes iconBounce {
+            0%,100%{transform:scale(1)rotate(0)} 30%{transform:scale(1.25)rotate(-10deg)} 70%{transform:scale(1.1)rotate(7deg)}
         }
-        .cbc1 { width: 130px; height: 130px; bottom: -40px; right: -40px; }
-        .cbc2 { width: 80px; height: 80px; top: -25px; left: -25px; }
-
-        .card-inner { padding: 36px 24px 28px; position: relative; z-index: 2; }
-
-        .card-icon { font-size: 54px; display: block; margin-bottom: 14px; transition: transform 0.3s; }
-        .role-card:hover .card-icon { animation: iconJiggle 0.4s ease; }
-        @keyframes iconJiggle {
-            0%,100%{transform:scale(1)rotate(0)} 25%{transform:scale(1.2)rotate(-8deg)} 75%{transform:scale(1.1)rotate(6deg)}
-        }
-
-        .card-inner h2 { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
-        .card-inner p { font-size: 13px; opacity: 0.75; line-height: 1.5; margin-bottom: 18px; }
-
-        .card-btn {
-            display: inline-flex; align-items: center; gap: 6px;
+        .card-body h2 { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+        .card-body p { font-size: 13px; opacity: 0.72; line-height: 1.55; margin-bottom: 20px; }
+        .card-cta {
+            display: inline-flex; align-items: center; gap: 7px;
             background: rgba(255,255,255,0.18); border-radius: 30px;
-            padding: 7px 18px; font-size: 13px; font-weight: 800;
+            padding: 8px 20px; font-size: 13px; font-weight: 800;
             transition: background 0.2s, gap 0.2s;
         }
-        .role-card:hover .card-btn { background: rgba(255,255,255,0.3); gap: 10px; }
+        .role-card:hover .card-cta { background: rgba(255,255,255,0.3); gap: 12px; }
 
+        /* QR section */
         .qr-section {
-            margin-top: 36px; padding: 22px;
-            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
+            margin-top: 32px; padding: 22px 24px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
             border-radius: 20px; backdrop-filter: blur(12px);
-            animation: slideUp 0.5s ease 0.7s both;
+            animation: fadeSlide 0.5s 0.7s both;
         }
-        .qr-section > p { color: rgba(255,255,255,0.5); font-size: 13px; margin-bottom: 14px; }
+        .qr-label { color: rgba(255,255,255,0.45); font-size: 13px; margin-bottom: 14px; }
         #qrcode { display: flex; justify-content: center; }
-        #qrcode img { border-radius: 10px; padding: 8px; background: #fff; }
-        #qr-url { margin-top: 10px; font-weight: 800; color: #c084fc; font-size: 13px; word-break: break-all; }
+        #qrcode img, #qrcode canvas { border-radius: 12px; padding: 10px; background: #fff; }
+        #qr-url { margin-top: 10px; font-weight: 800; color: #a78bfa; font-size: 12px; word-break: break-all; }
 
         @media (max-width: 520px) {
-            h1 { font-size: 26px; }
+            h1 { font-size: 30px; }
             .role-card { max-width: 100%; }
-            .logo-ring { width: 80px; height: 80px; font-size: 42px; border-radius: 22px; }
+            .logo { width: 82px; height: 82px; font-size: 44px; border-radius: 24px; }
         }
     </style>
 </head>
 <body>
 
-<div class="bg-shapes">
-    <div class="shape shape-1"></div>
-    <div class="shape shape-2"></div>
-    <div class="shape shape-3"></div>
-    <div class="shape shape-4"></div>
+<div class="bg">
+    <div class="bg-orb orb1"></div>
+    <div class="bg-orb orb2"></div>
+    <div class="bg-orb orb3"></div>
 </div>
 
 <div class="main">
-    <div class="logo-wrap">
-        <div class="logo-ring">🎓</div>
-    </div>
+    <div class="logo-wrap"><div class="logo">🎓</div></div>
 
-    <div class="live-badge">
-        <div class="live-dot-anim"></div>
-        CANLI PLATFORM
-    </div>
+    <div class="live-pill"><div class="live-dot"></div>CANLI PLATFORM</div>
 
-    <h1><span class="title-color">Akıllı Sınıf</span><br>Oylama Sistemi</h1>
+    <h1><span class="gradient-text">Akıllı Sınıf</span><br>Oylama Sistemi</h1>
     <p class="subtitle">Kablosuz Ağlar Dersi — Gerçek Zamanlı Eğitim Platformu<br>Giriş yapmak için rolünüzü seçin</p>
 
     <div class="cards">
-        <a href="./ogretmen.html" class="role-card teacher">
-            <div class="card-bg-circle cbc1"></div>
-            <div class="card-bg-circle cbc2"></div>
-            <div class="card-inner">
+        <a href="./ogretmen.html" class="role-card card-teacher">
+            <div class="card-shine"></div>
+            <div class="deco-circle dc1"></div>
+            <div class="deco-circle dc2"></div>
+            <div class="card-body">
                 <span class="card-icon">👨‍🏫</span>
                 <h2>Öğretmen</h2>
                 <p>Soru oluştur, oylama başlat ve sınıfı yönet</p>
-                <span class="card-btn">Giriş Yap →</span>
+                <span class="card-cta">Giriş Yap →</span>
             </div>
         </a>
-        
+        <a href="./ogrenci.html" class="role-card card-student">
+            <div class="card-shine"></div>
+            <div class="deco-circle dc1"></div>
+            <div class="deco-circle dc2"></div>
+            <div class="card-body">
+                <span class="card-icon">👨‍🎓</span>
+                <h2>Öğrenci</h2>
+                <p>Derse katıl, soruları cevapla ve yarış</p>
+                <span class="card-cta">Katıl →</span>
+            </div>
+        </a>
     </div>
 
     <div class="qr-section">
-        <p>📱 Diğer cihazlardan katılmak için kameranızla bu kodu okutun:</p>
+        <p class="qr-label">📱 Mobil cihazdan katılmak için QR kodu okutun:</p>
         <div id="qrcode"></div>
         <p id="qr-url"></p>
     </div>
@@ -202,25 +209,46 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-    // Confetti particles
-    const colors = ['#7c3aed','#2563eb','#db2777','#d97706','#059669','#fbbf24','#ec4899','#a78bfa'];
-    for(let i = 0; i < 30; i++) {
+    // Stars
+    for (let i = 0; i < 60; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        const sz = 1 + Math.random() * 2.5;
+        s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:#fff;animation-duration:${2+Math.random()*4}s;animation-delay:${-Math.random()*5}s;`;
+        document.body.appendChild(s);
+    }
+    // Confetti
+    const cc = ['#7c3aed','#2563eb','#ec4899','#f59e0b','#10b981','#fbbf24','#a78bfa'];
+    for (let i = 0; i < 25; i++) {
         const p = document.createElement('div');
-        p.className = 'particle';
-        const size = 5 + Math.random() * 10;
-        p.style.cssText = `left:${Math.random()*100}%;width:${size}px;height:${size}px;background:${colors[i%colors.length]};animation-duration:${4+Math.random()*7}s;animation-delay:${-Math.random()*8}s;border-radius:${Math.random()>0.5?'50%':'3px'};opacity:${0.25+Math.random()*0.35};`;
+        p.className = 'confetti';
+        const sz = 5 + Math.random() * 9;
+        p.style.cssText = `left:${Math.random()*100}%;width:${sz}px;height:${sz}px;background:${cc[i%cc.length]};animation-duration:${5+Math.random()*8}s;animation-delay:${-Math.random()*10}s;border-radius:${Math.random()>0.5?'50%':'3px'};opacity:${0.2+Math.random()*0.3};`;
         document.body.appendChild(p);
     }
-    const currentUrl = window.location.href;
-    document.getElementById('qr-url').innerText = currentUrl;
+
+    // QR code pointing to student page
+    const studentUrl = window.location.href.replace('index.html', '').replace(/\/$/, '') + '/ogrenci.html';
+    document.getElementById('qr-url').textContent = studentUrl;
     window.onload = function() {
         try {
             new QRCode(document.getElementById("qrcode"), {
-                text: currentUrl, width: 140, height: 140,
-                colorDark: "#1a0533", colorLight: "#ffffff",
+                text: studentUrl,
+                width: 140, height: 140,
+                colorDark: "#0d0221", colorLight: "#ffffff",
                 correctLevel: QRCode.CorrectLevel.M
             });
-        } catch(e) {}
+        } catch(e) {
+            // fallback: current url
+            try {
+                new QRCode(document.getElementById("qrcode"), {
+                    text: window.location.href,
+                    width: 140, height: 140,
+                    colorDark: "#0d0221", colorLight: "#ffffff"
+                });
+                document.getElementById('qr-url').textContent = window.location.href;
+            } catch(e2) {}
+        }
     };
 </script>
 </body>
