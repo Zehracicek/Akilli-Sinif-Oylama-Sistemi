@@ -1,11 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Öğretmen Paneli — Akıllı Sınıf v4</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="config.js"></script>
 <style>
 :root{
   --bg:#060d1f;--card:#0d1a38;--border:rgba(96,165,250,.15);
@@ -27,7 +29,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;color
 @keyframes entry{from{transform:translateY(60px) scale(.85);opacity:0}to{transform:none;opacity:1}}
 .lc-icon{font-size:72px;display:block;margin-bottom:16px;animation:rock 3s ease-in-out infinite;}
 @keyframes rock{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
-.lc h2{font-family:'Fredoka One',sans-serif;font-size:28px;color:#fff;margin-bottom:6px;}
+.lc h2{font-family:'Fredoka',sans-serif;font-size:28px;color:#fff;margin-bottom:6px;}
 .lc p{color:rgba(255,255,255,.4);font-size:14px;margin-bottom:26px;}
 .inp{width:100%;padding:14px 18px;background:rgba(255,255,255,.06);border:2px solid rgba(96,165,250,.2);border-radius:14px;color:#fff;font-size:15px;font-family:'Nunito',sans-serif;outline:none;margin-bottom:14px;transition:.25s;}
 .inp:focus{border-color:#60a5fa;box-shadow:0 0 0 4px rgba(37,99,235,.2);}
@@ -38,7 +40,13 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;color
 
 /* ── TOPBAR ── */
 .topbar{background:rgba(6,13,31,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
-.tb-brand{font-family:'Fredoka One',sans-serif;font-size:20px;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.tb-brand-wrap{display:flex;align-items:center;gap:12px;}
+.tb-icon{width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:14px;background:linear-gradient(145deg,rgba(96,165,250,.2),rgba(167,139,250,.12));box-shadow:0 0 0 1px rgba(96,165,250,.25),0 6px 20px rgba(37,99,235,.25);animation:tbIconBob 3s ease-in-out infinite;}
+.tb-icon svg{width:34px;height:34px;display:block;filter:drop-shadow(0 2px 4px rgba(0,0,0,.2));}
+@keyframes tbIconBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+.tb-brand{font-family:'Fredoka',sans-serif;font-size:20px;background:linear-gradient(135deg,#60a5fa,#a78bfa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
+.tb-sub{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px;}
+.tb-sub span{color:#60a5fa;font-weight:800;}
 .cb{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;}
 .cb-on{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#34d399;}
 .cb-off{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#f87171;}
@@ -101,7 +109,7 @@ select.fi option{background:#0d1a38;}
 .q-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;transition:.2s;animation:qIn .35s ease both;}
 @keyframes qIn{from{transform:translateX(-12px);opacity:0}to{transform:none;opacity:1}}
 .q-item:hover{border-color:rgba(96,165,250,.2);}
-.q-num-badge{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#1d4ed8,#7c3aed);display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',sans-serif;font-size:14px;flex-shrink:0;}
+.q-num-badge{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#1d4ed8,#7c3aed);display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-size:14px;flex-shrink:0;}
 .q-detail{flex:1;min-width:0;}
 .q-text{font-size:14px;font-weight:700;color:#e2e8f0;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .q-meta{display:flex;gap:6px;flex-wrap:wrap;}
@@ -110,15 +118,25 @@ select.fi option{background:#0d1a38;}
 .qb-dogru{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.2);}
 .qb-tip{background:rgba(96,165,250,.1);color:#60a5fa;border:1px solid rgba(96,165,250,.15);}
 
+/* ── CANLI KUYRUK ── */
+#canli-kuyruk-wrap .kq-list{max-height:200px;overflow-y:auto;}
+.kq-item{display:flex;gap:10px;align-items:center;padding:8px 12px;border-radius:12px;margin-bottom:6px;font-size:13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);}
+.kq-item.kq-active{border-color:rgba(96,165,250,.55);background:rgba(37,99,235,.18);box-shadow:0 0 0 1px rgba(96,165,250,.15);}
+.kq-item.kq-done{opacity:.48;}
+.kq-item.kq-wait{opacity:.85;}
+.kq-n{font-family:'Fredoka',sans-serif;font-weight:700;min-width:24px;color:#60a5fa;font-size:14px;}
+.kq-ic{flex-shrink:0;font-size:14px;}
+.kq-t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e2e8f0;font-weight:600;}
+
 /* ── QR LOBBY ── */
 #s-qr{background:linear-gradient(135deg,#060d1f,#0d1a38);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;}
 .qr-card{background:rgba(13,26,56,.9);border:1px solid rgba(96,165,250,.2);border-radius:28px;padding:40px 36px;max-width:520px;width:100%;box-shadow:0 24px 80px rgba(37,99,235,.3);}
-.qr-title{font-family:'Fredoka One',sans-serif;font-size:28px;color:#fff;margin-bottom:6px;}
+.qr-title{font-family:'Fredoka',sans-serif;font-size:28px;color:#fff;margin-bottom:6px;}
 .qr-sub{color:rgba(255,255,255,.4);font-size:14px;margin-bottom:24px;}
 .qr-box{display:flex;justify-content:center;margin-bottom:16px;}
 .qr-box>div{border-radius:14px;padding:10px;background:#fff;}
 .qr-url{font-weight:800;color:#60a5fa;font-size:13px;word-break:break-all;margin-bottom:24px;}
-.student-count{font-family:'Fredoka One',sans-serif;font-size:48px;color:#34d399;margin:0;}
+.student-count{font-family:'Fredoka',sans-serif;font-size:48px;color:#34d399;margin:0;}
 .student-label{color:rgba(255,255,255,.4);font-size:14px;margin-bottom:20px;}
 .student-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:40px;margin-bottom:24px;}
 .s-chip{background:rgba(37,99,235,.2);border:1px solid rgba(96,165,250,.25);border-radius:30px;padding:6px 14px;font-size:13px;font-weight:700;color:#93c5fd;animation:chipIn .4s cubic-bezier(.34,1.56,.64,1) both;}
@@ -127,7 +145,7 @@ select.fi option{background:#0d1a38;}
 /* ── STATS ── */
 .stats-row{display:flex;gap:14px;margin-bottom:14px;}
 .sbox{flex:1;background:rgba(255,255,255,.04);border-radius:14px;padding:14px;text-align:center;border:1px solid rgba(255,255,255,.06);}
-.snum{font-family:'Fredoka One',sans-serif;font-size:32px;color:var(--p2);line-height:1;}
+.snum{font-family:'Fredoka',sans-serif;font-size:32px;color:var(--p2);line-height:1;}
 .slabel{font-size:10px;color:rgba(255,255,255,.35);margin-top:4px;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
 
 /* Timer ring */
@@ -136,7 +154,7 @@ select.fi option{background:#0d1a38;}
 .tr svg{transform:rotate(-90deg);}
 .trc-bg{fill:none;stroke:rgba(255,255,255,.07);stroke-width:7;}
 .trc-fill{fill:none;stroke:var(--amber);stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s;}
-.tr-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',sans-serif;font-size:22px;color:var(--amber);}
+.tr-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-size:22px;color:var(--amber);}
 
 /* Progress bars */
 .pb-wrap{background:rgba(255,255,255,.04);border-radius:12px;padding:11px;margin-bottom:7px;border:1px solid rgba(255,255,255,.05);}
@@ -164,13 +182,13 @@ select.fi option{background:#0d1a38;}
 /* Leaderboard */
 .lb-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;margin-bottom:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);transition:.2s;animation:qIn .3s ease both;}
 .lb-item:hover{border-color:rgba(96,165,250,.2);}
-.lb-rank{font-family:'Fredoka One',sans-serif;font-size:18px;min-width:28px;text-align:center;}
+.lb-rank{font-family:'Fredoka',sans-serif;font-size:18px;min-width:28px;text-align:center;}
 .lb-rank.gold{color:#fbbf24;}
 .lb-rank.silver{color:#94a3b8;}
 .lb-rank.bronze{color:#cd7c3b;}
 .lb-rank.other{color:rgba(255,255,255,.3);}
 .lb-name{flex:1;font-size:14px;font-weight:800;color:#e2e8f0;}
-.lb-score{font-family:'Fredoka One',sans-serif;font-size:18px;color:#60a5fa;}
+.lb-score{font-family:'Fredoka',sans-serif;font-size:18px;color:#60a5fa;}
 
 /* Log */
 .log-i{padding:8px 13px;display:flex;justify-content:space-between;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04);animation:qIn .3s ease both;}
@@ -187,7 +205,19 @@ select.fi option{background:#0d1a38;}
 .toast{position:fixed;bottom:28px;right:28px;z-index:200;background:linear-gradient(135deg,#059669,#10b981);border-radius:16px;padding:13px 20px;font-size:14px;font-weight:800;color:#fff;box-shadow:0 10px 36px rgba(16,185,129,.4);transform:translateY(70px);opacity:0;transition:.4s cubic-bezier(.34,1.56,.64,1);display:flex;align-items:center;gap:8px;}
 .toast.show{transform:none;opacity:1;}
 
-/* Ogrenci */
+/* ── UYGULAMA MODAL (confirm/alert yerine) ── */
+.app-modal{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:22px;}
+.app-modal.hidden{display:none!important;}
+.app-modal-backdrop{position:absolute;inset:0;background:rgba(6,13,31,.78);backdrop-filter:blur(10px);}
+.app-modal-box{position:relative;width:100%;max-width:440px;background:linear-gradient(165deg,rgba(17,34,68,.98),rgba(13,26,56,.98));border:1px solid rgba(96,165,250,.28);border-radius:24px;padding:28px 26px 22px;box-shadow:0 28px 90px rgba(0,0,0,.5),0 0 0 1px rgba(37,99,235,.12);animation:modalIn .38s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes modalIn{from{opacity:0;transform:scale(.9) translateY(16px)}to{opacity:1;transform:none}}
+.app-modal-icon{font-size:42px;text-align:center;margin-bottom:8px;line-height:1;}
+.app-modal-title{font-family:'Fredoka',sans-serif;font-size:22px;font-weight:700;color:#fff;text-align:center;margin-bottom:12px;line-height:1.25;}
+.app-modal-msg{font-size:15px;color:rgba(226,232,240,.88);line-height:1.55;text-align:center;margin-bottom:24px;}
+.app-modal-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.app-modal-actions .btn{min-width:128px;justify-content:center;}
+
+/* Öğrenci listesi (sınıf sekmesi) */
 .og-item{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;align-items:center;font-size:13px;}
 .og-item:last-child{border:none;}
 .og-on{background:rgba(16,185,129,.1);color:#34d399;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid rgba(16,185,129,.2);}
@@ -238,9 +268,40 @@ select.fi option{background:#0d1a38;}
 <!-- ── ANA PANEL ── -->
 <div id="main-panel" style="display:none;">
   <div class="topbar">
-    <div>
-      <div class="tb-brand">👨‍🏫 Öğretmen Paneli</div>
-      <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:2px;">Eğitmen: <span id="teacher-label" style="color:#60a5fa;font-weight:800;"></span></div>
+    <div class="tb-brand-wrap">
+      <div class="tb-icon" title="Öğretmen" aria-hidden="true">
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" role="img">
+          <defs>
+            <linearGradient id="tb-hair" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#57534e"/><stop offset="100%" stop-color="#292524"/></linearGradient>
+            <linearGradient id="tb-card" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient>
+          </defs>
+          <ellipse cx="24" cy="41" rx="12" ry="5" fill="#1e3a5f" opacity=".35"/>
+          <path d="M14 30c0-8 4.5-14 10-14s10 6 10 14v8c0 3-4.5 5-10 5s-10-2-10-5v-8z" fill="#2563eb"/>
+          <path d="M18 30h12v6c0 2-2.5 3.5-6 3.5S18 38 18 36v-6z" fill="#1d4ed8" opacity=".5"/>
+          <circle cx="24" cy="17" r="12" fill="#fcd9bd"/>
+          <ellipse cx="19" cy="20" rx="2.2" ry="1.4" fill="#f9a8d4" opacity=".55"/>
+          <ellipse cx="29" cy="20" rx="2.2" ry="1.4" fill="#f9a8d4" opacity=".55"/>
+          <path d="M12 16c2-10 10-14 12-14s10 4 12 14c-2-6-8-9-12-9s-10 3-12 9z" fill="url(#tb-hair)"/>
+          <rect x="14" y="15" width="7" height="5.5" rx="1.2" fill="none" stroke="#334155" stroke-width="1.3"/>
+          <rect x="27" y="15" width="7" height="5.5" rx="1.2" fill="none" stroke="#334155" stroke-width="1.3"/>
+          <line x1="21" y1="17.8" x2="27" y2="17.8" stroke="#334155" stroke-width="1.3" stroke-linecap="round"/>
+          <circle cx="17.5" cy="17.5" r="1.1" fill="#1e293b"/>
+          <circle cx="30.5" cy="17.5" r="1.1" fill="#1e293b"/>
+          <circle cx="18" cy="17.1" r="0.35" fill="#fff"/>
+          <circle cx="31" cy="17.1" r="0.35" fill="#fff"/>
+          <path d="M19 22.5q5 4.5 10 0" fill="none" stroke="#c084fc" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M22 8.5q2-2.5 4-2.5t4 2.5" fill="none" stroke="#a78bfa" stroke-width="1.2" stroke-linecap="round" opacity=".9"/>
+          <g transform="translate(31,28)">
+            <rect x="0" y="0" width="9" height="11" rx="1" fill="url(#tb-card)" stroke="#f59e0b" stroke-width="0.6"/>
+            <line x1="4.5" y1="1.5" x2="4.5" y2="9.5" stroke="#d97706" stroke-width="0.7"/>
+            <path d="M1 3.5h7M1 6h7" stroke="#d97706" stroke-width="0.45" opacity=".7"/>
+          </g>
+        </svg>
+      </div>
+      <div>
+        <div class="tb-brand">Öğretmen Paneli</div>
+        <div class="tb-sub">Eğitmen: <span id="teacher-label"></span></div>
+      </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
       <div class="cb cb-on" id="conn-badge"><div class="dot"></div>Bağlanıyor...</div>
@@ -326,6 +387,14 @@ select.fi option{background:#0d1a38;}
         <div class="test-prog-bar"><div class="test-prog-fill" id="test-prog-fill" style="width:0%"></div></div>
       </div>
 
+      <div id="canli-kuyruk-wrap" class="hidden full" style="margin-bottom:16px;">
+        <div class="card" style="padding:14px 18px;">
+          <div class="card-t" style="margin-bottom:10px;"><span class="card-t-icon">📋</span>Test sırası (öğrenciye giden sıra)</div>
+          <div class="kq-list" id="canli-kuyruk-list"></div>
+          <div style="font-size:11px;color:rgba(255,255,255,.28);margin-top:8px;">⚡ Anlık sorular her zaman listenin <strong style="color:#a78bfa;">sonuna</strong> eklenir.</div>
+        </div>
+      </div>
+
       <div class="grid2">
         <!-- Canlı İstatistik -->
         <div class="card">
@@ -366,7 +435,9 @@ select.fi option{background:#0d1a38;}
           </div>
 
           <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
-            <button class="btn btn-red btn-sm" id="btn-kilitle" onclick="soruKilitle()" disabled>🔒 Kilitle</button>
+            <button type="button" class="btn btn-red btn-sm" id="btn-kilitle" disabled>🔒 Kilitle</button>
+            <button class="btn btn-green btn-sm hidden" id="btn-sonraki" onclick="sonrakiSoru()">⏭ Sonraki Soru</button>
+            <button class="btn btn-red btn-sm hidden" id="btn-test-bitir" onclick="testiBitir()">🏁 Testi Bitir</button>
           </div>
         </div>
 
@@ -375,6 +446,7 @@ select.fi option{background:#0d1a38;}
           <!-- Anlık tek soru -->
           <div class="card">
             <div class="card-t"><span class="card-t-icon">⚡</span>Anlık Soru Gönder</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.32);margin:-6px 0 10px;line-height:1.35;">Test <strong>açıkken</strong> gönderdiğiniz soru yukarıdaki kuyruğun <strong>sonuna</strong> eklenir; test yokken doğrudan öğrenciye gider.</div>
             <div class="field">
               <label>Soru</label>
               <textarea class="fi" id="anlik-soru-text" placeholder="Anlık soru..." rows="2"></textarea>
@@ -441,6 +513,19 @@ select.fi option{background:#0d1a38;}
 
 <div class="toast" id="toast">✅ <span id="toast-msg"></span></div>
 
+<div id="app-modal" class="app-modal hidden" aria-hidden="true">
+  <div class="app-modal-backdrop" id="app-modal-backdrop"></div>
+  <div class="app-modal-box" role="dialog" aria-modal="true" aria-labelledby="app-modal-title">
+    <div class="app-modal-icon" id="app-modal-icon">❓</div>
+    <h3 class="app-modal-title" id="app-modal-title">Onay</h3>
+    <p class="app-modal-msg" id="app-modal-msg"></p>
+    <div class="app-modal-actions">
+      <button type="button" class="btn btn-ghost" id="app-modal-cancel">İptal</button>
+      <button type="button" class="btn btn-green" id="app-modal-ok">Tamam</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── STATE ──────────────────────────────────────────────
 let ws, teacherName='', aktivSoruId=null;
@@ -451,12 +536,108 @@ const BAR_COLORS=['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981','#06b6d4','#
 const MAX_SIK=8;
 const CIRCUMFERENCE=201.1;
 let testToplam=0, testIndex=0;
+let canliKuyrukListe=[];
+let sonrakiZamanlayici=null;
+let canliTestSession=false;
+
+function escapeHtml(t){
+  const d=document.createElement('div');
+  d.textContent=t==null?'':String(t);
+  return d.innerHTML;
+}
+
+let appModalKeyHandler=null;
+function appModalClose(){
+  const m=document.getElementById('app-modal');
+  m.classList.add('hidden');
+  m.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+  if(appModalKeyHandler){
+    document.removeEventListener('keydown',appModalKeyHandler);
+    appModalKeyHandler=null;
+  }
+}
+/** Tek butonlu bilgi / uyarı (alert yerine). */
+function showModalAlert({title,message,btnText='Tamam',icon='ℹ️'}){
+  return new Promise(resolve=>{
+    const m=document.getElementById('app-modal');
+    const ok=document.getElementById('app-modal-ok');
+    const cancel=document.getElementById('app-modal-cancel');
+    document.getElementById('app-modal-icon').textContent=icon;
+    document.getElementById('app-modal-title').textContent=title||'Bilgi';
+    document.getElementById('app-modal-msg').textContent=message||'';
+    ok.textContent=btnText;
+    ok.className='btn btn-blue app-modal-btn-ok';
+    cancel.classList.add('hidden');
+    const done=()=>{appModalClose();resolve();};
+    ok.onclick=done;
+    cancel.onclick=null;
+    document.getElementById('app-modal-backdrop').onclick=done;
+    appModalKeyHandler=e=>{if(e.key==='Escape'){e.preventDefault();done();}};
+    document.addEventListener('keydown',appModalKeyHandler);
+    document.body.style.overflow='hidden';
+    m.classList.remove('hidden');
+    m.setAttribute('aria-hidden','false');
+    ok.focus();
+  });
+}
+/** İki butonlu onay (confirm yerine). resolve(true|false) */
+function showModalConfirm({title,message,okText='Evet',cancelText='İptal',danger=false,icon=null}){
+  return new Promise(resolve=>{
+    const m=document.getElementById('app-modal');
+    const ok=document.getElementById('app-modal-ok');
+    const cancel=document.getElementById('app-modal-cancel');
+    const ic=icon!=null?icon:(danger?'⚠️':'❓');
+    document.getElementById('app-modal-icon').textContent=ic;
+    document.getElementById('app-modal-title').textContent=title||'Onay';
+    document.getElementById('app-modal-msg').textContent=message||'';
+    ok.textContent=okText;
+    cancel.textContent=cancelText;
+    cancel.classList.remove('hidden');
+    ok.className='btn app-modal-btn-ok '+(danger?'btn-red':'btn-green');
+    const yes=()=>{appModalClose();resolve(true);};
+    const no=()=>{appModalClose();resolve(false);};
+    ok.onclick=yes;
+    cancel.onclick=no;
+    document.getElementById('app-modal-backdrop').onclick=no;
+    appModalKeyHandler=e=>{if(e.key==='Escape'){e.preventDefault();no();}};
+    document.addEventListener('keydown',appModalKeyHandler);
+    document.body.style.overflow='hidden';
+    m.classList.remove('hidden');
+    m.setAttribute('aria-hidden','false');
+    cancel.focus();
+  });
+}
+function iptalSonrakiTimer(){
+  if(sonrakiZamanlayici){clearTimeout(sonrakiZamanlayici);sonrakiZamanlayici=null;}
+}
+function renderCanliKuyruk(){
+  const wrap=document.getElementById('canli-kuyruk-wrap');
+  const listEl=document.getElementById('canli-kuyruk-list');
+  if(!wrap||!listEl)return;
+  if(!canliKuyrukListe.length){
+    wrap.classList.add('hidden');
+    listEl.innerHTML='';
+    return;
+  }
+  wrap.classList.remove('hidden');
+  listEl.innerHTML=canliKuyrukListe.map((s,i)=>{
+    const n=i+1;
+    let rowCls='kq-item kq-wait';
+    if(testIndex>0&&n<testIndex)rowCls='kq-item kq-done';
+    else if(testIndex>0&&n===testIndex)rowCls='kq-item kq-active';
+    const ic=s.kaynak==='anlik'?'⚡':'📌';
+    return`<div class="${rowCls}"><span class="kq-n">${n}</span><span class="kq-ic">${ic}</span><span class="kq-t">${escapeHtml(s.soru)}</span></div>`;
+  }).join('');
+  listEl.scrollTop=listEl.scrollHeight;
+}
 
 // ── LOGIN ────────────────────────────────────────────
 document.getElementById('teacher-name').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
 function login(){
   teacherName=document.getElementById('teacher-name').value.trim();
   if(!teacherName){document.getElementById('login-err').textContent='Lütfen adınızı girin.';return;}
+  canliTestSession=false;
   document.getElementById('s-login').style.display='none';
   document.getElementById('main-panel').style.display='block';
   document.getElementById('teacher-label').textContent=teacherName;
@@ -467,13 +648,15 @@ function login(){
 
 // ── WS ──────────────────────────────────────────────
 function initWS(){
-  const url='ws://'+window.location.hostname+':8765';
+  const url=(typeof SERVER_WS!=='undefined')?SERVER_WS:('ws://'+window.location.hostname+':8765');
   ws=new WebSocket(url);
   ws.onopen=()=>{
     setConn(true);
     ws.send(JSON.stringify({rol:'ogretmen',isim:teacherName}));
   };
-  ws.onclose=()=>{setConn(false);setTimeout(()=>{alert('Bağlantı koptu.');window.location.href='index.html';},1200);};
+  ws.onclose=()=>{setConn(false);setTimeout(()=>{
+    showModalAlert({title:'Bağlantı koptu',message:'Sunucu ile bağlantı kesildi. Ana sayfaya yönlendirileceksiniz.',btnText:'Tamam',icon:'📡'}).then(()=>{window.location.href='index.html';});
+  },1200);};
   ws.onerror=()=>setConn(false);
   ws.onmessage=e=>handleMsg(JSON.parse(e.data));
 }
@@ -485,19 +668,47 @@ function setConn(on){
 
 // ── MESSAGES ────────────────────────────────────────
 function handleMsg(d){
-  if(d.durum==='hata'){alert(d.mesaj);window.location.href='index.html';return;}
+  if(d.durum==='hata'){
+    showModalAlert({title:'Oturum hatası',message:d.mesaj||'Giriş yapılamadı.',btnText:'Tamam',icon:'🚫'}).then(()=>{window.location.href='index.html';});
+    return;
+  }
   switch(d.tip){
     case 'soru_onay':       onSoruOnay(d); break;
     case 'canli_cevap':     onCanliCevap(d); break;
     case 'istatistik':
-    case 'tum_cevaplar_tamam': if(d.istatistik&&aktifSecenekler.length>0)renderBars(d.istatistik); break;
+    case 'tum_cevaplar_tamam':
+      if(d.istatistik&&d.soru_tipi!=='acik_uclu'&&aktifSecenekler.length>0)renderBars(d.istatistik);
+      break;
     case 'zamanlayici':     onTimer(d); break;
+    case 'zaman_bitti':     onZamanBitti(); break;
     case 'sure_doldu':      onSureDoldu(); break;
     case 'kullanici_listesi': onKullaniciListesi(d); break;
     case 'giris':           addLog(d.isim+' bağlandı','#34d399',d.zaman); updateLobbyList(d); break;
     case 'cikis':           addLog(d.isim+' ayrıldı','#f87171',d.zaman); break;
     case 'arsiv':           renderArsiv(d.sorular); break;
-    case 'test_hazir':      showToast('✅ '+d.mesaj); break;
+    case 'test_hazir':
+      if(Array.isArray(d.kuyruk)&&d.kuyruk.length){
+        canliKuyrukListe=d.kuyruk.map(x=>({...x}));
+      }else{
+        canliKuyrukListe=soruListesi.map(x=>({...x}));
+      }
+      if(typeof d.soru_sayisi==='number'){testToplam=d.soru_sayisi;}
+      renderCanliKuyruk();
+      showToast('✅ '+d.mesaj);
+      break;
+    case 'siraya_soru_eklendi':
+      if(Array.isArray(d.kuyruk)&&d.kuyruk.length){
+        canliKuyrukListe=d.kuyruk.map(x=>({...x}));
+      }else if(d.kayit){
+        canliKuyrukListe.push({...d.kayit});
+      }
+      if(typeof d.toplam_soru==='number'){testToplam=d.toplam_soru;}
+      renderCanliKuyruk();
+      showToast('⚡ Soru sıranın sonuna eklendi (toplam '+(d.toplam_soru||canliKuyrukListe.length)+').');
+      document.getElementById('anlik-soru-text').value='';
+      document.querySelectorAll('.anlik-sik-inp').forEach(el=>{el.value='';});
+      document.getElementById('anlik-dogru').selectedIndex=0;
+      break;
     case 'siralama_guncelleme': renderLeaderboard(d.siralama); break;
     case 'test_bitti':      onTestBitti(d); break;
     case 'uyari':           showToast(d.mesaj,'err'); break;
@@ -505,62 +716,74 @@ function handleMsg(d){
 }
 
 function onSoruOnay(d){
+  iptalSonrakiTimer();
   aktivSoruId=d.soru_id;
-  toplamSure=parseInt(document.getElementById('sure-input')?.value||document.getElementById('anlik-sure')?.value)||0;
-  document.getElementById('btn-kilitle').disabled=false;
+  if(typeof d.test_aktif==='boolean'){
+    canliTestSession=d.test_aktif;
+  }
+  if(d.test_aktif && Array.isArray(d.kuyruk) && d.kuyruk.length){
+    canliKuyrukListe=d.kuyruk.map(x=>({...x}));
+  }
+  const formSure=parseInt(document.getElementById('sure-input')?.value||document.getElementById('anlik-sure')?.value)||0;
+  toplamSure=(typeof d.sure==='number'&&d.sure>=0)?d.sure:formSure;
+
+  kilitleButonunuAcikModaGetir();
+  document.getElementById('btn-sonraki').classList.add('hidden');
+  document.getElementById('btn-test-bitir').classList.remove('hidden');
   document.getElementById('cevap-sayisi').textContent='0';
   document.getElementById('dogru-sayisi').textContent='0';
   document.getElementById('yanlis-sayisi').textContent='0';
   document.getElementById('ogrenci-sayisi').textContent=d.ogrenci_sayisi;
 
-  // Test progress
   testToplam=d.toplam_soru||0;
   testIndex=d.soru_no||0;
   if(testToplam>1){
     document.getElementById('test-prog-wrap').classList.remove('hidden');
     document.getElementById('test-prog-text').textContent=`${testIndex} / ${testToplam}`;
     document.getElementById('test-prog-fill').style.width=((testIndex/testToplam)*100)+'%';
+  }else{
+    document.getElementById('test-prog-wrap').classList.add('hidden');
   }
 
-  aktifDogruCevap='';
-  document.getElementById('dys').style.display='none';
+  const tipFromServer=d.soru_tipi||document.getElementById('soru-tipi')?.value||document.getElementById('anlik-tip')?.value||'coktan_secmeli';
 
-  const tip=document.getElementById('soru-tipi')?.value||document.getElementById('anlik-tip')?.value||'coktan_secmeli';
-
-  // Banner
   document.getElementById('canli-soru-alani').classList.remove('hidden');
-  // soru metni canli-soru-metni ye aktarılacak: handleMsg soru_onay anında gelir, soru metni bilmiyoruz
-  // builder soru listesinden alırız
-  const soruMetni = (soruListesi[testIndex-1]?.soru) || '—';
+  const soruMetni=(d.soru!=null&&d.soru!=='')?d.soru:(canliKuyrukListe[testIndex-1]?.soru)||(soruListesi[testIndex-1]?.soru)||'—';
   document.getElementById('canli-soru-metni').textContent=soruMetni||'—';
   document.getElementById('canli-soru-prog').textContent=testToplam>1?`Soru ${testIndex} / ${testToplam}`:'';
 
   aktifSecenekler=[];
   aktifDogruCevap='';
-  if(tip==='coktan_secmeli'){
+  if(tipFromServer==='coktan_secmeli'){
     document.getElementById('dys').style.display='';
-    // Anlık ya da builder'dan
-    const anlikSiklar=document.querySelectorAll('.anlik-sik-inp');
-    const builderSiklar=document.querySelectorAll('.sik-input');
-    if(anlikSiklar.length>0){
-      anlikSiklar.forEach(el=>{const v=el.value.trim();if(v)aktifSecenekler.push(v);});
-      aktifDogruCevap=document.getElementById('anlik-dogru')?.value||'';
-    } else {
-      builderSiklar.forEach(el=>{const v=el.value.trim();if(v)aktifSecenekler.push(v);});
-      aktifDogruCevap=document.getElementById('dogru-cevap')?.value||'';
+    if(Array.isArray(d.secenekler)&&d.secenekler.length>0){
+      aktifSecenekler=d.secenekler.slice();
+      aktifDogruCevap=d.dogru_cevap||'';
+    }else{
+      const anlikSiklar=document.querySelectorAll('.anlik-sik-inp');
+      const builderSiklar=document.querySelectorAll('.sik-input');
+      if(anlikSiklar.length>0){
+        anlikSiklar.forEach(el=>{const v=el.value.trim();if(v)aktifSecenekler.push(v);});
+        aktifDogruCevap=document.getElementById('anlik-dogru')?.value||'';
+      }else{
+        builderSiklar.forEach(el=>{const v=el.value.trim();if(v)aktifSecenekler.push(v);});
+        aktifDogruCevap=document.getElementById('dogru-cevap')?.value||'';
+      }
+      if(aktifSecenekler.length===0&&canliKuyrukListe.length>0&&testIndex>0){
+        const sq=canliKuyrukListe[testIndex-1];
+        if(sq&&sq.secenekler){aktifSecenekler=sq.secenekler.slice();aktifDogruCevap=sq.dogru_cevap||'';}
+      }
     }
-    // Test modundaki soru
-    if(soruListesi.length>0&&testIndex>0){
-      const sq=soruListesi[testIndex-1];
-      if(sq){aktifSecenekler=sq.secenekler||[];aktifDogruCevap=sq.dogru_cevap||'';}
-    }
+  }else{
+    document.getElementById('dys').style.display='none';
   }
 
   document.getElementById('istatistik-bars').innerHTML='';
-  if(tip==='coktan_secmeli'&&aktifSecenekler.length>0) renderBosBars();
+  if(tipFromServer==='coktan_secmeli'&&aktifSecenekler.length>0) renderBosBars();
   document.getElementById('yanitlar-list').innerHTML='';
 
-  // Canlı test sekmesine geç
+  renderCanliKuyruk();
+
   showTab('live',document.getElementById('tab-btn-live'));
   showToast(`Soru ${testIndex>0?testIndex+'/'+testToplam:''} gönderildi! (${d.ogrenci_sayisi} öğrenci)`);
 
@@ -569,6 +792,8 @@ function onSoruOnay(d){
     document.getElementById('timer-display').textContent=toplamSure+'s';
     document.getElementById('timer-circle').style.strokeDashoffset=0;
     document.getElementById('timer-circle').style.stroke=CIRCUMFERENCE;
+  }else{
+    document.getElementById('timer-area').classList.add('hidden');
   }
 }
 
@@ -613,9 +838,13 @@ function onTimer(d){
     c.style.strokeDashoffset=offset; c.style.stroke=color;
   }
 }
+function onZamanBitti(){
+  document.getElementById('timer-area').classList.add('hidden');
+  showToast('⏰ Süre bitti — öğrenciler hâlâ cevap verebilir. Hazır olduğunuzda Kilitle\'ye basın.');
+}
 function onSureDoldu(){
   document.getElementById('timer-area').classList.add('hidden');
-  document.getElementById('btn-kilitle').disabled=true;
+  kilitleButonunuKilitliModaGetir();
 }
 
 function onKullaniciListesi(d){
@@ -641,12 +870,21 @@ function updateLobbyList(d){
 }
 
 function onTestBitti(d){
+  iptalSonrakiTimer();
+  canliTestSession=false;
+  testToplam=0;
+  testIndex=0;
+  canliKuyrukListe=[];
+  renderCanliKuyruk();
   showToast('🎉 Test tamamlandı!');
   document.getElementById('test-prog-wrap').classList.remove('hidden');
   document.getElementById('test-prog-text').textContent=`Bitti! ${d.toplam_soru}/${d.toplam_soru}`;
   document.getElementById('test-prog-fill').style.width='100%';
   renderLeaderboard(d.siralama);
   showTab('live',document.getElementById('tab-btn-live'));
+  document.getElementById('btn-kilitle').classList.add('hidden');
+  document.getElementById('btn-kilitle').onclick=null;
+  document.getElementById('btn-sonraki').classList.add('hidden');
 }
 
 // ── SORU BUILDer ────────────────────────────────────
@@ -660,7 +898,7 @@ function initSecenekler(){
 function sikEkle(){
   const list=document.getElementById('secenekler-list');
   const count=list.children.length;
-  if(count>=MAX_SIK){alert('En fazla '+MAX_SIK+' şık!');return;}
+  if(count>=MAX_SIK){showToast('En fazla '+MAX_SIK+' şık ekleyebilirsiniz.','err');return;}
   const h=String.fromCharCode(65+count);
   list.innerHTML+=`<div class="row-inp"><span class="sik-l">${h}</span><input type="text" class="fi sik-input" placeholder="${h} seçeneği" oninput="dogruCevapGuncelle()"></div>`;
   dogruCevapGuncelle();
@@ -736,14 +974,24 @@ function soruSil(i){
   renderQList();
 }
 function listeyiTemizle(){
-  if(!soruListesi.length||confirm('Tüm sorular silinsin mi?')){
-    soruListesi=[];renderQList();
-  }
+  const run=()=>{soruListesi=[];renderQList();};
+  if(!soruListesi.length){run();return;}
+  showModalConfirm({
+    title:'Listeyi temizle',
+    message:'Tüm sorular silinecek. Bu işlemi onaylıyor musunuz?',
+    okText:'Evet, sil',
+    cancelText:'İptal',
+    danger:true,
+    icon:'🗑️'
+  }).then(ok=>{if(ok)run();});
 }
 
 // ── QR LOBBY ────────────────────────────────────────
 function showQRLobby(){
   if(!soruListesi.length){showToast('Önce soru ekleyin!','err');return;}
+  canliTestSession=false;
+  canliKuyrukListe=soruListesi.map(x=>({...x}));
+  renderCanliKuyruk();
   // Soruları sunucuya kaydet
   ws.send(JSON.stringify({tip:'test_hazirla',sorular:soruListesi}));
 
@@ -751,7 +999,7 @@ function showQRLobby(){
   document.getElementById('s-qr').style.display='flex';
 
   // QR oluştur
-  const studentUrl='http://'+window.location.hostname+':9090/ogrenci.html';
+  const studentUrl=(typeof SERVER_HTTP!=='undefined')?(SERVER_HTTP+'/ogrenci.html'):('http://'+window.location.hostname+':9090/ogrenci.html');
   document.getElementById('qr-url-text').textContent=studentUrl;
   const qrDiv=document.getElementById('qr-div');
   qrDiv.innerHTML='';
@@ -771,11 +1019,17 @@ function showPanel(){
   document.getElementById('main-panel').style.display='block';
 }
 function testBaslat(){
+  canliTestSession=true;
+  canliKuyrukListe=soruListesi.map(x=>({...x}));
+  renderCanliKuyruk();
   ws.send(JSON.stringify({tip:'test_baslat'}));
   showPanel();
   showTab('live',document.getElementById('tab-btn-live'));
 }
 function direktTestBaslat(){
+  canliTestSession=true;
+  canliKuyrukListe=soruListesi.map(x=>({...x}));
+  renderCanliKuyruk();
   ws.send(JSON.stringify({tip:'test_hazirla',sorular:soruListesi}));
   setTimeout(()=>{
     ws.send(JSON.stringify({tip:'test_baslat'}));
@@ -813,19 +1067,94 @@ function anlikSoruGonder(){
     if(secenekler.length<2){showToast('En az 2 şık!','err');return;}
   }
   const paket={
-    tip:'soru', soru, soru_tipi:tip, secenekler,
+    soru, soru_tipi:tip, secenekler,
     dogru_cevap:document.getElementById('anlik-dogru').value||'',
     sure:parseInt(document.getElementById('anlik-sure').value)||0,
     gizli_oylama:false
   };
-  ws.send(JSON.stringify(paket));
-  // Soru listesine geçici olarak ekle (onay gelince temizle)
-  soruListesi=[{...paket}];
+  if(canliTestSession){
+    ws.send(JSON.stringify(Object.assign({tip:'siraya_soru_ekle'},paket)));
+  }else{
+    ws.send(JSON.stringify(Object.assign({tip:'soru'},paket)));
+  }
+}
+function kilitleButonunuAcikModaGetir(){
+  const btn=document.getElementById('btn-kilitle');
+  document.getElementById('btn-sonraki').classList.add('hidden');
+  btn.classList.remove('hidden');
+  btn.disabled=false;
+  btn.textContent='🔒 Kilitle';
+  btn.className='btn btn-red btn-sm';
+  btn.onclick=soruKilitle;
+}
+function kilitleButonunuKilitliModaGetir(){
+  const btn=document.getElementById('btn-kilitle');
+  document.getElementById('btn-sonraki').classList.add('hidden');
+  btn.classList.remove('hidden');
+  btn.disabled=false;
+  btn.textContent='🔓 Kilidi Aç';
+  btn.className='btn btn-green btn-sm';
+  btn.onclick=soruKilidiAc;
 }
 function soruKilitle(){
   if(!aktivSoruId)return;
   ws.send(JSON.stringify({tip:'kilitle',soru_id:aktivSoruId}));
-  document.getElementById('btn-kilitle').disabled=true;
+  kilitleButonunuKilitliModaGetir();
+  showToast('🔒 Soru kilitlendi — öğrenciler cevap değiştiremez');
+}
+function soruKilidiAc(){
+  if(!aktivSoruId)return;
+  ws.send(JSON.stringify({tip:'kilidi_ac',soru_id:aktivSoruId}));
+  if(testToplam>1){
+    iptalSonrakiTimer();
+    const btn=document.getElementById('btn-kilitle');
+    btn.disabled=true;
+    btn.textContent='⏳ 2 sn...';
+    btn.onclick=null;
+    showToast('🔓 Kilit açıldı. 2 saniye sonra sıradaki soru geliyor...');
+    sonrakiZamanlayici=setTimeout(()=>{
+      sonrakiZamanlayici=null;
+      ws.send(JSON.stringify({tip:'sonraki_soru'}));
+      document.getElementById('btn-kilitle').classList.add('hidden');
+      document.getElementById('btn-kilitle').onclick=null;
+    },2000);
+    return;
+  }
+  kilitleButonunuAcikModaGetir();
+  showToast('🔓 Soru kilidi açıldı — öğrenciler tekrar cevap verebilir');
+}
+function sonrakiSoru(){
+  showModalConfirm({
+    title:'Sonraki soru',
+    message:'Sıradaki soruya geçilsin mi? (Önce soruyu kilitlemiş olmanız gerekir.)',
+    okText:'Geç',
+    cancelText:'İptal',
+    danger:false,
+    icon:'⏭️'
+  }).then(ok=>{
+    if(!ok)return;
+    ws.send(JSON.stringify({tip:'sonraki_soru'}));
+    document.getElementById('btn-sonraki').classList.add('hidden');
+    document.getElementById('btn-kilitle').classList.add('hidden');
+    document.getElementById('btn-kilitle').onclick=null;
+  });
+}
+function testiBitir(){
+  showModalConfirm({
+    title:'Testi bitir',
+    message:'Test erken sonlandırılsın mı? Mevcut soru kilitlenir ve tüm öğrencilere sonuçlar paylaşılır.',
+    okText:'Evet, bitir',
+    cancelText:'İptal',
+    danger:true,
+    icon:'🏁'
+  }).then(ok=>{
+    if(!ok)return;
+    ws.send(JSON.stringify({tip:'test_bitir'}));
+    document.getElementById('btn-test-bitir').classList.add('hidden');
+    document.getElementById('btn-sonraki').classList.add('hidden');
+    document.getElementById('btn-kilitle').classList.add('hidden');
+    document.getElementById('btn-kilitle').onclick=null;
+  });
 }
 
 // ── BARS ──────────────────────────────────────────────
@@ -880,18 +1209,26 @@ function renderArsiv(sorular){
   if(!sorular?.length){el.innerHTML='<div style="color:rgba(255,255,255,.2);font-size:13px;text-align:center;padding:30px;">Arşiv boş.</div>';return;}
   el.innerHTML=[...sorular].reverse().map(s=>{
     let badges='';
+    let dogruSayisi=0, yanlisSayisi=0;
     if(s.istatistik?.dagilim){
       for(const[sik,data] of Object.entries(s.istatistik.dagilim)){
-        const ok=s.dogru_cevap&&s.dogru_cevap===sik;
-        badges+=`<span class="ar-badge ${ok?'ar-ok':''}">${sik}: ${data.yuzde}% (${data.adet})</span>`;
+        if(s.dogru_cevap&&s.dogru_cevap===sik){
+          dogruSayisi+=data.adet;
+          badges+=`<span class="ar-badge ${sik==='ar-ok'?'ar-ok':''}">${sik}: ${data.yuzde}% (${data.adet})</span>`;
+        } else {
+          yanlisSayisi+=data.adet;
+          badges+=`<span class="ar-badge">${sik}: ${data.yuzde}% (${data.adet})</span>`;
+        }
       }
     }
+    const ozet=s.dogru_cevap?`✅ ${dogruSayisi} doğru | ❌ ${yanlisSayisi} yanlış`:'';
     return `<div class="ar-item">
       <h4>${s.soru}</h4>
       <div class="ar-meta">
         <span class="ar-badge">${s.zaman}</span>
         <span class="ar-badge">${s.soru_tipi==='acik_uclu'?'Açık Uçlu':'Çoktan Seçmeli'}</span>
         ${s.dogru_cevap?`<span class="ar-badge ar-ok">Doğru: ${s.dogru_cevap}</span>`:''}
+        ${ozet?`<span class="ar-badge" style="background:rgba(37,99,235,.1);color:#60a5fa;font-weight:700;">${ozet}</span>`:''}
         ${badges}
       </div>
     </div>`;
@@ -910,6 +1247,7 @@ function showTab(t,btn){
   document.getElementById('tab-'+t).classList.remove('hidden');
   if(btn)btn.classList.add('active');
   if(t==='arsiv')ws.send(JSON.stringify({tip:'arsiv_talep'}));
+  if(t==='live')renderCanliKuyruk();
 }
 
 // ── TOAST ─────────────────────────────────────────────
