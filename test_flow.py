@@ -29,21 +29,23 @@ async def teacher_task():
             pass
 
 async def student_task(name, answer, delay=0.5):
-    async with websockets.connect(WS_URI) as ws:
-        try:
-            async with asyncio.timeout(15):  # max 15 saniye bekle
-                await ws.send(json.dumps({'rol':'ogrenci','isim':name}))
-                while True:
-                    msg = await ws.recv()
-                    d = json.loads(msg)
-                    print(f'[STUDENT {name} recv]', d)
-                    if d.get('tip') == 'soru':
-                        await asyncio.sleep(delay)
-                        await ws.send(json.dumps({'tip':'cevap','soru_id':d.get('soru_id'),'cevap':answer}))
-                    if d.get('tip') in ('sure_doldu','sonuc'):
-                        break
-        except TimeoutError:
-            print(f'[STUDENT {name}] timeout — bağlantı kesildi')
+    async def run_student():
+        async with websockets.connect(WS_URI) as ws:
+            await ws.send(json.dumps({'rol': 'ogrenci', 'isim': name}))
+            while True:
+                msg = await ws.recv()
+                d = json.loads(msg)
+                print(f'[STUDENT {name} recv]', d)
+                if d.get('tip') == 'soru':
+                    await asyncio.sleep(delay)
+                    await ws.send(json.dumps({'tip': 'cevap', 'soru_id': d.get('soru_id'), 'cevap': answer}))
+                if d.get('tip') in ('sure_doldu', 'sonuc', 'zaman_bitti'):
+                    break
+
+    try:
+        await asyncio.wait_for(run_student(), timeout=15)
+    except asyncio.TimeoutError:
+        print(f'[STUDENT {name}] timeout — bağlantı kesildi')
 
 async def main():
     t = asyncio.create_task(teacher_task())
