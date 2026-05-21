@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Akıllı Sınıf Oylama Sistemi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --purple: #7c3aed;
@@ -80,7 +81,7 @@
         @keyframes liveDot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.2;transform:scale(0.5)} }
 
         h1 {
-            font-family: 'Fredoka One', sans-serif;
+            font-family: 'Fredoka', sans-serif;
             font-size: 42px; letter-spacing: -0.5px;
             color: #fff; margin-bottom: 8px; line-height: 1.05;
             animation: fadeSlide 0.5s 0.3s both;
@@ -208,6 +209,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="config.js"></script>
 <script>
     // Stars
     for (let i = 0; i < 60; i++) {
@@ -228,7 +230,7 @@
     }
 
     // QR code pointing to student page
-    const studentUrl = window.location.href.replace('index.html', '').replace(/\/$/, '') + '/ogrenci.html';
+    const studentUrl = (typeof SERVER_HTTP !== 'undefined' ? SERVER_HTTP : window.location.href.replace('index.html', '').replace(/\/$/, '')) + '/ogrenci.html';
     document.getElementById('qr-url').textContent = studentUrl;
     window.onload = function() {
         try {
