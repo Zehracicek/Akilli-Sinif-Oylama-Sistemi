@@ -1,4 +1,5 @@
 import asyncio
+import sys
 import websockets
 import json
 import socket
@@ -7,6 +8,13 @@ import http.server
 import socketserver
 import webbrowser
 from datetime import datetime
+
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except (AttributeError, OSError):
+        pass
 
 # ================================================================
 # AKILLI SINIF OYLAMA SISTEMI - MERKEZ SUNUCU v4.0 (QUIZ MODE)
@@ -123,6 +131,26 @@ def bagli_ogretmen_var_mi():
     return False
 
 
+def client_rol(ws):
+    return client_info.get(ws, {}).get("rol")
+
+
+def kuyruk_ogretmen_payload(sorular):
+    """Öğretmen panelindeki sıra listesi ile sunucu test_sorulari'ni birebir eşitlemek için."""
+    out = []
+    for t in sorular or []:
+        out.append({
+            "soru": t.get("soru", ""),
+            "secenekler": list(t.get("secenekler") or []),
+            "soru_tipi": t.get("soru_tipi", "coktan_secmeli"),
+            "gizli_oylama": t.get("gizli_oylama", False),
+            "sure": int(t.get("sure") or 0) or 20,
+            "dogru_cevap": t.get("dogru_cevap", ""),
+            "kaynak": t.get("kaynak") or "plan",
+        })
+    return out
+
+
 def arsive_ekle(soru_id):
     global aktif_soru
     if not aktif_soru or aktif_soru.get("soru_id") != soru_id:
@@ -208,28 +236,13 @@ async def zamanlayici_baslat(sure_saniye, soru_id):
                 "tip": "zamanlayici", "soru_id": soru_id, "kalan_sure": kalan - 1
             })
 
-        print(f"[TIMER] Süre doldu! Soru #{soru_id}")
+        print(f"[TIMER] Süre doldu (soru açık kaldı — kilitleme öğretmende). Soru #{soru_id}")
+        # Kahoot benzeri: süre bitince otomatik kilitleme yok; öğretmen "Kilitle" ile kapatır.
         herkese_broadcast({
-            "tip": "sure_doldu", "soru_id": soru_id, "mesaj": "Süre doldu!"
+            "tip": "zaman_bitti",
+            "soru_id": soru_id,
+            "mesaj": "Süre doldu — öğretmen kilitleyene kadar cevap değiştirilebilir.",
         })
-
-        if aktif_soru and aktif_soru.get("soru_id") == soru_id:
-            aktif_soru["kilitli"] = True
-
-        ist = istatistik_hesapla(soru_id)
-        ogretmenlere_broadcast({"tip": "istatistik", "soru_id": soru_id, "istatistik": ist})
-        arsive_ekle(soru_id)
-        sonuc_her_ogrenciye_gonder(soru_id)
-        sonuc_paylasilan.add(soru_id)
-
-        ogretmenlere_broadcast({
-            "tip": "siralama_guncelleme",
-            "siralama": siralama_hesapla()
-        })
-
-        if test_aktif:
-            await asyncio.sleep(4)
-            await test_sonraki_soru_gonder()
 
     except asyncio.CancelledError:
         pass
@@ -296,7 +309,15 @@ async def test_sonraki_soru_gonder():
         "soru_id": soru_id,
         "ogrenci_sayisi": ogrenci_sayisi,
         "soru_no": test_soru_index,
-        "toplam_soru": len(test_sorulari)
+        "toplam_soru": len(test_sorulari),
+        "test_aktif": True,
+        "kuyruk": kuyruk_ogretmen_payload(test_sorulari),
+        "soru": soru_paketi.get("soru", ""),
+        "secenekler": soru_paketi.get("secenekler", []),
+        "soru_tipi": soru_paketi.get("soru_tipi", ""),
+        "sure": soru_paketi.get("sure", 0),
+        "dogru_cevap": soru_paketi.get("dogru_cevap", ""),
+        "gizli_oylama": soru_paketi.get("gizli_oylama", False),
     })
 
     if soru_paketi["sure"] > 0:
@@ -314,7 +335,10 @@ async def handler(websocket):
 
     try:
         async for message in websocket:
-            data = json.loads(message)
+            try:
+                data = json.loads(message)
+            except (json.JSONDecodeError, TypeError, UnicodeDecodeError):
+                continue
 
             # ── KİMLİK ────────────────────────────────────────────
             if "rol" in data and "isim" in data and websocket not in client_info:
@@ -377,9 +401,14 @@ async def handler(websocket):
 
                 continue
 
+            elif websocket not in client_info:
+                continue
+
             # ── TEST HAZIRLA ───────────────────────────────────────
             elif data.get("tip") == "test_hazirla":
-                test_sorulari = data.get("sorular", [])
+                if client_rol(websocket) != "ogretmen":
+                    continue
+                test_sorulari = list(data.get("sorular") or [])
                 test_aktif = False
                 test_soru_index = 0
                 test_bitti = False
@@ -391,7 +420,8 @@ async def handler(websocket):
                 ogretmenlere_broadcast({
                     "tip": "test_hazir",
                     "soru_sayisi": len(test_sorulari),
-                    "mesaj": f"{len(test_sorulari)} soru yüklendi!"
+                    "mesaj": f"{len(test_sorulari)} soru yüklendi!",
+                    "kuyruk": kuyruk_ogretmen_payload(test_sorulari),
                 })
                 ogrencilere_broadcast({
                     "tip": "test_hazirlaniyor",
@@ -401,6 +431,8 @@ async def handler(websocket):
 
             # ── TEST BAŞLAT ────────────────────────────────────────
             elif data.get("tip") == "test_baslat":
+                if client_rol(websocket) != "ogretmen":
+                    continue
                 if not test_sorulari:
                     ogretmenlere_broadcast({"tip": "uyari", "mesaj": "Önce soruları kaydedin!"})
                     continue
@@ -425,8 +457,43 @@ async def handler(websocket):
                 await asyncio.sleep(2)
                 await test_sonraki_soru_gonder()
 
-            # ── TEKİL SORU (anlık, test dışı) ─────────────────────
+            # ── SIRAYA ANLIK SORU (test devam ederken, her zaman listenin sonuna) ──
+            elif data.get("tip") == "siraya_soru_ekle":
+                if client_rol(websocket) != "ogretmen":
+                    continue
+                if not test_aktif:
+                    await websocket.send(json.dumps({
+                        "tip": "uyari",
+                        "mesaj": "Sıraya eklemek için test açık olmalı. Önce testi başlatın.",
+                    }))
+                    continue
+                yeni = {
+                    "soru": data.get("soru", ""),
+                    "secenekler": data.get("secenekler", []),
+                    "soru_tipi": data.get("soru_tipi", "coktan_secmeli"),
+                    "gizli_oylama": data.get("gizli_oylama", False),
+                    "sure": int(data.get("sure") or 0) or 20,
+                    "dogru_cevap": data.get("dogru_cevap", ""),
+                    "kaynak": "anlik",
+                }
+                test_sorulari.append(yeni)
+                n = len(test_sorulari)
+                print(f"[SIRAYA] siraya_soru_ekle -> sonda. test_soru_index={test_soru_index} len={n}")
+                ogretmenlere_broadcast({
+                    "tip": "siraya_soru_eklendi",
+                    "kayit": yeni,
+                    "toplam_soru": n,
+                    "kuyruk": kuyruk_ogretmen_payload(test_sorulari),
+                })
+                ogrencilere_broadcast({
+                    "tip": "test_kuyruk_guncellendi",
+                    "toplam_soru": n,
+                })
+
+            # ── TEKİL SORU (anlık, test dışı — doğrudan yayın) ─────────────────────
             elif data.get("tip") == "soru":
+                if client_rol(websocket) != "ogretmen":
+                    continue
                 if aktif_soru and not aktif_soru.get("kilitli"):
                     aktif_soru["kilitli"] = True
                     arsive_ekle(aktif_soru.get("soru_id"))
@@ -463,7 +530,14 @@ async def handler(websocket):
                 ogrencilere_broadcast(ogrenci_paketi)
                 ogretmenlere_broadcast({
                     "tip": "soru_onay", "soru_id": soru_id,
-                    "ogrenci_sayisi": ogrenci_sayisi, "soru_no": 1, "toplam_soru": 1
+                    "ogrenci_sayisi": ogrenci_sayisi, "soru_no": 1, "toplam_soru": 1,
+                    "test_aktif": False,
+                    "soru": soru_paketi.get("soru", ""),
+                    "secenekler": soru_paketi.get("secenekler", []),
+                    "soru_tipi": soru_paketi.get("soru_tipi", ""),
+                    "sure": soru_paketi.get("sure", 0),
+                    "dogru_cevap": soru_paketi.get("dogru_cevap", ""),
+                    "gizli_oylama": soru_paketi.get("gizli_oylama", False),
                 })
 
                 if soru_paketi["sure"] > 0:
@@ -473,6 +547,8 @@ async def handler(websocket):
 
             # ── ÖĞRENCİ CEVAP ─────────────────────────────────────
             elif data.get("tip") == "cevap":
+                if client_rol(websocket) != "ogrenci":
+                    continue
                 soru_id = data.get("soru_id")
                 ogrenci_ismi = client_info.get(websocket, {}).get("isim", "Anonim")
                 cevap = data.get("cevap", "")
@@ -534,6 +610,8 @@ async def handler(websocket):
 
             # ── KİLİTLE ───────────────────────────────────────────
             elif data.get("tip") == "kilitle":
+                if client_rol(websocket) != "ogretmen":
+                    continue
                 soru_id = data.get("soru_id")
                 if aktif_soru and aktif_soru.get("soru_id") == soru_id:
                     aktif_soru["kilitli"] = True
@@ -548,16 +626,68 @@ async def handler(websocket):
                     sonuc_paylasilan.add(soru_id)
                     ogretmenlere_broadcast({"tip": "siralama_guncelleme", "siralama": siralama_hesapla()})
 
-                    if test_aktif:
-                        await asyncio.sleep(4)
-                        await test_sonraki_soru_gonder()
+            # ── KİLİDİ AÇ (öğretmen) ───────────────────────────────
+            elif data.get("tip") == "kilidi_ac":
+                if client_rol(websocket) != "ogretmen":
+                    continue
+                soru_id = data.get("soru_id")
+                if aktif_soru and aktif_soru.get("soru_id") == soru_id and aktif_soru.get("kilitli"):
+                    aktif_soru["kilitli"] = False
+                    sonuc_paylasilan.discard(soru_id)
+                    herkese_broadcast({
+                        "tip": "kilidi_acildi",
+                        "soru_id": soru_id,
+                        "mesaj": "Öğretmen kilidi açtı.",
+                    })
+
+            # ── SONRAKİ SORU (manuel) ──────────────────────────────
+            elif data.get("tip") == "sonraki_soru":
+                if client_rol(websocket) != "ogretmen":
+                    continue
+                if test_aktif:
+                    if aktif_soru and not aktif_soru.get("kilitli"):
+                        await websocket.send(json.dumps({
+                            "tip": "uyari",
+                            "mesaj": "Önce soruyu kilitleyin; ardından sonraki soruya geçebilirsiniz.",
+                        }))
+                        continue
+                    await test_sonraki_soru_gonder()
+
+            # ── TESTİ BİTİR (erken) ───────────────────────────────
+            elif data.get("tip") == "test_bitir":
+                if client_rol(websocket) != "ogretmen":
+                    continue
+                if zamanlayici_gorev and not zamanlayici_gorev.done():
+                    zamanlayici_gorev.cancel()
+                if aktif_soru and not aktif_soru.get("kilitli"):
+                    soru_id = aktif_soru.get("soru_id")
+                    aktif_soru["kilitli"] = True
+                    herkese_broadcast({"tip": "sure_doldu", "soru_id": soru_id, "mesaj": "Test sonlandırıldı."})
+                    arsive_ekle(soru_id)
+                    if soru_id not in sonuc_paylasilan:
+                        sonuc_her_ogrenciye_gonder(soru_id)
+                        sonuc_paylasilan.add(soru_id)
+                test_aktif = False
+                test_bitti = True
+                siralama = siralama_hesapla()
+                print(f"\n[TEST] Öğretmen testi erken bitirdi! {len(siralama)} öğrenci")
+                herkese_broadcast({
+                    "tip": "test_bitti",
+                    "siralama": siralama,
+                    "toplam_soru": len(test_sorulari),
+                    "mesaj": "Test tamamlandı! 🎉"
+                })
 
             # ── ARŞİV ─────────────────────────────────────────────
             elif data.get("tip") == "arsiv_talep":
+                if client_rol(websocket) != "ogretmen":
+                    continue
                 await websocket.send(json.dumps({"tip": "arsiv", "sorular": soru_arsivi}))
 
             # ── GEÇMİŞ ────────────────────────────────────────────
             elif data.get("tip") == "gecmis_talep":
+                if client_rol(websocket) != "ogrenci":
+                    continue
                 ogrenci_ismi = client_info.get(websocket, {}).get("isim", "")
                 gecmis = []
                 for arsiv in soru_arsivi:
@@ -634,13 +764,21 @@ async def main():
     print(f"  WebSocket  : ws://{yerel_ip}:{PORT}")
     print(f"  Başlangıç  : {datetime.now().strftime('%H:%M:%S')}")
 
+    # config.js oluştur — HTML sayfaları bu dosyadan IP bilgisini alır
+    import os
+    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.js")
+    with open(config_path, "w", encoding="utf-8") as f:
+        f.write(f'const SERVER_IP = "{yerel_ip}";\n')
+        f.write(f'const SERVER_HTTP = "http://{yerel_ip}:9090";\n')
+        f.write(f'const SERVER_WS = "ws://{yerel_ip}:8765";\n')
+
     http_thread = threading.Thread(target=start_http_server, args=(yerel_ip,), daemon=True)
     http_thread.start()
 
     print("  Bağlantılar bekleniyor...\n")
     try:
         webbrowser.open(f"http://{yerel_ip}:9090/index.html")
-    except:
+    except Exception:
         pass
 
     async with websockets.serve(handler, HOST, PORT):
