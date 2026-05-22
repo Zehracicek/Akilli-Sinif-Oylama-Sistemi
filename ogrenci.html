@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="dark">
 
 <head>
   <meta charset="UTF-8">
@@ -10,6 +9,7 @@
     href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap"
     rel="stylesheet">
   <script src="config.js"></script>
+  <script src="theme.js"></script>
   <style>
     :root {
       --bg: #0d0221;
@@ -21,6 +21,11 @@
       --amber: #f59e0b;
       --green: #10b981;
       --red: #ef4444;
+    }
+
+    [data-theme="light"] {
+      --bg: #f0f4ff;
+      --card: #ffffff;
     }
 
     * {
@@ -39,7 +44,8 @@
     body {
       font-family: 'Nunito', sans-serif;
       background: var(--bg);
-      color: #fff;
+      color: var(--text, #fff);
+      transition: background .3s ease;
       height: 100vh;
       display: flex;
       flex-direction: column;
@@ -1351,10 +1357,659 @@
       z-index: 100;
       display: none;
     }
+
+    /* ══════════════════════════════════════
+   TEMA DEĞİŞKENLERİ
+══════════════════════════════════════ */
+    [data-theme="dark"] .bg {
+      display: block;
+    }
+
+    [data-theme="light"] .bg {
+      display: none;
+    }
+
+    [data-theme="light"] .bg-light {
+      display: block !important;
+    }
+
+    [data-theme="dark"] .bg-light {
+      display: none !important;
+    }
+
+    [data-theme="light"] .star {
+      display: none;
+    }
+
+    .bg-light {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-light-grad {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #e0e7ff 0%, #fce7f3 40%, #dbeafe 70%, #ede9fe 100%);
+      background-size: 400% 400%;
+      animation: gradShift 12s ease infinite;
+    }
+
+    .bg-light-dots {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(99, 102, 241, .1) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    @keyframes gradShift {
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    /* TEMA BUTONU */
+    .theme-toggle-btn {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      z-index: 999;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .2s, background .3s;
+      backdrop-filter: blur(10px);
+    }
+
+    [data-theme="dark"] .theme-toggle-btn {
+      background: rgba(255, 255, 255, .1);
+      border: 1px solid rgba(255, 255, 255, .15);
+    }
+
+    [data-theme="light"] .theme-toggle-btn {
+      background: rgba(255, 255, 255, .9);
+      border: 2px solid rgba(99, 102, 241, .2);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, .1);
+    }
+
+    .theme-toggle-btn:hover {
+      transform: scale(1.15) rotate(20deg);
+    }
+
+    /* ══════════════════════════════════════
+   AÇIK TEMA OVERRIDE'LARI
+   (sadece [data-theme="light"] altında)
+══════════════════════════════════════ */
+
+    /* --- index.html & genel --- */
+    [data-theme="light"] body {
+      background: #f0f4ff;
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] h1 {
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .subtitle {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .live-pill {
+      background: rgba(16, 185, 129, .1);
+      border-color: rgba(16, 185, 129, .3);
+      color: #059669;
+    }
+
+    [data-theme="light"] .live-dot {
+      background: #10b981;
+    }
+
+    [data-theme="light"] .qr-section {
+      background: rgba(255, 255, 255, .8);
+      border: 2px solid rgba(255, 255, 255, .95);
+      box-shadow: 0 4px 24px rgba(99, 102, 241, .1);
+    }
+
+    [data-theme="light"] .qr-label {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] #qr-url {
+      color: #7c3aed;
+    }
+
+    /* --- ogretmen.html topbar --- */
+    [data-theme="light"] .topbar {
+      background: rgba(255, 255, 255, .92);
+      border-bottom: 2px solid #e0e7ff;
+      box-shadow: 0 2px 12px rgba(99, 102, 241, .08);
+    }
+
+    [data-theme="light"] .tb-brand {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    [data-theme="light"] .tb-sub {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .btn-exit {
+      color: #6b7280;
+      border-color: #e0e7ff;
+    }
+
+    /* --- tab bar --- */
+    [data-theme="light"] .tab-bar {
+      background: #f3f4f6;
+    }
+
+    [data-theme="light"] .tab {
+      color: #9ca3af;
+    }
+
+    [data-theme="light"] .tab.active {
+      background: rgba(37, 99, 235, .12);
+      color: #2563eb;
+      box-shadow: inset 0 0 0 1px rgba(37, 99, 235, .2);
+    }
+
+    /* --- card --- */
+    [data-theme="light"] .card {
+      background: #ffffff;
+      border: 2px solid #e0e7ff;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, .07);
+    }
+
+    [data-theme="light"] .card-t {
+      color: #9ca3af;
+    }
+
+    [data-theme="light"] label {
+      color: #4b5563;
+    }
+
+    /* --- form inputs --- */
+    [data-theme="light"] .fi,
+    [data-theme="light"] .inp {
+      background: #f8fafc;
+      border-color: #e0e7ff;
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .fi::placeholder,
+    [data-theme="light"] .inp::placeholder {
+      color: #c4b5fd;
+    }
+
+    [data-theme="light"] .fi:focus,
+    [data-theme="light"] .inp:focus {
+      border-color: #7c3aed;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, .1);
+    }
+
+    [data-theme="light"] select.fi option {
+      background: #fff;
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .sik-l {
+      color: #9ca3af;
+    }
+
+    /* --- soru listesi (builder) --- */
+    [data-theme="light"] .q-item {
+      background: #f8fafc;
+      border-color: #e0e7ff;
+    }
+
+    [data-theme="light"] .q-item:hover {
+      border-color: #c4b5fd;
+    }
+
+    [data-theme="light"] .q-text {
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .q-num-badge {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+    }
+
+    /* --- QR lobby --- */
+    [data-theme="light"] #s-qr {
+      background: linear-gradient(135deg, #e0e7ff, #fce7f3);
+    }
+
+    [data-theme="light"] .qr-card {
+      background: rgba(255, 255, 255, .96);
+      border: 2px solid rgba(99, 102, 241, .2);
+      box-shadow: 0 24px 80px rgba(99, 102, 241, .15);
+    }
+
+    [data-theme="light"] .qr-title {
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .qr-sub {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .qr-url {
+      color: #2563eb;
+    }
+
+    [data-theme="light"] .student-count {
+      color: #059669;
+    }
+
+    [data-theme="light"] .student-label {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .s-chip {
+      background: #ede9fe;
+      border-color: #ddd6fe;
+      color: #6d28d9;
+    }
+
+    /* --- istatistik kutuları --- */
+    [data-theme="light"] .sbox {
+      background: #f8fafc;
+      border-color: #e0e7ff;
+    }
+
+    [data-theme="light"] .snum {
+      color: #2563eb;
+    }
+
+    [data-theme="light"] .slabel {
+      color: #9ca3af;
+    }
+
+    [data-theme="light"] .trc-bg {
+      stroke: #e0e7ff !important;
+    }
+
+    /* --- progress bars --- */
+    [data-theme="light"] .pb-wrap {
+      background: #f8fafc;
+      border-color: #e0e7ff;
+    }
+
+    [data-theme="light"] .pb-label {
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .pb-bar {
+      background: #e0e7ff;
+    }
+
+    /* --- yanıt listesi --- */
+    [data-theme="light"] .ans {
+      border-bottom-color: #f3f4f6;
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .a-badge {
+      background: #ede9fe;
+      color: #6d28d9;
+    }
+
+    [data-theme="light"] .a-ok {
+      background: rgba(16, 185, 129, .12) !important;
+      color: #059669 !important;
+    }
+
+    [data-theme="light"] .a-no {
+      background: rgba(239, 68, 68, .1) !important;
+      color: #dc2626 !important;
+    }
+
+    /* --- aktif soru banner --- */
+    [data-theme="light"] .q-banner {
+      background: linear-gradient(135deg, rgba(219, 234, 254, .9), rgba(237, 233, 254, .9));
+      border-color: rgba(99, 102, 241, .25);
+    }
+
+    [data-theme="light"] .qb-label {
+      color: #2563eb;
+    }
+
+    [data-theme="light"] .qb-text {
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .qb-prog {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .test-prog-bar {
+      background: #e0e7ff;
+    }
+
+    /* --- sıralama (leaderboard) --- */
+    [data-theme="light"] .lb-item {
+      background: #f8fafc;
+      border-color: #e0e7ff;
+    }
+
+    [data-theme="light"] .lb-item:hover {
+      border-color: #c4b5fd;
+    }
+
+    [data-theme="light"] .lb-name {
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .lb-score {
+      color: #2563eb;
+    }
+
+    [data-theme="light"] .lb-rank.other {
+      color: #9ca3af;
+    }
+
+    /* --- loglar --- */
+    [data-theme="light"] .log-i {
+      border-bottom-color: #f3f4f6;
+      color: #1e1b4b;
+    }
+
+    /* --- arşiv --- */
+    [data-theme="light"] .ar-item {
+      background: #f8fafc;
+      border-color: #e0e7ff;
+    }
+
+    [data-theme="light"] .ar-item h4 {
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .ar-badge {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .ar-ok {
+      background: rgba(16, 185, 129, .1);
+      color: #059669;
+    }
+
+    /* --- öğrenci listesi --- */
+    [data-theme="light"] .og-item {
+      border-bottom-color: #f3f4f6;
+    }
+
+    [data-theme="light"] .og-on {
+      background: rgba(16, 185, 129, .1);
+      color: #059669;
+      border-color: rgba(16, 185, 129, .2);
+    }
+
+    [data-theme="light"] .og-off {
+      background: rgba(239, 68, 68, .08);
+      color: #dc2626;
+      border-color: rgba(239, 68, 68, .15);
+    }
+
+    /* --- lc (login kartı) --- */
+    [data-theme="light"] .lc {
+      background: rgba(255, 255, 255, .96) !important;
+      border: 2px solid rgba(99, 102, 241, .2) !important;
+      box-shadow: 0 8px 0 rgba(99, 102, 241, .12), 0 24px 60px rgba(99, 102, 241, .15) !important;
+    }
+
+    [data-theme="light"] .lc h2 {
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .lc p {
+      color: #6b7280;
+    }
+
+    /* --- ogrenci.html login/avatar/lobby --- */
+    [data-theme="light"] .login-card,
+    [data-theme="light"] .av-card {
+      background: rgba(255, 255, 255, .9) !important;
+      border: 2px solid rgba(255, 255, 255, .95) !important;
+      box-shadow: 0 8px 0 rgba(124, 58, 237, .12), 0 20px 60px rgba(124, 58, 237, .12) !important;
+    }
+
+    [data-theme="light"] .login-card p,
+    [data-theme="light"] .av-card p {
+      color: #6b7280 !important;
+    }
+
+    [data-theme="light"] .av-btn {
+      background: #f8fafc;
+      border-color: #e0e7ff;
+    }
+
+    [data-theme="light"] .av-btn:hover {
+      background: #ede9fe;
+      border-color: #a78bfa;
+    }
+
+    [data-theme="light"] .av-btn.sel {
+      background: #ede9fe;
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, .2);
+    }
+
+    [data-theme="light"] .lobby-card {
+      background: rgba(255, 255, 255, .9) !important;
+      border: 2px solid rgba(255, 255, 255, .95) !important;
+    }
+
+    [data-theme="light"] .player-name-big {
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .waiting-txt {
+      color: #6b7280;
+    }
+
+    [data-theme="light"] .teacher-card {
+      background: #ede9fe;
+      border-color: #ddd6fe;
+      color: #6d28d9;
+    }
+
+    [data-theme="light"] .ready-banner {
+      background: #ede9fe;
+      border-color: #c4b5fd;
+      color: #5b21b6;
+    }
+
+    /* --- ogrenci.html soru ekranı --- */
+    [data-theme="light"] .q-topbar {
+      background: rgba(255, 255, 255, .92) !important;
+      border-bottom: 2px solid #e0e7ff !important;
+      box-shadow: 0 2px 12px rgba(99, 102, 241, .08);
+    }
+
+    [data-theme="light"] .q-playername {
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .q-score {
+      color: #7c3aed;
+    }
+
+    [data-theme="light"] .q-progress-bar {
+      background: #e0e7ff;
+    }
+
+    [data-theme="light"] .q-card {
+      background: #ffffff !important;
+      border: 2px solid #e0e7ff !important;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, .1);
+    }
+
+    [data-theme="light"] .q-label {
+      color: #7c3aed !important;
+    }
+
+    [data-theme="light"] .q-text {
+      color: #1e1b4b !important;
+    }
+
+    [data-theme="light"] .open-wrap textarea {
+      background: #fff !important;
+      border-color: #e0e7ff !important;
+      color: #1e1b4b !important;
+    }
+
+    /* --- feedback --- */
+    [data-theme="light"] .fb-sent {
+      background: #ede9fe;
+      border-color: #c4b5fd;
+      color: #6d28d9;
+    }
+
+    [data-theme="light"] .fb-ok {
+      background: #dcfce7;
+      border-color: #86efac;
+      color: #166534;
+    }
+
+    [data-theme="light"] .fb-bad {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #991b1b;
+    }
+
+    [data-theme="light"] .fb-timeout {
+      background: #fef3c7;
+      border-color: #fde68a;
+      color: #92400e;
+    }
+
+    /* --- sonuç popup --- */
+    [data-theme="light"] .result-popup {
+      background: rgba(99, 102, 241, .15);
+    }
+
+    [data-theme="light"] .result-inner {
+      background: #fff !important;
+      border: 2px solid #e0e7ff !important;
+      box-shadow: 0 8px 0 rgba(99, 102, 241, .12), 0 24px 60px rgba(99, 102, 241, .15) !important;
+    }
+
+    [data-theme="light"] .result-title {
+      color: #1e1b4b !important;
+    }
+
+    [data-theme="light"] .result-sub {
+      color: #6b7280 !important;
+    }
+
+    [data-theme="light"] .puan-label {
+      color: #6b7280 !important;
+    }
+
+    [data-theme="light"] .total-puan {
+      background: #ede9fe !important;
+      border-color: #ddd6fe !important;
+      color: #6d28d9 !important;
+    }
+
+    [data-theme="light"] .total-puan strong {
+      color: #7c3aed !important;
+    }
+
+    [data-theme="light"] .mlb-row {
+      border-bottom-color: #f3f4f6 !important;
+    }
+
+    [data-theme="light"] .mlb-name {
+      color: #1e1b4b !important;
+    }
+
+    [data-theme="light"] .mlb-score {
+      color: #7c3aed !important;
+    }
+
+    [data-theme="light"] .mlb-me {
+      background: #ede9fe !important;
+    }
+
+    [data-theme="light"] .next-pill {
+      background: #dbeafe !important;
+      border-color: #bfdbfe !important;
+      color: #1d4ed8 !important;
+    }
+
+    /* --- final ekranı --- */
+    [data-theme="light"] #s-final {
+      background: linear-gradient(135deg, #f0f4ff, #fce7f3) !important;
+    }
+
+    [data-theme="light"] .final-title {
+      color: #1e1b4b !important;
+    }
+
+    [data-theme="light"] .final-sub {
+      color: #6b7280 !important;
+    }
+
+    [data-theme="light"] .final-lb {
+      background: #fff !important;
+      border: 2px solid #e0e7ff !important;
+    }
+
+    [data-theme="light"] .flb-header {
+      background: #f8fafc !important;
+      border-bottom-color: #e0e7ff !important;
+      color: #6b7280 !important;
+    }
+
+    [data-theme="light"] .flb-row {
+      border-bottom-color: #f3f4f6 !important;
+    }
+
+    [data-theme="light"] .flb-name {
+      color: #1e1b4b !important;
+    }
+
+    [data-theme="light"] .flb-score {
+      color: #7c3aed !important;
+    }
+
+    [data-theme="light"] .flb-row.me-row {
+      background: #ede9fe !important;
+      border-left-color: #7c3aed !important;
+    }
   </style>
 </head>
 
 <body>
+
+  <!-- LIGHT BG (dark'ta gizlenir, light'ta görünür) -->
+  <div class="bg-light">
+    <div class="bg-light-grad"></div>
+    <div class="bg-light-dots"></div>
+  </div>
+
+  <!-- TEMA TOGGLE BUTONU -->
+  <button class="theme-toggle-btn" onclick="ThemeManager.toggleTheme()" title="Temayı değiştir"
+    aria-label="Tema">☀️</button>
 
   <div class="bg">
     <div class="orb o1"></div>
@@ -1706,7 +2361,7 @@
       document.getElementById('q-label').textContent = `SORU ${qNum} / ${qTotal}`;
       document.getElementById('q-text').textContent = d.soru;
       document.getElementById('qt-score').textContent = myTotalScore.toLocaleString() + ' puan';
-      
+
       // Üst barında soru numarası göster
       if (myRank) {
         document.getElementById('qt-rank').textContent = '📋 ' + qNum + '/' + qTotal + ' | 🏆 #' + myRank;
