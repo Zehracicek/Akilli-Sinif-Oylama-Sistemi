@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sunum Modu — Akıllı Sınıf</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=9">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="config.js"></script>
+  <script src="theme.js?v=7" defer></script>
+  <script>
+    (function () {
+      var m = location.search.match(/[?&]tema=(light|dark)/);
+      if (m) document.documentElement.setAttribute('data-theme', m[1]);
+    })();
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #060d1f;
+      color: #fff;
+      min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .sunum-wrap {
+      position: relative;
+      z-index: 2;
+      height: 100vh;
+      max-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 24px 20px;
+      box-sizing: border-box;
+      background: radial-gradient(ellipse at top, rgba(37,99,235,.18), transparent 55%),
+                  radial-gradient(ellipse at bottom right, rgba(124,58,237,.15), transparent 50%),
+                  #060d1f;
+    }
+    .sunum-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+    }
+
+    .sunum-top-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+      padding-right: 110px;
+    }
+    .sunum-brand-panel {
+      display: inline-block;
+    }
+
+    .sunum-brand {
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(18px, 2.2vw, 24px);
+      font-weight: 700;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Cam paneller — okunabilir metin */
+    .sunum-glass {
+      background: rgba(15, 23, 42, .88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(96, 165, 250, .25);
+      border-radius: 20px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .4), inset 0 1px 0 rgba(255, 255, 255, .08);
+      padding: 22px 26px;
+    }
+
+    .sunum-glass-sm {
+      padding: 8px 16px;
+      border-radius: 14px;
+    }
+
+    .pin-mega-inner,
+    .player-count-inner {
+      background: rgba(30, 41, 59, .55);
+      border: 1px solid rgba(96, 165, 250, .18);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+    }
+
+    .player-count-inner {
+      margin-bottom: 0;
+    }
+
+    .sunum-meta { text-align: right; font-size: 13px; color: rgba(255,255,255,.75); }
+    .sunum-meta strong { color: #93c5fd; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+    .screen { display: none; flex: 1; flex-direction: column; min-height: 0; }
+    .screen.active { display: flex; animation: fadeIn .4s ease; overflow-y: auto; }
+
+    /* LOBBY */
+    .lobby-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+      min-height: 0;
+    }
+    .pin-mega-wrap {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 100%;
+    }
+    .pin-mega-label {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(203, 213, 225, .9);
+      margin-bottom: 10px;
+    }
+    .pin-mega {
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(40px, min(6.2vw, 7.2vh), 64px);
+      letter-spacing: clamp(6px, 0.14em, 12px);
+      line-height: 1.1;
+      white-space: nowrap;
+      max-width: 100%;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b, #fcd34d);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 8px rgba(251, 191, 36, .35));
+      margin-bottom: 0;
+    }
+    .join-url {
+      font-size: 14px;
+      color: #93c5fd;
+      font-weight: 800;
+      margin: 12px 0;
+      word-break: break-all;
+      background: rgba(30, 41, 59, .55);
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(96, 165, 250, .15);
+      display: inline-block;
+      max-width: 100%;
+      line-height: 1.4;
+    }
+    #sunum-qr {
+      display: flex;
+      justify-content: center;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+    #sunum-qr>div { background: #fff; padding: 10px; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+    #sunum-qr canvas, #sunum-qr img { display: block; max-width: 100%; height: auto !important; }
+    .sunum-lobby-panel { text-align: center; }
+    .player-count-mega {
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(48px, min(5.8vw, 6.8vh), 72px);
+      color: #34d399;
+      text-align: center;
+      line-height: 1;
+      text-shadow: 0 0 24px rgba(52, 211, 153, .35);
+    }
+    .player-count-label {
+      text-align: center;
+      color: rgba(148, 163, 184, .95);
+      font-size: 17px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+    .sunum-players {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 14px;
+      max-height: min(160px, 28vh);
+      overflow-y: auto;
+    }
+
+    @media (max-height: 760px) {
+      .sunum-wrap { padding: 12px 18px 16px; }
+      .pin-mega { font-size: clamp(34px, min(5.5vw, 6.2vh), 52px); letter-spacing: 8px; }
+      .player-count-mega { font-size: clamp(40px, min(5vw, 5.8vh), 58px); }
+    }
+
+    /* QUESTION */
+    .q-stage { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+    .q-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 16px 20px;
+      border-radius: 20px;
+      background: rgba(15, 23, 42, .84);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(96, 165, 250, .2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .3);
+    }
+    .q-no {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 22px;
+      color: #a78bfa;
+    }
+    .q-timer-big {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 64px;
+      color: #fbbf24;
+      min-width: 100px;
+      text-align: center;
+    }
+    .q-timer-big.urgent { color: #ef4444; animation: pulse 1s ease infinite; }
+    @keyframes pulse { 50% { transform: scale(1.08); } }
+    .q-body {
+      flex: 1;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 24px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+    }
+    .q-img-sunum {
+      max-width: min(640px, 90%);
+      max-height: 280px;
+      border-radius: 16px;
+      object-fit: contain;
+      box-shadow: 0 12px 40px rgba(0,0,0,.4);
+    }
+    .q-text-sunum {
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(28px, 4vw, 44px);
+      text-align: center;
+      line-height: 1.25;
+      max-width: 900px;
+    }
+    .ans-meter {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 20px;
+      font-weight: 800;
+      color: #e2e8f0;
+      background: rgba(30, 41, 59, .5);
+      padding: 8px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(96, 165, 250, .12);
+    }
+    .ans-meter-bar {
+      flex: 1;
+      height: 14px;
+      background: rgba(255,255,255,.08);
+      border-radius: 10px;
+      overflow: hidden;
+      max-width: 400px;
+    }
+    .ans-meter-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      border-radius: 10px;
+      transition: width .4s ease;
+    }
+
+    /* RESULTS */
+    .result-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+    }
+    .result-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 20px;
+      padding: 24px;
+    }
+    .result-card h3 {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 20px;
+      margin-bottom: 16px;
+      color: #a78bfa;
+    }
+    .sunum-bar-fill { height: 100%; border-radius: 10px; transition: width .85s cubic-bezier(.22, 1, .36, 1); width: 0 !important; }
+    .sunum-bar-fill.animate { width: var(--bar-w, 0%) !important; }
+    .sunum-bar.is-correct .sunum-bar-label span:first-child { color: #34d399; }
+    .sunum-bar.is-correct .sunum-bar-track { box-shadow: 0 0 0 2px rgba(52, 211, 153, .35); }
+
+    .correct-big {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 48px;
+      color: #34d399;
+      text-align: center;
+      padding: 20px;
+      opacity: 0;
+      transform: scale(.6);
+    }
+    .correct-big.pop-in {
+      animation: correctPop .65s cubic-bezier(.34, 1.56, .64, 1) forwards;
+    }
+    @keyframes correctPop {
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .result-wait-banner {
+      grid-column: 1 / -1;
+      text-align: center;
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(16px, 2vw, 22px);
+      font-weight: 700;
+      color: #fbbf24;
+      background: rgba(251, 191, 36, .12);
+      border: 1px solid rgba(251, 191, 36, .28);
+      border-radius: 16px;
+      padding: 14px 20px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .4s ease, transform .4s ease;
+    }
+    .result-wait-banner.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .lb-sunum-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: 18px;
+      font-weight: 800;
+      opacity: 0;
+      transform: translateX(-12px);
+      animation: rowIn .45s ease forwards;
+    }
+
+    @keyframes rowIn {
+      to { opacity: 1; transform: none; }
+    }
+
+    .q-body.q-enter {
+      animation: qEnter .55s cubic-bezier(.22, 1, .36, 1);
+    }
+    @keyframes qEnter {
+      from { opacity: 0; transform: scale(.96) translateY(16px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .q-timer-big.time-up {
+      animation: timeUpFlash .8s ease 3;
+      color: #ef4444 !important;
+    }
+    @keyframes timeUpFlash {
+      50% { transform: scale(1.12); filter: brightness(1.2); }
+    }
+
+    #sunum-fx {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+      overflow: hidden;
+    }
+    .fx-particle {
+      position: absolute;
+      top: -10px;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      animation: fxFall 2.2s ease-in forwards;
+    }
+    @keyframes fxFall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    .final-stage.final-pop {
+      animation: qEnter .7s cubic-bezier(.22, 1, .36, 1);
+    }
+    .podium-item {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: podiumRise .6s cubic-bezier(.22, 1, .36, 1) forwards;
+    }
+    .podium-item:nth-child(1) { animation-delay: .15s; }
+    .podium-item:nth-child(2) { animation-delay: 0s; }
+    .podium-item:nth-child(3) { animation-delay: .25s; }
+    @keyframes podiumRise {
+      to { opacity: 1; transform: none; }
+    }
+
+    .sunum-bar {
+      margin-bottom: 12px;
+    }
+    .sunum-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .sunum-bar-track {
+      height: 18px;
+      background: rgba(255,255,255,.07);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    /* FINAL */
+    .final-stage { flex: 1; text-align: center; }
+    .final-stage h2 {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 42px;
+      margin-bottom: 24px;
+    }
+    .podium-wrap { min-height: 180px; margin-bottom: 24px; }
+    .lb-sunum { max-width: 600px; margin: 0 auto; text-align: left; }
+    .lb-sunum-row:first-child { background: rgba(251,191,36,.08); border-radius: 12px; }
+    .conn-dot {
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      font-size: 12px;
+      color: rgba(255,255,255,.3);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .conn-dot span { width: 8px; height: 8px; border-radius: 50%; background: #34d399; }
+    .conn-dot.off span { background: #ef4444; }
+
+    [data-theme="dark"] .bg-light { display: none !important; }
+    [data-theme="light"] .bg-light { display: block !important; }
+
+    .sunum-theme-fab {
+      position: fixed !important;
+      top: 12px !important;
+      right: 12px !important;
+      z-index: 2147483647 !important;
+      display: inline-flex !important;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, .35);
+      background: rgba(15, 23, 42, .88);
+      color: #fff !important;
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, .45);
+      backdrop-filter: blur(12px);
+      pointer-events: auto;
+      line-height: 1;
+    }
+
+    .sunum-theme-fab:hover {
+      transform: scale(1.05);
+    }
+
+    [data-theme="light"] .sunum-theme-fab {
+      background: rgba(255, 255, 255, .95);
+      color: #1e1b4b !important;
+      border-color: rgba(99, 102, 241, .35);
+      box-shadow: 0 6px 24px rgba(99, 102, 241, .2);
+    }
+
+    /* Açık tema — sunum ekranı */
+    [data-theme="light"] html,
+    [data-theme="light"] body {
+      background: transparent !important;
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .sunum-wrap {
+      background: transparent !important;
+    }
+
+    [data-theme="light"] .sunum-glass,
+    [data-theme="light"] .q-head {
+      background: rgba(255, 255, 255, .94) !important;
+      border: 2px solid rgba(255, 255, 255, .98) !important;
+      box-shadow: 0 12px 44px rgba(99, 102, 241, .16), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+    }
+
+    [data-theme="light"] .pin-mega-inner,
+    [data-theme="light"] .player-count-inner {
+      background: rgba(255, 255, 255, .82) !important;
+      border: 1px solid rgba(99, 102, 241, .18) !important;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, .08);
+    }
+
+    [data-theme="light"] .sunum-brand {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: none;
+    }
+
+    [data-theme="light"] .sunum-meta {
+      color: #475569;
+    }
+
+    [data-theme="light"] .sunum-meta strong {
+      color: #2563eb;
+    }
+
+    [data-theme="light"] .pin-mega-label,
+    [data-theme="light"] .player-count-label {
+      color: #64748b !important;
+      font-weight: 800;
+    }
+
+    [data-theme="light"] .join-url {
+      color: #1d4ed8 !important;
+      background: rgba(255, 255, 255, .9) !important;
+      border: 2px solid rgba(99, 102, 241, .22) !important;
+      font-weight: 800;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, .1);
+    }
+
+    [data-theme="light"] .lb-sunum {
+      background: rgba(255, 255, 255, .88);
+      border-radius: 16px;
+      padding: 8px 0;
+      border: 1px solid rgba(99, 102, 241, .12);
+    }
+
+    [data-theme="light"] .ans-meter {
+      color: #334155;
+      background: rgba(255, 255, 255, .7);
+      border-color: rgba(99, 102, 241, .15);
+    }
+
+    [data-theme="light"] .q-no {
+      color: #7c3aed;
+    }
+
+    [data-theme="light"] .q-body,
+    [data-theme="light"] .result-card {
+      background: rgba(255, 255, 255, .88);
+      border: 2px solid rgba(99, 102, 241, .15);
+      box-shadow: 0 12px 40px rgba(99, 102, 241, .1);
+    }
+
+    [data-theme="light"] .q-text-sunum,
+    [data-theme="light"] .final-stage h2 {
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .result-card h3 {
+      color: #7c3aed;
+    }
+
+    [data-theme="light"] .result-wait-banner {
+      color: #b45309;
+      background: rgba(251, 191, 36, .18);
+      border-color: rgba(245, 158, 11, .35);
+    }
+
+    [data-theme="light"] .ans-meter-bar,
+    [data-theme="light"] .sunum-bar-track {
+      background: rgba(99, 102, 241, .12);
+    }
+
+    [data-theme="light"] .lb-sunum-row {
+      border-bottom-color: rgba(99, 102, 241, .12);
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .lb-sunum-row:first-child {
+      background: rgba(251, 191, 36, .15);
+    }
+
+    [data-theme="light"] .conn-dot {
+      color: #64748b;
+      z-index: 3;
+      background: rgba(255, 255, 255, .88);
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(99, 102, 241, .15);
+      box-shadow: 0 4px 16px rgba(99, 102, 241, .1);
+    }
+  </style>
+</head>
+
+<body>
+  <button type="button" id="sunum-theme-btn" class="sunum-theme-fab theme-toggle-btn" onclick="ThemeManager.toggleTheme()" title="Temayı değiştir" aria-label="Temayı değiştir">
+    <span class="theme-btn-ic" aria-hidden="true">☀️</span> Tema
+  </button>
+
+  <div class="bg-light">
+    <div class="bg-light-grad"></div>
+    <div class="bg-light-dots"></div>
+  </div>
+
+  <div class="sunum-wrap">
+    <div class="sunum-top">
+      <div class="sunum-glass sunum-glass-sm sunum-brand-panel">
+        <div class="sunum-brand">📽️ Sunum Modu</div>
+      </div>
+      <div class="sunum-top-actions">
+        <div class="sunum-meta sunum-glass sunum-glass-sm">
+          <div>Öğretmen: <strong id="sm-teacher">—</strong></div>
+          <div id="sm-status">Bağlanıyor...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOBBY -->
+    <div class="screen active" id="sc-lobby">
+      <div class="lobby-grid">
+        <div class="pin-mega-wrap sunum-glass">
+          <div class="pin-mega-inner">
+            <div class="pin-mega-label">Oyun PIN</div>
+            <div class="pin-mega" id="sm-pin">------</div>
+          </div>
+          <div class="join-url" id="sm-url">—</div>
+          <div id="sunum-qr"></div>
+        </div>
+        <div class="sunum-lobby-panel sunum-glass">
+          <div class="player-count-inner">
+            <div class="player-count-mega" id="sm-count">0</div>
+            <div class="player-count-label">öğrenci bağlandı</div>
+          </div>
+          <div class="sunum-players player-grid" id="sm-players"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUESTION -->
+    <div class="screen" id="sc-question">
+      <div class="q-stage">
+        <div class="q-head">
+          <div class="q-no" id="sm-qno">Soru 1 / 5</div>
+          <div class="q-timer-big" id="sm-timer">--</div>
+          <div class="ans-meter">
+            <span id="sm-ans-text">0 / 0</span>
+            <div class="ans-meter-bar"><div class="ans-meter-fill" id="sm-ans-fill" style="width:0%"></div></div>
+          </div>
+        </div>
+        <div class="q-body">
+          <img class="q-img-sunum hidden" id="sm-img" alt="">
+          <div class="q-text-sunum" id="sm-qtext">Soru metni</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULT -->
+    <div class="screen" id="sc-result">
+      <div class="result-grid">
+        <div class="result-wait-banner" id="sm-wait-banner">⏭ Sonraki soru otomatik gelecek</div>
+        <div class="result-card">
+          <h3>📊 Cevap Dağılımı</h3>
+          <div id="sm-bars"></div>
+        </div>
+        <div class="result-card">
+          <h3>✅ Doğru Cevap</h3>
+          <div class="correct-big" id="sm-correct">—</div>
+          <h3 style="margin-top:20px;">🏆 Top 5</h3>
+          <div id="sm-top5"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINAL -->
+    <div class="screen" id="sc-final">
+      <div class="final-stage sunum-glass">
+        <h2>🎉 Test Tamamlandı!</h2>
+        <div class="podium-wrap" id="sm-podium"></div>
+        <div class="lb-sunum" id="sm-final-lb"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="conn-dot" id="sm-conn"><span></span> Sunucuya bağlanıyor</div>
+  <div id="sunum-fx" aria-hidden="true"></div>
+
+  <script>
+    const BAR_COLORS = ['#ef4444', '#2563eb', '#16a34a', '#d97706', '#7c3aed', '#0891b2'];
+    let ws, currentScreen = 'lobby', totalSure = 0, secenekler = [];
+
+    function showScreen(name) {
+      currentScreen = name;
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('sc-' + name).classList.add('active');
+    }
+
+    function setConn(on) {
+      const el = document.getElementById('sm-conn');
+      el.className = 'conn-dot' + (on ? '' : ' off');
+      el.innerHTML = `<span></span> ${on ? 'Bağlı' : 'Bağlantı koptu'}`;
+      document.getElementById('sm-status').textContent = on ? 'Canlı yayın' : 'Bağlantı yok';
+    }
+
+    function renderQR() {
+      const base = (typeof SERVER_HTTP !== 'undefined') ? SERVER_HTTP : ('http://' + location.hostname + ':9090');
+      const url = base + '/ogrenci.html';
+      document.getElementById('sm-url').textContent = url;
+      const el = document.getElementById('sunum-qr');
+      el.innerHTML = '';
+      try {
+        new QRCode(el, { text: url, width: 156, height: 156, colorDark: '#060d1f', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M });
+      } catch (e) { }
+    }
+
+    function updatePin(pin) {
+      if (!pin) return;
+      document.getElementById('sm-pin').textContent = String(pin);
+    }
+
+    function updateLobby(d) {
+      const list = (d.kullanicilar || []).filter(k => k.rol === 'ogrenci' && k.durum === 'bagli');
+      document.getElementById('sm-count').textContent = d.ogrenci_sayisi ?? list.length;
+      document.getElementById('sm-players').innerHTML = list.map(k =>
+        `<div class="player-chip">🎮 ${k.isim}</div>`).join('');
+      if (d.pin) updatePin(d.pin);
+    }
+
+    function burstConfetti(count) {
+      const wrap = document.getElementById('sunum-fx');
+      if (!wrap) return;
+      wrap.innerHTML = '';
+      const colors = ['#fbbf24', '#34d399', '#60a5fa', '#f472b6', '#a78bfa', '#fb7185'];
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('span');
+        p.className = 'fx-particle';
+        p.style.left = (8 + Math.random() * 84) + '%';
+        p.style.background = colors[i % colors.length];
+        p.style.animationDelay = (Math.random() * 0.5) + 's';
+        p.style.animationDuration = (1.6 + Math.random() * 1.2) + 's';
+        wrap.appendChild(p);
+      }
+      setTimeout(() => { wrap.innerHTML = ''; }, 2800);
+    }
+
+    function showQuestion(d) {
+      const banner = document.getElementById('sm-wait-banner');
+      if (banner) banner.classList.remove('show');
+      showScreen('question');
+      document.getElementById('sm-qno').textContent = `Soru ${d.soru_no || '?'} / ${d.toplam_soru || '?'}`;
+      document.getElementById('sm-qtext').textContent = d.soru || '—';
+      totalSure = d.sure || 0;
+      secenekler = d.secenekler || [];
+      const img = document.getElementById('sm-img');
+      if (d.gorsel_url) {
+        img.src = d.gorsel_url;
+        img.classList.remove('hidden');
+        img.onerror = () => img.classList.add('hidden');
+      } else {
+        img.classList.add('hidden');
+        img.removeAttribute('src');
+      }
+      const timerEl = document.getElementById('sm-timer');
+      timerEl.classList.remove('urgent', 'time-up');
+      if (d.sure > 0) {
+        timerEl.textContent = d.sure + 's';
+      } else {
+        timerEl.textContent = '∞';
+      }
+      const qBody = document.querySelector('#sc-question .q-body');
+      if (qBody) {
+        qBody.classList.remove('q-enter');
+        void qBody.offsetWidth;
+        qBody.classList.add('q-enter');
+      }
+      updateAnsMeter(0, d.ogrenci_sayisi || 0);
+    }
+
+    function updateAnsMeter(cevap, toplam) {
+      document.getElementById('sm-ans-text').textContent = `${cevap} / ${toplam}`;
+      const pct = toplam > 0 ? Math.round((cevap / toplam) * 100) : 0;
+      document.getElementById('sm-ans-fill').style.width = pct + '%';
+    }
+
+    function onTimer(d) {
+      if (currentScreen !== 'question') return;
+      const t = document.getElementById('sm-timer');
+      t.textContent = d.kalan_sure + 's';
+      t.classList.toggle('urgent', d.kalan_sure <= 5);
+    }
+
+    function onTimeUp() {
+      if (currentScreen !== 'question') return;
+      const t = document.getElementById('sm-timer');
+      t.textContent = '0s';
+      t.classList.add('time-up');
+    }
+
+    function showResult(d) {
+      showScreen('result');
+      const dogru = (d.dogru_cevap || '').trim().toUpperCase();
+      const correctEl = document.getElementById('sm-correct');
+      correctEl.textContent = d.dogru_cevap || '—';
+      correctEl.classList.remove('pop-in');
+      void correctEl.offsetWidth;
+      correctEl.classList.add('pop-in');
+
+      const banner = document.getElementById('sm-wait-banner');
+      if (banner) {
+        const kalan = d.kalan_soru ?? 0;
+        banner.textContent = kalan > 0
+          ? '⏭ Sonraki soru birkaç saniye içinde otomatik gelecek'
+          : '🏁 Son soru tamamlandı — test sonu yakında';
+        banner.classList.add('show');
+      }
+
+      burstConfetti(28);
+
+      const bars = document.getElementById('sm-bars');
+      const ist = d.istatistik;
+      if (ist && ist.dagilim && secenekler.length) {
+        bars.innerHTML = secenekler.map((m, i) => {
+          const h = String.fromCharCode(65 + i);
+          const data = ist.dagilim[h] || { yuzde: 0, adet: 0 };
+          const isCorrect = dogru && h === dogru;
+          return `<div class="sunum-bar${isCorrect ? ' is-correct' : ''}"><div class="sunum-bar-label"><span>${h}) ${m}</span><span>${data.yuzde}% (${data.adet})</span></div><div class="sunum-bar-track"><div class="sunum-bar-fill" data-w="${data.yuzde}" style="--bar-w:${data.yuzde}%;background:${BAR_COLORS[i % BAR_COLORS.length]}"></div></div></div>`;
+        }).join('');
+        requestAnimationFrame(() => {
+          bars.querySelectorAll('.sunum-bar-fill').forEach((el, idx) => {
+            setTimeout(() => el.classList.add('animate'), 120 + idx * 100);
+          });
+        });
+      } else {
+        bars.innerHTML = '<p style="color:rgba(255,255,255,.3);">İstatistik yok</p>';
+      }
+
+      const top = d.siralama || [];
+      document.getElementById('sm-top5').innerHTML = top.map((s, i) =>
+        `<div class="lb-sunum-row" style="animation-delay:${0.35 + i * 0.08}s"><span>${['🥇','🥈','🥉','4.','5.'][i] || s.sira}</span><span style="flex:1">${s.isim}</span><span style="color:#60a5fa">${s.puan}</span>${s.streak >= 2 ? `<span class="streak-pill">🔥${s.streak}</span>` : ''}</div>`
+      ).join('');
+    }
+
+    function showFinal(d) {
+      showScreen('final');
+      const stage = document.querySelector('#sc-final .final-stage');
+      if (stage) {
+        stage.classList.remove('final-pop');
+        void stage.offsetWidth;
+        stage.classList.add('final-pop');
+      }
+      burstConfetti(40);
+      const list = d.siralama || [];
+      const medals = ['🥇', '🥈', '🥉'];
+      const top3 = list.slice(0, 3);
+      if (top3.length >= 2) {
+        const order = top3.length === 3 ? [top3[1], top3[0], top3[2]] : top3;
+        document.getElementById('sm-podium').innerHTML = order.map(s => {
+          const cls = ['silver', 'gold', 'bronze'][s.sira - 1] || 'bronze';
+          return `<div class="podium-item"><div class="podium-bar ${cls}">${medals[s.sira - 1] || s.sira}<br>${s.puan}</div><div class="podium-name">${s.isim}</div></div>`;
+        }).join('');
+      }
+      document.getElementById('sm-final-lb').innerHTML = list.map((s, i) =>
+        `<div class="lb-sunum-row" style="animation-delay:${0.2 + i * 0.05}s"><span>${medals[i] || s.sira}</span><span style="flex:1">${s.isim}</span><span style="color:#60a5fa">${s.puan.toLocaleString()}</span></div>`
+      ).join('');
+    }
+
+    function handleMsg(d) {
+      switch (d.tip) {
+        case 'sunum_durum':
+          if (d.pin) updatePin(d.pin);
+          if (d.ogretmen) document.getElementById('sm-teacher').textContent = d.ogretmen;
+          updateLobby({ ogrenci_sayisi: d.ogrenci_sayisi, kullanicilar: d.kullanicilar, pin: d.pin });
+          if (d.aktif_soru && !d.test_bitti) {
+            if (d.aktif_soru.kilitli) showResult({ dogru_cevap: d.aktif_soru.dogru_cevap, istatistik: d.istatistik, siralama: d.siralama });
+            else showQuestion(d.aktif_soru);
+          } else if (d.test_bitti) showFinal({ siralama: d.siralama });
+          else showScreen('lobby');
+          break;
+        case 'pin_guncelle':
+          updatePin(d.pin);
+          break;
+        case 'lobby_guncelle':
+        case 'kullanici_listesi':
+          updateLobby(d);
+          if (currentScreen === 'lobby' || !d.tip) showScreen('lobby');
+          break;
+        case 'giris':
+          if (d.rol === 'ogrenci') {
+            ws.send(JSON.stringify({ tip: 'ping' }));
+          }
+          break;
+        case 'test_hazirlaniyor':
+        case 'test_basladi':
+          showScreen('lobby');
+          break;
+        case 'soru_onay':
+          showQuestion(d);
+          break;
+        case 'soru':
+          showQuestion(d);
+          break;
+        case 'zamanlayici':
+          onTimer(d);
+          break;
+        case 'zaman_bitti':
+          onTimeUp();
+          break;
+        case 'sunum_cevap':
+        case 'canli_cevap':
+          updateAnsMeter(d.cevaplayan, d.toplam_ogrenci);
+          break;
+        case 'soru_kilitlendi':
+        case 'sunum_sonuc':
+          showResult(d);
+          break;
+        case 'test_bitti':
+          showFinal(d);
+          break;
+        case 'siralama_guncelleme':
+          if (currentScreen === 'result') {
+            document.getElementById('sm-top5').innerHTML = (d.siralama || []).slice(0, 5).map((s, i) =>
+              `<div class="lb-sunum-row"><span>${['🥇','🥈','🥉','4.','5.'][i]}</span><span style="flex:1">${s.isim}</span><span style="color:#60a5fa">${s.puan}</span></div>`
+            ).join('');
+          }
+          break;
+      }
+    }
+
+    function initWS() {
+      const url = (typeof SERVER_WS !== 'undefined') ? SERVER_WS : ('ws://' + location.hostname + ':8765');
+      ws = new WebSocket(url);
+      ws.onopen = () => {
+        setConn(true);
+        ws.send(JSON.stringify({ rol: 'sunum', isim: 'Sunum Ekranı' }));
+      };
+      ws.onclose = () => { setConn(false); setTimeout(initWS, 3000); };
+      ws.onerror = () => setConn(false);
+      ws.onmessage = e => {
+        const d = JSON.parse(e.data);
+        if (d.durum === 'basarili') {
+          if (d.pin) updatePin(d.pin);
+          return;
+        }
+        handleMsg(d);
+      };
+    }
+
+    renderQR();
+    initWS();
+  </script>
+</body>
+
+</html>
