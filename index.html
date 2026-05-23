@@ -9,7 +9,17 @@
     href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap"
     rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="theme.js"></script>
+  <link rel="stylesheet" href="styles.css?v=9">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('akillisınıf_tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
+  <script src="theme.js?v=7" defer></script>
+  <script src="sounds.js"></script>
   <script src="config.js" onerror="void 0"></script>
   <style>
     /* ═══════════════════════════════════════════════════
@@ -155,32 +165,7 @@
       z-index: 0;
     }
 
-    .bg-light-grad {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, #e0e7ff 0%, #fce7f3 40%, #dbeafe 70%, #ede9fe 100%);
-      background-size: 400% 400%;
-      animation: gradShift 12s ease infinite;
-    }
-
-    @keyframes gradShift {
-
-      0%,
-      100% {
-        background-position: 0% 50%
-      }
-
-      50% {
-        background-position: 100% 50%
-      }
-    }
-
-    .bg-light-dots {
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(rgba(99, 102, 241, .1) 1px, transparent 1px);
-      background-size: 28px 28px;
-    }
+    /* bg-light-grad & dots → styles.css */
 
     /* Stars (dark only) */
     .star {
@@ -231,7 +216,7 @@
     /* ── TEMA TOGGLE BUTONU ── */
     .theme-toggle-btn {
       position: fixed;
-      top: 16px;
+      top: 62px;
       right: 16px;
       z-index: 100;
       width: 40px;
@@ -675,17 +660,10 @@
       z-index: 0;
     }
 
-    .bg-light-dots {
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(rgba(99, 102, 241, .1) 1px, transparent 1px);
-      background-size: 28px 28px;
-    }
-
     /* TEMA BUTONU */
     .theme-toggle-btn {
       position: fixed;
-      top: 14px;
+      top: 62px;
       right: 14px;
       z-index: 999;
       width: 40px;
@@ -723,7 +701,7 @@
 
     /* --- index.html & genel --- */
     [data-theme="light"] body {
-      background: #f0f4ff;
+      background: transparent !important;
       color: #1e1b4b;
     }
 
@@ -731,9 +709,7 @@
       color: #1e1b4b;
     }
 
-    [data-theme="light"] .subtitle {
-      color: #6b7280;
-    }
+    /* subtitle → styles.css okunabilirlik paneli */
 
     [data-theme="light"] .live-pill {
       background: rgba(16, 185, 129, .1);
@@ -781,20 +757,7 @@
       border-color: #e0e7ff;
     }
 
-    /* --- tab bar --- */
-    [data-theme="light"] .tab-bar {
-      background: #f3f4f6;
-    }
-
-    [data-theme="light"] .tab {
-      color: #9ca3af;
-    }
-
-    [data-theme="light"] .tab.active {
-      background: rgba(37, 99, 235, .12);
-      color: #2563eb;
-      box-shadow: inset 0 0 0 1px rgba(37, 99, 235, .2);
-    }
+    /* --- tab bar → styles.css --- */
 
     /* --- card --- */
     [data-theme="light"] .card {
@@ -1291,10 +1254,19 @@
       <div class="live-dot"></div>CANLI PLATFORM
     </div>
     <h1><span class="gradient-text">Akıllı Sınıf</span><br>Oylama Sistemi</h1>
-    <p class="subtitle">Kablosuz Ağlar Dersi — Gerçek Zamanlı Eğitim Platformu<br>Giriş yapmak için rolünüzü seçin</p>
+    <p class="subtitle">Kablosuz Ağlar Dersi — Gerçek Zamanlı Quiz Platformu<br>6 haneli PIN ile katıl · Kahoot tarzı canlı test</p>
+
+    <div class="feature-row">
+      <span class="feature-pill">🔢 6 Haneli PIN</span>
+      <span class="feature-pill">⚡ Canlı Sorular</span>
+      <span class="feature-pill">🔥 Combo Puan</span>
+      <span class="feature-pill">📽️ Sunum Modu</span>
+      <span class="feature-pill">🖼 Soru Görseli</span>
+      <span class="feature-pill">📱 QR ile Katılım</span>
+    </div>
 
     <div class="cards">
-      <a href="./ogretmen.html" class="role-card card-teacher">
+      <a href="./ogretmen.html" class="role-card card-teacher" onclick="SoundFX&&SoundFX.click()">
         <div class="card-shine"></div>
         <div class="deco-circle dc1"></div>
         <div class="deco-circle dc2"></div>
@@ -1305,7 +1277,7 @@
           <span class="card-cta">Giriş Yap →</span>
         </div>
       </a>
-      <a href="./ogrenci.html" class="role-card card-student">
+      <a href="./ogrenci.html" class="role-card card-student" onclick="SoundFX&&SoundFX.click()">
         <div class="card-shine"></div>
         <div class="deco-circle dc1"></div>
         <div class="deco-circle dc2"></div>
@@ -1318,10 +1290,15 @@
       </a>
     </div>
 
-    <div class="qr-section">
+    <div class="qr-section pulse-glow">
       <p class="qr-label">📱 Öğrenciler mobil cihazdan QR okutarak katılabilir:</p>
       <div id="qrcode"></div>
       <p id="qr-url"></p>
+      <div class="pin-box">
+        <div class="pin-label">Öğretmen Girişinden PIN Alın</div>
+        <div class="pin-code" id="pin-code">6 · H · A · N · E</div>
+        <p style="font-size:12px;color:var(--text2);margin-top:8px;">Öğretmen panele girince PIN oluşur</p>
+      </div>
     </div>
   </div>
 
@@ -1346,6 +1323,7 @@
       const base = (typeof SERVER_HTTP !== 'undefined' ? SERVER_HTTP : window.location.href.replace('index.html', '').replace(/\/$/, ''));
       const studentUrl = base + '/ogrenci.html';
       document.getElementById('qr-url').textContent = studentUrl;
+      document.getElementById('pin-code').textContent = 'Öğretmenden alın';
       const qrEl = document.getElementById('qrcode');
       qrEl.innerHTML = '';
       const theme = document.documentElement.getAttribute('data-theme');
