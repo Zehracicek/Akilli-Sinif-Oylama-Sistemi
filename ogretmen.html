@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr" data-theme="dark">
+<html lang="tr" data-theme="dark" class="teacher-panel">
 
 <head>
   <meta charset="UTF-8">
@@ -9,8 +9,18 @@
     href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap"
     rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link rel="stylesheet" href="styles.css?v=11">
   <script src="config.js"></script>
-  <script src="theme.js"></script>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('akillisınıf_tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
+  <script src="theme.js?v=7" defer></script>
+  <script src="sounds.js"></script>
   <style>
     :root {
       --bg: #060d1f;
@@ -90,7 +100,7 @@
     }
 
     /* ── LOGIN ── */
-    #s-login {
+    [data-theme="dark"] #s-login {
       position: fixed;
       inset: 0;
       z-index: 100;
@@ -99,6 +109,16 @@
       justify-content: center;
       padding: 20px;
       background: var(--bg);
+    }
+
+    #s-login {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
 
     .lc {
@@ -339,51 +359,419 @@
       border-color: rgba(255, 255, 255, .3);
     }
 
-    /* ── TABS ── */
-    .tab-bar {
+    /* ── TOPBAR SAĞ ── */
+    .tb-right {
       display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .tb-util-col {
+      display: flex;
+      flex-direction: column;
       gap: 6px;
-      padding: 20px 24px 0;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .tb-util-col .sound-toggle-btn,
+    .theme-toggle-btn.tb-inline {
+      position: static;
+      width: 36px;
+      height: 36px;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    /* ── TABS ── */
+    .tab-nav-wrap {
       max-width: 1300px;
       margin: 0 auto;
+      padding: 16px 24px 0;
       position: relative;
-      /* İçeriğin arkasında kalmasın diye position ekledik */
       z-index: 10;
-      /* .content alanındaki 5 değerini geçmesi için 10 yaptık */
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      padding: 6px;
+      background: rgba(13, 26, 56, .72);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .18);
     }
 
     .tab {
-      padding: 10px 20px;
-      border-radius: 12px;
+      flex: 1;
+      justify-content: center;
+      padding: 12px 14px;
+      border-radius: 11px;
       font-size: 13px;
       font-weight: 800;
       cursor: pointer;
-      color: rgba(255, 255, 255, .35);
+      color: rgba(255, 255, 255, .42);
       background: transparent;
       border: none;
       font-family: 'Nunito', sans-serif;
-      transition: .2s;
+      transition: .22s;
       display: flex;
       align-items: center;
       gap: 7px;
+      white-space: nowrap;
+    }
+
+    .tab .tab-ic {
+      font-size: 15px;
+      line-height: 1;
     }
 
     .tab.active {
-      background: rgba(37, 99, 235, .2);
-      color: #60a5fa;
-      box-shadow: inset 0 0 0 1px rgba(96, 165, 250, .2);
+      background: linear-gradient(135deg, rgba(37, 99, 235, .42), rgba(124, 58, 237, .28));
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(37, 99, 235, .28), inset 0 0 0 1px rgba(147, 197, 253, .18);
     }
 
     .tab:hover:not(.active) {
-      color: rgba(255, 255, 255, .6);
+      color: rgba(255, 255, 255, .78);
+      background: rgba(255, 255, 255, .04);
     }
 
     .content {
-      padding: 20px 24px;
+      padding: 20px 24px 32px;
       max-width: 1300px;
       margin: 0 auto;
       position: relative;
       z-index: 5;
+    }
+
+    .tab-shell {
+      animation: tabFadeIn .35s ease both;
+    }
+
+    @keyframes tabFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .tab-hero {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 22px;
+      margin-bottom: 18px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, .14), rgba(124, 58, 237, .08));
+      border: 1px solid rgba(96, 165, 250, .16);
+      border-radius: 20px;
+      backdrop-filter: blur(8px);
+    }
+
+    .tab-hero-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .08);
+      flex-shrink: 0;
+    }
+
+    .tab-hero-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tab-hero-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: #f8fafc;
+      margin-bottom: 4px;
+    }
+
+    .tab-hero-desc {
+      font-size: 13px;
+      color: rgba(255, 255, 255, .45);
+      line-height: 1.45;
+    }
+
+    .tab-hero-stat {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .tab-hero-stat .hs-num {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #60a5fa;
+      line-height: 1;
+    }
+
+    .tab-hero-stat .hs-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: rgba(255, 255, 255, .35);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: rgba(255, 255, 255, .28);
+    }
+
+    .empty-state .es-icon {
+      font-size: 42px;
+      margin-bottom: 12px;
+      opacity: .55;
+    }
+
+    .empty-state .es-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: rgba(255, 255, 255, .45);
+      margin-bottom: 6px;
+    }
+
+    .empty-state .es-sub {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .card-pro {
+      background: rgba(13, 26, 56, .82);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .12);
+    }
+
+    .card-pro-hd {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(255, 255, 255, .02);
+    }
+
+    .card-pro-hd .card-t {
+      margin: 0;
+    }
+
+    .card-pro-bd {
+      padding: 20px;
+    }
+
+    .form-section {
+      padding-bottom: 14px;
+      margin-bottom: 14px;
+      border-bottom: 1px dashed rgba(255, 255, 255, .06);
+    }
+
+    .form-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .form-section-label {
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(96, 165, 250, .55);
+      margin-bottom: 12px;
+    }
+
+    .live-status-strip {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .live-pill-stat {
+      flex: 1;
+      min-width: 120px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid rgba(255, 255, 255, .07);
+      text-align: center;
+    }
+
+    .live-pill-stat .lps-num {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #60a5fa;
+    }
+
+    .live-pill-stat .lps-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, .35);
+      margin-top: 2px;
+    }
+
+    .class-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .class-search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .class-search-wrap .cs-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      pointer-events: none;
+      opacity: .5;
+    }
+
+    .class-search-wrap input {
+      width: 100%;
+      padding: 11px 14px 11px 36px;
+      background: rgba(255, 255, 255, .05);
+      border: 1.5px solid rgba(255, 255, 255, .09);
+      border-radius: 12px;
+      color: #e2e8f0;
+      font-size: 13px;
+      font-family: 'Nunito', sans-serif;
+      outline: none;
+      transition: .2s;
+    }
+
+    .class-search-wrap input:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+    }
+
+    .class-count-badge {
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
+      background: rgba(16, 185, 129, .12);
+      border: 1px solid rgba(16, 185, 129, .25);
+      color: #34d399;
+      white-space: nowrap;
+    }
+
+    .class-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .class-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid rgba(255, 255, 255, .07);
+      transition: .2s;
+    }
+
+    .class-card:hover {
+      border-color: rgba(96, 165, 250, .25);
+      background: rgba(37, 99, 235, .08);
+    }
+
+    .class-av {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      background: rgba(37, 99, 235, .15);
+      flex-shrink: 0;
+    }
+
+    .class-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .class-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: #e2e8f0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .class-ip {
+      font-size: 11px;
+      color: rgba(255, 255, 255, .25);
+      margin-top: 2px;
+    }
+
+    .arsiv-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ar-item {
+      transition: .2s;
+    }
+
+    .ar-item:hover {
+      border-color: rgba(96, 165, 250, .22);
+      background: rgba(37, 99, 235, .06);
+    }
+
+    .ar-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .ar-time {
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, .35);
+      white-space: nowrap;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, .05);
     }
 
     .grid2 {
@@ -769,8 +1157,14 @@
     }
 
     /* ── QR LOBBY ── */
-    #s-qr {
+    [data-theme="dark"] #s-qr {
       background: linear-gradient(135deg, #060d1f, #0d1a38);
+    }
+
+    #s-qr {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -778,6 +1172,7 @@
       justify-content: center;
       padding: 20px;
       text-align: center;
+      overflow-y: auto;
     }
 
     .qr-card {
@@ -841,8 +1236,36 @@
       flex-wrap: wrap;
       gap: 8px;
       justify-content: center;
-      min-height: 40px;
-      margin-bottom: 24px;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .qr-loading {
+      min-height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, .45);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    [data-theme="light"] .qr-loading {
+      color: #64748b;
+    }
+
+    @media (max-width: 520px) {
+      #s-qr { padding: 12px; align-items: flex-start; padding-top: max(16px, env(safe-area-inset-top)); }
+      .qr-card { padding: 22px 16px; border-radius: 22px; max-width: 100%; }
+      .qr-title { font-size: 22px; }
+      .pin-mega-display, #lobby-pin {
+        font-size: clamp(26px, 7.5vw, 40px) !important;
+        letter-spacing: clamp(4px, 1.8vw, 10px) !important;
+        word-break: keep-all;
+      }
+      .qr-url { font-size: 11px; line-height: 1.45; padding: 0 4px; }
+      .student-count { font-size: 40px; }
+      .qr-box>div { padding: 8px !important; }
     }
 
     .s-chip {
@@ -1305,9 +1728,29 @@
         grid-template-columns: 1fr;
       }
 
-      .tab-bar,
+      .tab-nav-wrap,
       .content {
         padding: 12px 14px 0;
+      }
+
+      .tab {
+        flex: 1 1 calc(50% - 4px);
+        font-size: 12px;
+        padding: 10px 8px;
+      }
+
+      .tab-hero {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+      }
+
+      .tab-hero-stat {
+        text-align: left;
+      }
+
+      .tb-right {
+        gap: 8px;
       }
 
       .content {
@@ -1349,20 +1792,7 @@
       z-index: 0;
     }
 
-    .bg-light-grad {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, #e0e7ff 0%, #fce7f3 40%, #dbeafe 70%, #ede9fe 100%);
-      background-size: 400% 400%;
-      animation: gradShift 12s ease infinite;
-    }
-
-    .bg-light-dots {
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(rgba(99, 102, 241, .1) 1px, transparent 1px);
-      background-size: 28px 28px;
-    }
+    /* bg-light-grad & dots → styles.css */
 
     @keyframes gradShift {
 
@@ -1376,11 +1806,11 @@
       }
     }
 
-    /* TEMA BUTONU */
+    /* TEMA BUTONU (login/QR ekranında sabit; panelde topbar içinde) */
     .theme-toggle-btn {
       position: fixed;
-      top: 14px;
-      right: 170px;
+      top: 62px;
+      right: 14px;
       z-index: 999;
       width: 40px;
       height: 40px;
@@ -1393,6 +1823,11 @@
       justify-content: center;
       transition: transform .2s, background .3s;
       backdrop-filter: blur(10px);
+    }
+
+    .teacher-panel #main-panel ~ .theme-toggle-btn,
+    .teacher-panel .theme-toggle-btn.tb-inline {
+      position: static;
     }
 
     [data-theme="dark"] .theme-toggle-btn {
@@ -1417,7 +1852,7 @@
 
     /* --- index.html & genel --- */
     [data-theme="light"] body {
-      background: #f0f4ff;
+      background: transparent !important;
       color: #1e1b4b;
     }
 
@@ -1475,35 +1910,65 @@
       border-color: #e0e7ff;
     }
 
-    /* --- tab bar --- */
-    /* --- tab bar --- */
-    [data-theme="light"] .tab-bar {
-      background: rgba(255, 255, 255, 0.95) !important;
-      /* Arkadaki gradyanı tamamen kessin diye opaklığı artırdık */
-      border-bottom: 2px solid #cbd5e1 !important;
-      padding-bottom: 8px;
-      border-radius: 12px 12px 0 0;
+    /* --- tab bar & hero → styles.css --- */
+
+    [data-theme="light"] .tab-hero-desc,
+    [data-theme="light"] .tab-hero-stat .hs-label,
+    [data-theme="light"] .empty-state,
+    [data-theme="light"] .empty-state .es-sub {
+      color: #6b7280;
     }
 
-    [data-theme="light"] .tab {
-      color: #4b5563 !important;
-      /* Aktif olmayan butonların gri rengi netleşti */
-      background: rgba(0, 0, 0, 0.04) !important;
-      /* Buton alanları belirginleşti */
-      margin-right: 4px;
+    [data-theme="light"] .empty-state .es-title {
+      color: #374151;
     }
 
-    [data-theme="light"] .tab.active {
-      background: #2563eb !important;
-      /* Seçili buton arka planı tamamen belirgin mavi */
-      color: #ffffff !important;
-      /* Yazı rengi saf beyaz */
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+    [data-theme="light"] .card-pro {
+      background: #fff;
+      border-color: rgba(99, 102, 241, .12);
+      box-shadow: 0 8px 32px rgba(99, 102, 241, .08);
     }
 
-    [data-theme="light"] .tab:hover:not(.active) {
-      color: #1e1b4b !important;
-      background: rgba(37, 99, 235, 0.08) !important;
+    [data-theme="light"] .card-pro-hd {
+      background: rgba(99, 102, 241, .04);
+      border-bottom-color: rgba(99, 102, 241, .1);
+    }
+
+    [data-theme="light"] .class-card {
+      background: rgba(99, 102, 241, .04);
+      border-color: rgba(99, 102, 241, .12);
+    }
+
+    [data-theme="light"] .class-name {
+      color: #1e1b4b;
+    }
+
+    /* live-pill-stat → styles.css */
+
+    [data-theme="light"] .class-search-wrap input {
+      background: #fff;
+      border-color: rgba(99, 102, 241, .18);
+      color: #1e1b4b;
+    }
+
+    /* tab stilleri → styles.css */
+
+    [data-theme="light"] .btn-ghost {
+      background: rgba(99, 102, 241, .06);
+      border-color: rgba(99, 102, 241, .15);
+      color: #475569;
+    }
+
+    [data-theme="light"] .btn-ghost:hover {
+      background: rgba(99, 102, 241, .12);
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] #s-qr {
+      background: transparent !important;
+      position: fixed;
+      inset: 0;
+      z-index: 90;
     }
 
     /* --- card --- */
@@ -1569,10 +2034,6 @@
     }
 
     /* --- QR lobby --- */
-    [data-theme="light"] #s-qr {
-      background: linear-gradient(135deg, #e0e7ff, #fce7f3);
-    }
-
     [data-theme="light"] .qr-card {
       background: rgba(255, 255, 255, .96);
       border: 2px solid rgba(99, 102, 241, .2);
@@ -1750,6 +2211,14 @@
       background: rgba(255, 255, 255, .96) !important;
       border: 2px solid rgba(99, 102, 241, .2) !important;
       box-shadow: 0 8px 0 rgba(99, 102, 241, .12), 0 24px 60px rgba(99, 102, 241, .15) !important;
+    }
+
+    [data-theme="light"] #s-login {
+      background: transparent !important;
+    }
+
+    [data-theme="light"] #main-panel {
+      background: transparent !important;
     }
 
     [data-theme="light"] .lc h2 {
@@ -1935,7 +2404,7 @@
 
     /* --- final ekranı --- */
     [data-theme="light"] #s-final {
-      background: linear-gradient(135deg, #f0f4ff, #fce7f3) !important;
+      background: transparent !important;
     }
 
     [data-theme="light"] .final-title {
@@ -1984,8 +2453,8 @@
     <div class="bg-light-dots"></div>
   </div>
 
-  <!-- TEMA TOGGLE BUTONU -->
-  <button class="theme-toggle-btn" onclick="ThemeManager.toggleTheme()" title="Temayı değiştir"
+  <!-- TEMA (giriş ekranı — panel açılınca topbar'a taşınır) -->
+  <button id="login-theme-btn" class="theme-toggle-btn" onclick="ThemeManager.toggleTheme()" title="Temayı değiştir"
     aria-label="Tema">☀️</button>
   <div class="bg">
     <div class="orb o1"></div>
@@ -2012,16 +2481,19 @@
     <div class="qr-card">
       <div style="font-size:48px;margin-bottom:12px;">📡</div>
       <div class="qr-title">Öğrenciler Bağlanıyor</div>
-      <div class="qr-sub">Öğrenciler QR kodu okutarak katılabilir</div>
+      <div class="qr-sub">Öğrenciler PIN + QR ile katılabilir</div>
+      <div class="pin-mega-display" id="lobby-pin">------</div>
+      <p style="color:rgba(255,255,255,.35);font-size:13px;margin-bottom:16px;">kahoot.com.tr gibi 6 haneli PIN</p>
       <div class="qr-box">
         <div id="qr-div"></div>
       </div>
       <div class="qr-url" id="qr-url-text">—</div>
       <p class="student-count" id="lobby-count">0</p>
       <p class="student-label">öğrenci bağlandı</p>
-      <div class="student-list" id="lobby-list"></div>
+      <div class="student-list player-grid" id="lobby-list"></div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
         <button class="btn btn-green" id="btn-baslat-lobby" onclick="testBaslat()" disabled>🚀 Testi Başlat</button>
+        <a href="sunum.html" target="_blank" class="sunum-link-btn" title="Projeksiyon ekranını aç" onclick="this.href=(window.ThemeManager&&ThemeManager.sunumHref)?ThemeManager.sunumHref():('sunum.html?tema='+(localStorage.getItem('akillisınıf_tema')||'dark'))">📽️ Sunum Modu</a>
         <button class="btn btn-ghost" onclick="showPanel()">← Düzenle</button>
       </div>
     </div>
@@ -2072,29 +2544,56 @@
           <div class="tb-sub">Eğitmen: <span id="teacher-label"></span></div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px;">
+      <div class="tb-right">
+        <div class="pin-box" style="margin:0;padding:8px 14px;" id="tb-pin-wrap" title="Oyun PIN">
+          <div class="pin-label" style="margin:0;font-size:9px;">PIN</div>
+          <div class="pin-code" id="tb-pin" style="font-size:18px;letter-spacing:4px;">------</div>
+        </div>
+        <a href="sunum.html" target="_blank" class="sunum-link-btn" title="Projeksiyon ekranını aç" onclick="this.href=(window.ThemeManager&&ThemeManager.sunumHref)?ThemeManager.sunumHref():('sunum.html?tema='+(localStorage.getItem('akillisınıf_tema')||'dark'))">📽️ Sunum Modu</a>
         <div class="cb cb-on" id="conn-badge">
           <div class="dot"></div>Bağlanıyor...
+        </div>
+        <div class="tb-util-col" id="tb-util-col" style="display:none;">
+          <div id="sound-toggle-mount"></div>
+          <button type="button" class="theme-toggle-btn tb-inline" onclick="ThemeManager.toggleTheme()" title="Temayı değiştir" aria-label="Tema">☀️</button>
         </div>
         <button class="btn-exit" onclick="window.location.href='index.html'">Çıkış</button>
       </div>
     </div>
 
+    <div class="tab-nav-wrap">
     <div class="tab-bar">
-      <button class="tab active" id="tab-btn-builder" onclick="showTab('builder',this)">✏️ Test Hazırla</button>
-      <button class="tab" id="tab-btn-live" onclick="showTab('live',this)">📊 Canlı Test</button>
-      <button class="tab" id="tab-btn-arsiv" onclick="showTab('arsiv',this)">📁 Arşiv</button>
-      <button class="tab" id="tab-btn-ogrenciler" onclick="showTab('ogrenciler',this)">👥 Sınıf</button>
+      <button class="tab active" id="tab-btn-builder" onclick="showTab('builder',this)"><span class="tab-ic">✏️</span>Test Hazırla</button>
+      <button class="tab" id="tab-btn-live" onclick="showTab('live',this)"><span class="tab-ic">📊</span>Canlı Test</button>
+      <button class="tab" id="tab-btn-arsiv" onclick="showTab('arsiv',this)"><span class="tab-ic">📁</span>Arşiv</button>
+      <button class="tab" id="tab-btn-ogrenciler" onclick="showTab('ogrenciler',this)"><span class="tab-ic">👥</span>Sınıf</button>
+    </div>
     </div>
 
     <div class="content">
 
       <!-- ── BUILDER ── -->
-      <div id="tab-builder">
+      <div id="tab-builder" class="tab-shell">
+        <div class="tab-hero">
+          <div class="tab-hero-icon">✏️</div>
+          <div class="tab-hero-body">
+            <div class="tab-hero-title">Test Hazırla</div>
+            <div class="tab-hero-desc">Sorularınızı oluşturun, görsel ekleyin ve QR ile öğrencileri bekleyin.</div>
+          </div>
+          <div class="tab-hero-stat">
+            <div class="hs-num" id="hero-q-count">0</div>
+            <div class="hs-label">Soru</div>
+          </div>
+        </div>
         <div class="grid2">
           <!-- Sol: Yeni Soru Ekle -->
-          <div class="card">
-            <div class="card-t"><span class="card-t-icon">➕</span>Soru Ekle</div>
+          <div class="card-pro">
+            <div class="card-pro-hd">
+              <div class="card-t"><span class="card-t-icon">➕</span>Soru Ekle</div>
+            </div>
+            <div class="card-pro-bd">
+            <div class="form-section">
+              <div class="form-section-label">Soru bilgisi</div>
             <div class="field">
               <label>Soru Tipi</label>
               <select class="fi" id="soru-tipi" onchange="tipDegisti()">
@@ -2106,6 +2605,13 @@
               <label>Soru Metni</label>
               <textarea class="fi" id="soru-text" placeholder="Soruyu buraya yazın..." rows="3"></textarea>
             </div>
+            <div class="field">
+              <label>🖼 Görsel URL <span style="color:rgba(255,255,255,.3);font-weight:400;">(opsiyonel)</span></label>
+              <input type="url" class="fi" id="soru-gorsel" placeholder="https://...jpg/png" oninput="previewGorsel('soru-gorsel','soru-gorsel-prev')">
+              <img class="gorsel-preview hidden" id="soru-gorsel-prev" alt="">
+            </div>
+            </div>
+            <div class="form-section" id="secenekler-alani-wrap">
             <div id="secenekler-alani" class="field">
               <label>Cevap Şıkları</label>
               <div id="secenekler-list"></div>
@@ -2118,6 +2624,9 @@
                 <option value="">— Seçiniz —</option>
               </select>
             </div>
+            </div>
+            <div class="form-section">
+              <div class="form-section-label">Ayarlar</div>
             <div class="field" style="display:flex;align-items:center;gap:12px;">
               <label style="margin:0;white-space:nowrap;">⏱ Süre (sn):</label>
               <input type="text" class="fi" id="sure-input" value="20" style="width:90px;">
@@ -2126,24 +2635,43 @@
               <label class="sw"><input type="checkbox" id="gizli-toggle"><span class="sl"></span></label>
               <span style="font-size:13px;color:rgba(255,255,255,.45);">🕵️ Gizli Oylama</span>
             </div>
+            </div>
             <button class="btn btn-blue btn-full" style="margin-top:8px;" onclick="soruListeyeEkle()">📌 Listeye
               Ekle</button>
             <div id="ekle-sonuc"
               style="margin-top:8px;font-size:13px;min-height:18px;text-align:center;font-weight:700;"></div>
+            </div>
           </div>
 
           <!-- Sağ: Soru Listesi -->
-          <div class="card" style="display:flex;flex-direction:column;">
-            <div class="card-t" style="justify-content:space-between;">
-              <span style="display:flex;align-items:center;gap:7px;"><span class="card-t-icon">📋</span>Soru Listesi
+          <div class="card-pro" style="display:flex;flex-direction:column;">
+            <div class="card-pro-hd">
+              <div class="card-t" style="margin:0;"><span class="card-t-icon">📋</span>Soru Listesi
                 <span id="q-count-badge"
-                  style="background:rgba(37,99,235,.2);border:1px solid rgba(96,165,250,.2);color:#60a5fa;padding:2px 9px;border-radius:20px;font-size:11px;">0
-                  soru</span></span>
-              <button class="btn btn-sm btn-ghost" onclick="listeyiTemizle()">🗑 Temizle</button>
+                  style="background:rgba(37,99,235,.2);border:1px solid rgba(96,165,250,.2);color:#60a5fa;padding:2px 9px;border-radius:20px;font-size:11px;margin-left:8px;">0
+                  soru</span></div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <button type="button" class="btn btn-sm btn-ghost" onclick="soruSetiDisaAktar()" title="JSON dosyası indir">💾 Kaydet</button>
+                <button type="button" class="btn btn-sm btn-ghost" onclick="document.getElementById('soru-seti-file').click()" title="JSON dosyası yükle">📂 Yükle</button>
+                <button type="button" class="btn btn-sm btn-ghost" onclick="soruSetiYerelYukle()" title="Son kaydedilen listeyi geri yükle">↩️ Geri Yükle</button>
+                <button class="btn btn-sm btn-ghost" onclick="listeyiTemizle()">🗑 Temizle</button>
+              </div>
+              <input type="file" id="soru-seti-file" accept=".json,application/json" class="hidden" style="display:none" onchange="soruSetiIceAktar(event)">
             </div>
-            <div id="q-list" style="flex:1;overflow-y:auto;max-height:380px;">
-              <div style="color:rgba(255,255,255,.2);font-size:13px;text-align:center;padding:40px 0;">Henüz soru
-                eklenmedi.<br><span style="font-size:20px;opacity:.5;">📝</span></div>
+            <div class="card-pro-bd" style="flex:1;display:flex;flex-direction:column;padding-top:12px;">
+            <div id="q-list" style="flex:1;overflow-y:auto;max-height:380px;min-height:200px;">
+              <div class="empty-state">
+                <div class="es-icon">📝</div>
+                <div class="es-title">Henüz soru eklenmedi</div>
+                <div class="es-sub">Soldaki formdan soru ekleyerek listeyi oluşturun.</div>
+              </div>
+            </div>
+            <div class="sw-row" style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06);">
+              <label class="sw"><input type="checkbox" id="test-modu-toggle" checked><span class="sl"></span></label>
+              <span style="font-size:13px;color:rgba(255,255,255,.45);">📝 Test Modu — süre dolunca otomatik sonraki soru</span>
+            </div>
+            <div class="sw-row" style="margin-top:10px;opacity:.55;">
+              <span style="font-size:12px;color:rgba(255,255,255,.35);">⏸ Duraklat: süreyi ve cevapları dondur · ▶ Devam: kaldığı yerden sürdür</span>
             </div>
             <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
               <button class="btn btn-green btn-full" id="btn-qr-goster" onclick="showQRLobby()" disabled>📡 QR Göster &
@@ -2154,12 +2682,39 @@
             <div style="margin-top:8px;font-size:12px;color:rgba(255,255,255,.25);text-align:center;">
               💡 Tek anlık soru için Canlı Test sekmesini kullan
             </div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- ── CANLI TEST ── -->
-      <div id="tab-live" class="hidden">
+      <div id="tab-live" class="hidden tab-shell">
+        <div class="tab-hero">
+          <div class="tab-hero-icon">📊</div>
+          <div class="tab-hero-body">
+            <div class="tab-hero-title">Canlı Test</div>
+            <div class="tab-hero-desc">Soruları yönetin, istatistikleri izleyin ve sıralamayı takip edin.</div>
+          </div>
+          <div class="tab-hero-stat">
+            <div class="hs-num" id="hero-live-students">0</div>
+            <div class="hs-label">Öğrenci</div>
+          </div>
+        </div>
+
+        <div class="live-status-strip">
+          <div class="live-pill-stat">
+            <div class="lps-num" id="hero-live-answers">0</div>
+            <div class="lps-label">Cevap</div>
+          </div>
+          <div class="live-pill-stat">
+            <div class="lps-num" id="hero-live-progress">—</div>
+            <div class="lps-label">Soru</div>
+          </div>
+          <div class="live-pill-stat">
+            <div class="lps-num" id="hero-live-status">Bekliyor</div>
+            <div class="lps-label">Durum</div>
+          </div>
+        </div>
         <!-- Test progress bar -->
         <div id="test-prog-wrap" class="hidden" style="margin-bottom:16px;">
           <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
@@ -2223,8 +2778,13 @@
             </div>
 
             <div id="canli-soru-alani" class="hidden">
+              <div id="lock-banner" class="lock-banner open show">
+                <span id="lock-banner-icon">✅</span>
+                <span id="lock-banner-text">Soru açık — öğrenciler cevap verebilir</span>
+              </div>
               <div class="q-banner">
                 <div class="qb-label">📍 Aktif Soru</div>
+                <img class="q-gorsel hidden" id="canli-soru-gorsel" alt="">
                 <div class="qb-text" id="canli-soru-metni">—</div>
                 <div class="qb-prog" id="canli-soru-prog"></div>
               </div>
@@ -2235,12 +2795,11 @@
                 burada istatistikler görünecek.</div>
             </div>
 
-            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
-              <button type="button" class="btn btn-red btn-sm" id="btn-kilitle" disabled>🔒 Kilitle</button>
-              <button class="btn btn-green btn-sm hidden" id="btn-sonraki" onclick="sonrakiSoru()">⏭ Sonraki
-                Soru</button>
-              <button class="btn btn-red btn-sm hidden" id="btn-test-bitir" onclick="testiBitir()">🏁 Testi
-                Bitir</button>
+            <div class="live-controls">
+              <button type="button" class="btn btn-kahoot btn-kahoot-lock btn-sm" id="btn-kilitle" disabled onclick="soruDuraklat()">⏸ Duraklat</button>
+              <button class="btn btn-kahoot btn-kahoot-next btn-sm hidden" id="btn-sonraki" onclick="sonrakiSoru()">⏭ Sonraki Soruya Geç (Erken)</button>
+              <button class="btn btn-kahoot btn-kahoot-finish btn-sm hidden" id="btn-test-bitir" onclick="testiBitir()">🏁 Testi Bitir</button>
+              <button type="button" class="btn btn-sm btn-ghost hidden" id="btn-rapor-indir" onclick="testRaporuIndir()">📥 CSV Rapor İndir</button>
             </div>
           </div>
 
@@ -2256,6 +2815,10 @@
               <div class="field">
                 <label>Soru</label>
                 <textarea class="fi" id="anlik-soru-text" placeholder="Anlık soru..." rows="2"></textarea>
+              </div>
+              <div class="field">
+                <label>🖼 Görsel URL</label>
+                <input type="url" class="fi" id="anlik-gorsel" placeholder="https://...">
               </div>
               <div class="field" style="display:flex;gap:10px;">
                 <select class="fi" id="anlik-tip" onchange="anlikTipDegisti()" style="flex:1;">
@@ -2288,8 +2851,9 @@
                   style="height:100%;width:0%;background:linear-gradient(90deg,#2563eb,#7c3aed);border-radius:5px;transition:width .4s ease;">
                 </div>
               </div>
-              <div id="yanitlar-list" <div
-                style="color:rgba(255,255,255,.2);font-size:13px;text-align:center;padding:20px;">Yanıt bekleniyor...
+              <div id="yanitlar-list">
+                <div style="color:rgba(255,255,255,.2);font-size:13px;text-align:center;padding:20px;">Yanıt bekleniyor...
+                </div>
               </div>
             </div>
           </div>
@@ -2297,7 +2861,11 @@
 
         <!-- Sıralama (Leaderboard) -->
         <div class="card">
-          <div class="card-t"><span class="card-t-icon">🏆</span>Canlı Sıralama</div>
+          <div class="card-t" style="justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span style="display:flex;align-items:center;gap:7px;"><span class="card-t-icon">🏆</span>Canlı Sıralama</span>
+            <button type="button" class="btn btn-sm btn-green hidden" id="btn-rapor-indir-2" onclick="testRaporuIndir()">📥 Test Raporu (CSV)</button>
+          </div>
+          <div id="lb-podium" class="podium-wrap hidden"></div>
           <div id="lb-list">
             <div style="color:rgba(255,255,255,.2);font-size:13px;text-align:center;padding:24px 0;">Sıralama burada
               görünecek.</div>
@@ -2312,31 +2880,68 @@
           </div>
         </div>
       </div>
-    </div>
 
     <!-- ── ARŞİV ── -->
-    <div id="tab-arsiv" class="hidden">
-      <div class="card">
-        <div class="card-t"><span class="card-t-icon">📁</span>Geçmiş Etkileşimler</div>
-        <div id="arsiv-list">
-          <div style="color:rgba(255,255,255,.2);font-size:13px;text-align:center;padding:30px;">Henüz arşiv yok.</div>
+    <div id="tab-arsiv" class="hidden tab-shell">
+      <div class="tab-hero">
+        <div class="tab-hero-icon">📁</div>
+        <div class="tab-hero-body">
+          <div class="tab-hero-title">Arşiv</div>
+          <div class="tab-hero-desc">Geçmiş sorularınızın istatistiklerini ve sonuçlarını inceleyin.</div>
+        </div>
+        <div class="tab-hero-stat">
+          <div class="hs-num" id="hero-arsiv-count">0</div>
+          <div class="hs-label">Kayıt</div>
+        </div>
+      </div>
+      <div class="card-pro">
+        <div class="card-pro-hd">
+          <div class="card-t"><span class="card-t-icon">📁</span>Geçmiş Etkileşimler</div>
+        </div>
+        <div class="card-pro-bd">
+          <div id="arsiv-list" class="arsiv-grid">
+            <div class="empty-state">
+              <div class="es-icon">📂</div>
+              <div class="es-title">Henüz arşiv yok</div>
+              <div class="es-sub">Tamamlanan sorular burada listelenir.</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- ── ÖĞRENCİLER ── -->
-    <div id="tab-ogrenciler" class="hidden">
-      <div class="card">
-        <div class="card-t"><span class="card-t-icon">👥</span>Aktif Sınıf</div>
-        <div style="position:relative;margin-bottom:10px;">
-          <span
-            style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none;">🔍</span>
-          <input id="ogrenci-search" type="text"
-            style="width:100%;padding:9px 14px 9px 34px;background:var(--input-bg);border:1.5px solid var(--input-border);border-radius:12px;color:var(--text);font-size:13px;font-family:'Nunito',sans-serif;outline:none;"
-            placeholder="Öğrenci ara..." oninput="araOgrenci(this.value)">
+    <div id="tab-ogrenciler" class="hidden tab-shell">
+      <div class="tab-hero">
+        <div class="tab-hero-icon">👥</div>
+        <div class="tab-hero-body">
+          <div class="tab-hero-title">Sınıf</div>
+          <div class="tab-hero-desc">Bağlı öğrencileri görün, durumlarını takip edin.</div>
         </div>
-        <div id="ogrenci-list">
-          <div style="color:rgba(255,255,255,.2);font-size:13px;text-align:center;padding:30px;">Sınıf boş.</div>
+        <div class="tab-hero-stat">
+          <div class="hs-num" id="hero-class-count">0</div>
+          <div class="hs-label">Bağlı</div>
+        </div>
+      </div>
+      <div class="card-pro">
+        <div class="card-pro-hd">
+          <div class="card-t"><span class="card-t-icon">👥</span>Aktif Sınıf</div>
+          <span class="class-count-badge" id="class-online-badge">0 çevrimiçi</span>
+        </div>
+        <div class="card-pro-bd">
+          <div class="class-toolbar">
+            <div class="class-search-wrap">
+              <span class="cs-icon">🔍</span>
+              <input id="ogrenci-search" type="text" placeholder="Öğrenci ara..." oninput="araOgrenci(this.value)">
+            </div>
+          </div>
+          <div id="ogrenci-list">
+            <div class="empty-state">
+              <div class="es-icon">👋</div>
+              <div class="es-title">Sınıf boş</div>
+              <div class="es-sub">Öğrenciler PIN ile katıldığında burada görünür.</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2372,6 +2977,98 @@
     let canliKuyrukListe = [];
     let sonrakiZamanlayici = null;
     let canliTestSession = false;
+    let soruKilitli = false;
+    let soruDuraklatildi = false;
+    let lastTimerSound = -1;
+    let oyunPin = '';
+    let sonTestRaporu = null;
+    const SORU_SETI_LS_KEY = 'akillisınıf_son_soru_seti';
+
+    function setPinDisplay(pin) {
+      if (!pin) return;
+      oyunPin = String(pin);
+      const spaced = oyunPin.split('').join(' ');
+      const tb = document.getElementById('tb-pin');
+      const lb = document.getElementById('lobby-pin');
+      if (tb) tb.textContent = spaced;
+      if (lb) lb.textContent = spaced;
+      renderLobbyQR();
+    }
+
+    function renderLobbyQR() {
+      const qrDiv = document.getElementById('qr-div');
+      const urlEl = document.getElementById('qr-url-text');
+      const sqr = document.getElementById('s-qr');
+      if (!qrDiv || !urlEl || !sqr || sqr.style.display === 'none') return;
+
+      if (!oyunPin || String(oyunPin).length !== 6) {
+        urlEl.textContent = 'PIN oluşturuluyor...';
+        qrDiv.innerHTML = '<div class="qr-loading">⏳ Sunucudan PIN bekleniyor...</div>';
+        return;
+      }
+
+      const baseUrl = (typeof SERVER_HTTP !== 'undefined')
+        ? (SERVER_HTTP + '/ogrenci.html')
+        : ('http://' + window.location.hostname + ':9090/ogrenci.html');
+      const studentUrl = baseUrl + '?pin=' + encodeURIComponent(oyunPin);
+      urlEl.textContent = studentUrl;
+      qrDiv.innerHTML = '';
+      try {
+        new QRCode(qrDiv, {
+          text: studentUrl,
+          width: 160,
+          height: 160,
+          colorDark: '#060d1f',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } catch (e) {
+        qrDiv.innerHTML = '<div class="qr-loading">QR oluşturulamadı</div>';
+      }
+    }
+
+    function previewGorsel(inputId, imgId) {
+      const url = document.getElementById(inputId)?.value.trim();
+      const img = document.getElementById(imgId);
+      if (!img) return;
+      if (url) { img.src = url; img.classList.remove('hidden'); img.onerror = () => img.classList.add('hidden'); }
+      else { img.classList.add('hidden'); img.removeAttribute('src'); }
+    }
+
+    function showTeacherGorsel(url) {
+      const img = document.getElementById('canli-soru-gorsel');
+      if (!img) return;
+      if (url) { img.src = url; img.classList.remove('hidden'); img.onerror = () => img.classList.add('hidden'); }
+      else { img.classList.add('hidden'); img.removeAttribute('src'); }
+    }
+
+    function sfx(name) {
+      if (typeof SoundFX !== 'undefined' && typeof SoundFX[name] === 'function') SoundFX[name]();
+    }
+
+    function updateLockBanner(mode) {
+      const b = document.getElementById('lock-banner');
+      if (!b) return;
+      b.classList.remove('open', 'locked', 'waiting');
+      b.classList.add('show', mode);
+      const icon = document.getElementById('lock-banner-icon');
+      const text = document.getElementById('lock-banner-text');
+      if (mode === 'open') {
+        icon.textContent = '✅';
+        text.textContent = 'Soru açık — öğrenciler cevap verebilir';
+      } else if (mode === 'paused') {
+        icon.textContent = '⏸';
+        text.textContent = 'Duraklatıldı — süre ve cevaplar dondu. Devam etmek için butona basın';
+      } else if (mode === 'locked') {
+        icon.textContent = '📊';
+        text.textContent = canliTestSession && testIndex < testToplam
+          ? 'Süre doldu — sonuçlar gösteriliyor, sonraki soru otomatik gelecek'
+          : 'Soru bitti — sonuçlar paylaşıldı';
+      } else if (mode === 'waiting') {
+        icon.textContent = '⏰';
+        text.textContent = 'Süre doldu — sonuçlar hesaplanıyor...';
+      }
+    }
 
     function escapeHtml(t) {
       const d = document.createElement('div');
@@ -2469,14 +3166,23 @@
     document.getElementById('teacher-name').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
     function login() {
       teacherName = document.getElementById('teacher-name').value.trim();
-      if (!teacherName) { document.getElementById('login-err').textContent = 'Lütfen adınızı girin.'; return; }
+      if (!teacherName) { document.getElementById('login-err').textContent = 'Lütfen adınızı girin.'; sfx('error'); return; }
+      SoundFX && SoundFX.unlock();
+      sfx('join');
       canliTestSession = false;
       document.getElementById('s-login').style.display = 'none';
       document.getElementById('main-panel').style.display = 'block';
+      document.getElementById('login-theme-btn')?.classList.add('hidden');
+      const utilCol = document.getElementById('tb-util-col');
+      if (utilCol) utilCol.style.display = 'flex';
+      const soundBtn = document.querySelector('body > .sound-toggle-btn');
+      const soundMount = document.getElementById('sound-toggle-mount');
+      if (soundBtn && soundMount) soundMount.appendChild(soundBtn);
       document.getElementById('teacher-label').textContent = teacherName;
       initWS();
       initSecenekler();
       initAnlikSiklar();
+      soruSetiYerelYukle(true);
     }
 
     // ── WS ──────────────────────────────────────────────
@@ -2493,7 +3199,11 @@
         }, 1200);
       };
       ws.onerror = () => setConn(false);
-      ws.onmessage = e => handleMsg(JSON.parse(e.data));
+      ws.onmessage = e => {
+        const d = JSON.parse(e.data);
+        if (d.durum === 'basarili' && d.pin) setPinDisplay(d.pin);
+        handleMsg(d);
+      };
     }
     function setConn(on) {
       const b = document.getElementById('conn-badge');
@@ -2516,12 +3226,16 @@
           break;
         case 'zamanlayici': onTimer(d); break;
         case 'zaman_bitti': onZamanBitti(); break;
-        case 'sure_doldu': onSureDoldu(); break;
+        case 'soru_duraklatildi': onSoruDuraklatildi(d); break;
+        case 'soru_devam_ediyor': onSoruDevamEdiyor(d); break;
+        case 'sure_doldu':
+        case 'soru_kilitlendi': onSoruSonlandi(d); break;
         case 'kullanici_listesi': onKullaniciListesi(d); break;
         case 'giris': addLog(d.isim + ' bağlandı', '#34d399', d.zaman); updateLobbyList(d); break;
         case 'cikis': addLog(d.isim + ' ayrıldı', '#f87171', d.zaman); break;
         case 'arsiv': renderArsiv(d.sorular); break;
         case 'test_hazir':
+          if (d.pin) setPinDisplay(d.pin);
           if (Array.isArray(d.kuyruk) && d.kuyruk.length) {
             canliKuyrukListe = d.kuyruk.map(x => ({ ...x }));
           } else {
@@ -2547,11 +3261,15 @@
         case 'siralama_guncelleme': renderLeaderboard(d.siralama); break;
         case 'test_bitti': onTestBitti(d); break;
         case 'uyari': showToast(d.mesaj, 'err'); break;
+        case 'pin_guncelle': setPinDisplay(d.pin); break;
       }
     }
 
     function onSoruOnay(d) {
       iptalSonrakiTimer();
+      sonTestRaporu = null;
+      document.getElementById('btn-rapor-indir')?.classList.add('hidden');
+      document.getElementById('btn-rapor-indir-2')?.classList.add('hidden');
       aktivSoruId = d.soru_id;
       if (typeof d.test_aktif === 'boolean') {
         canliTestSession = d.test_aktif;
@@ -2562,13 +3280,17 @@
       const formSure = parseInt(document.getElementById('sure-input')?.value || document.getElementById('anlik-sure')?.value) || 0;
       toplamSure = (typeof d.sure === 'number' && d.sure >= 0) ? d.sure : formSure;
 
-      kilitleButonunuAcikModaGetir();
+      soruKilitli = false;
+      soruDuraklatildi = false;
+      lastTimerSound = -1;
+      duraklatButonunuAcikModaGetir();
       document.getElementById('btn-sonraki').classList.add('hidden');
       document.getElementById('btn-test-bitir').classList.remove('hidden');
       document.getElementById('cevap-sayisi').textContent = '0';
       document.getElementById('dogru-sayisi').textContent = '0';
       document.getElementById('yanlis-sayisi').textContent = '0';
       document.getElementById('ogrenci-sayisi').textContent = d.ogrenci_sayisi;
+      updateLiveHero(d);
 
       testToplam = d.toplam_soru || 0;
       testIndex = d.soru_no || 0;
@@ -2585,6 +3307,7 @@
       document.getElementById('canli-soru-alani').classList.remove('hidden');
       const soruMetni = (d.soru != null && d.soru !== '') ? d.soru : (canliKuyrukListe[testIndex - 1]?.soru) || (soruListesi[testIndex - 1]?.soru) || '—';
       document.getElementById('canli-soru-metni').textContent = soruMetni || '—';
+      showTeacherGorsel(d.gorsel_url || canliKuyrukListe[testIndex - 1]?.gorsel_url || '');
       document.getElementById('canli-soru-prog').textContent = testToplam > 1 ? `Soru ${testIndex} / ${testToplam}` : '';
 
       aktifSecenekler = [];
@@ -2619,6 +3342,7 @@
 
       renderCanliKuyruk();
 
+      sfx('questionIn');
       showTab('live', document.getElementById('tab-btn-live'));
       showToast(`Soru ${testIndex > 0 ? testIndex + '/' + testToplam : ''} gönderildi! (${d.ogrenci_sayisi} öğrenci)`);
 
@@ -2635,6 +3359,7 @@
     function onCanliCevap(d) {
       document.getElementById('cevap-sayisi').textContent = d.cevaplayan;
       document.getElementById('ogrenci-sayisi').textContent = d.toplam_ogrenci;
+      updateLiveHero({ cevap_sayisi: d.cevaplayan, ogrenci_sayisi: d.toplam_ogrenci });
       updateAnsRate(d.cevaplayan, d.toplam_ogrenci);
       const yl = document.getElementById('yanitlar-list');
       let html = '';
@@ -2673,14 +3398,42 @@
         const c = document.getElementById('timer-circle');
         c.style.strokeDashoffset = offset; c.style.stroke = color;
       }
+      if (kalan <= 5 && kalan >= 0 && kalan !== lastTimerSound) {
+        lastTimerSound = kalan;
+        sfx(kalan <= 3 ? 'tickUrgent' : 'tick');
+      }
     }
     function onZamanBitti() {
       document.getElementById('timer-area').classList.add('hidden');
-      showToast('⏰ Süre bitti — öğrenciler hâlâ cevap verebilir. Hazır olduğunuzda Kilitle\'ye basın.');
+      updateLockBanner('waiting');
+      sfx('tickUrgent');
+      showToast('⏰ Süre doldu — sonuçlar paylaşılıyor, sonraki soru otomatik gelecek');
     }
-    function onSureDoldu() {
+    function onSoruDuraklatildi(d) {
+      if (d && d.soru_id && d.soru_id !== aktivSoruId) return;
+      soruDuraklatildi = true;
       document.getElementById('timer-area').classList.add('hidden');
-      kilitleButonunuKilitliModaGetir();
+      duraklatButonunuDevamModaGetir();
+      sfx('lock');
+      showToast('⏸ Soru duraklatıldı');
+    }
+    function onSoruDevamEdiyor(d) {
+      if (d && d.soru_id && d.soru_id !== aktivSoruId) return;
+      soruDuraklatildi = false;
+      duraklatButonunuAcikModaGetir();
+      if (typeof d.kalan_sure === 'number' && d.kalan_sure > 0) {
+        document.getElementById('timer-area').classList.remove('hidden');
+        onTimer({ soru_id: aktivSoruId, kalan_sure: d.kalan_sure });
+      }
+      showToast('▶ Yarışma devam ediyor');
+    }
+    function onSoruSonlandi(d) {
+      if (d && d.soru_id && d.soru_id !== aktivSoruId) return;
+      soruKilitli = true;
+      soruDuraklatildi = false;
+      document.getElementById('timer-area').classList.add('hidden');
+      soruSonlandiModuGetir();
+      sfx('lock');
     }
 
     function onKullaniciListesi(d) {
@@ -2690,14 +3443,14 @@
       const ogrenciler = d.kullanicilar.filter(k => k.rol === 'ogrenci' && k.durum === 'bagli');
       document.getElementById('lobby-count').textContent = ogrenciler.length;
       const ll = document.getElementById('lobby-list');
-      ll.innerHTML = ogrenciler.map(k => `<div class="s-chip">${k.isim}</div>`).join('');
+      ll.innerHTML = ogrenciler.map(k => `<div class="player-chip">🎮 ${k.isim}</div>`).join('');
       document.getElementById('btn-baslat-lobby').disabled = ogrenciler.length === 0;
     }
 
     function updateLobbyList(d) {
       if (d.rol === 'ogrenci') {
         const chip = document.createElement('div');
-        chip.className = 's-chip'; chip.textContent = d.isim;
+        chip.className = 'player-chip'; chip.textContent = '🎮 ' + d.isim;
         document.getElementById('lobby-list').appendChild(chip);
         const cnt = document.getElementById('lobby-count');
         cnt.textContent = parseInt(cnt.textContent || 0) + 1;
@@ -2712,15 +3465,187 @@
       testIndex = 0;
       canliKuyrukListe = [];
       renderCanliKuyruk();
+      sfx('victory');
       showToast('🎉 Test tamamlandı!');
       document.getElementById('test-prog-wrap').classList.remove('hidden');
       document.getElementById('test-prog-text').textContent = `Bitti! ${d.toplam_soru}/${d.toplam_soru}`;
       document.getElementById('test-prog-fill').style.width = '100%';
       renderLeaderboard(d.siralama);
+      sonTestRaporu = {
+        tarih: d.rapor?.tarih || new Date().toLocaleString('tr-TR'),
+        ogretmen: d.rapor?.ogretmen || teacherName,
+        toplam_soru: d.toplam_soru,
+        siralama: d.siralama || [],
+        sorular: d.rapor?.sorular || []
+      };
+      document.getElementById('btn-rapor-indir')?.classList.remove('hidden');
+      document.getElementById('btn-rapor-indir-2')?.classList.remove('hidden');
       showTab('live', document.getElementById('tab-btn-live'));
       document.getElementById('btn-kilitle').classList.add('hidden');
       document.getElementById('btn-kilitle').onclick = null;
       document.getElementById('btn-sonraki').classList.add('hidden');
+    }
+
+    // ── SORU SETİ KAYDET / YÜKLE ─────────────────────────
+    function csvHucre(v) {
+      return '"' + String(v ?? '').replace(/"/g, '""') + '"';
+    }
+
+    function soruSetiNormalize(raw, index) {
+      if (!raw || typeof raw.soru !== 'string' || !raw.soru.trim()) {
+        throw new Error(`Soru ${index + 1}: metin boş olamaz`);
+      }
+      const tip = raw.soru_tipi === 'acik_uclu' ? 'acik_uclu' : 'coktan_secmeli';
+      const secenekler = Array.isArray(raw.secenekler) ? raw.secenekler.map(s => String(s).trim()).filter(Boolean) : [];
+      if (tip === 'coktan_secmeli' && secenekler.length < 2) {
+        throw new Error(`Soru ${index + 1}: en az 2 şık gerekli`);
+      }
+      return {
+        soru: raw.soru.trim(),
+        soru_tipi: tip,
+        secenekler,
+        dogru_cevap: String(raw.dogru_cevap || '').trim(),
+        sure: Math.max(5, parseInt(raw.sure, 10) || 20),
+        gizli_oylama: !!raw.gizli_oylama,
+        gorsel_url: String(raw.gorsel_url || '').trim()
+      };
+    }
+
+    function soruSetiParse(payload) {
+      let data = payload;
+      if (typeof payload === 'string') data = JSON.parse(payload);
+      const list = Array.isArray(data) ? data : (Array.isArray(data.sorular) ? data.sorular : null);
+      if (!list || !list.length) throw new Error('Geçerli soru listesi bulunamadı');
+      return list.map((item, i) => soruSetiNormalize(item, i));
+    }
+
+    function soruSetiYerelKaydet() {
+      try {
+        if (!soruListesi.length) {
+          localStorage.removeItem(SORU_SETI_LS_KEY);
+          return;
+        }
+        localStorage.setItem(SORU_SETI_LS_KEY, JSON.stringify({
+          format: 'akillisınıf-soru-seti',
+          version: 1,
+          guncelleme: new Date().toISOString(),
+          sorular: soruListesi
+        }));
+      } catch (e) { /* ignore */ }
+    }
+
+    function soruSetiYerelYukle(silent) {
+      try {
+        const raw = localStorage.getItem(SORU_SETI_LS_KEY);
+        if (!raw) {
+          if (!silent) showToast('Kayıtlı soru seti yok', 'err');
+          return;
+        }
+        soruListesi = soruSetiParse(JSON.parse(raw));
+        renderQList();
+        if (!silent) showToast(`✅ ${soruListesi.length} soru geri yüklendi`);
+      } catch (e) {
+        if (!silent) showToast('Geri yükleme hatası: ' + e.message, 'err');
+      }
+    }
+
+    function soruSetiDisaAktar() {
+      if (!soruListesi.length) { showToast('İndirilecek soru yok', 'err'); return; }
+      const ad = prompt('Soru seti adı:', 'Soru Seti') || 'Soru Seti';
+      const payload = {
+        format: 'akillisınıf-soru-seti',
+        version: 1,
+        ad,
+        olusturma: new Date().toISOString(),
+        sorular: soruListesi
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${ad.replace(/[^\w\-ğüşıöçĞÜŞİÖÇ ]+/gi, '').trim() || 'soru-seti'}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('💾 Soru seti indirildi');
+    }
+
+    function soruSetiIceAktar(ev) {
+      const file = ev.target.files && ev.target.files[0];
+      ev.target.value = '';
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const list = soruSetiParse(reader.result);
+          showModalConfirm({
+            title: 'Soru seti yükle',
+            message: `${list.length} soru yüklenecek. Mevcut liste değiştirilsin mi?`,
+            okText: 'Yükle',
+            cancelText: 'İptal',
+            danger: false,
+            icon: '📂'
+          }).then(ok => {
+            if (!ok) return;
+            soruListesi = list;
+            renderQList();
+            showToast(`✅ ${list.length} soru yüklendi`);
+          });
+        } catch (e) {
+          showToast('JSON hatası: ' + e.message, 'err');
+        }
+      };
+      reader.readAsText(file, 'UTF-8');
+    }
+
+    function testRaporuIndir() {
+      const r = sonTestRaporu;
+      if (!r || !r.siralama || !r.siralama.length) {
+        showToast('İndirilecek rapor yok', 'err');
+        return;
+      }
+      const rows = [];
+      rows.push([csvHucre('Akıllı Sınıf Test Raporu')].join(';'));
+      rows.push(['Tarih', r.tarih, 'Öğretmen', r.ogretmen || teacherName].map(csvHucre).join(';'));
+      rows.push(['Toplam Soru', r.toplam_soru || r.sorular?.length || 0].map(csvHucre).join(';'));
+      rows.push('');
+      rows.push([csvHucre('ÖZET — SIRALAMA')].join(';'));
+      rows.push(['Sıra', 'İsim', 'Toplam Puan', 'Streak'].map(csvHucre).join(';'));
+      r.siralama.forEach(s => {
+        rows.push([s.sira, s.isim, s.puan, s.streak || 0].map(csvHucre).join(';'));
+      });
+      rows.push('');
+      rows.push([csvHucre('DETAY — SORU BAZLI')].join(';'));
+      rows.push(['Soru No', 'Soru', 'Doğru Cevap', 'Öğrenci', 'Verilen Cevap', 'Puan', 'Doğru mu'].map(csvHucre).join(';'));
+      (r.sorular || []).forEach((s, i) => {
+        const cevaplar = s.cevaplar || {};
+        const ogrenciler = Object.keys(cevaplar);
+        if (!ogrenciler.length) {
+          rows.push([i + 1, s.soru, s.dogru_cevap, '-', '-', 0, '-'].map(csvHucre).join(';'));
+          return;
+        }
+        ogrenciler.forEach((isim, j) => {
+          const e = cevaplar[isim] || {};
+          const dogruMu = s.dogru_cevap && e.cevap
+            ? (e.cevap.trim().toUpperCase() === s.dogru_cevap.trim().toUpperCase() ? 'Evet' : 'Hayır')
+            : '-';
+          rows.push([
+            j === 0 ? i + 1 : '',
+            j === 0 ? s.soru : '',
+            j === 0 ? s.dogru_cevap : '',
+            isim,
+            e.cevap || '-',
+            e.puan || 0,
+            dogruMu
+          ].map(csvHucre).join(';'));
+        });
+      });
+      const blob = new Blob(['\ufeff' + rows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      const safeTarih = (r.tarih || '').replace(/[:./\\ ]+/g, '-').slice(0, 16);
+      a.download = `test-raporu-${safeTarih || 'export'}.csv`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('📥 CSV rapor indirildi');
     }
 
     // ── SORU BUILDer ────────────────────────────────────
@@ -2763,14 +3688,17 @@
         if (secenekler.length < 2) { document.getElementById('ekle-sonuc').textContent = '⚠️ En az 2 şık!'; return; }
       }
       const sure = parseInt(document.getElementById('sure-input').value) || 20;
+      const gorsel = document.getElementById('soru-gorsel')?.value.trim() || '';
       soruListesi.push({
         soru, soru_tipi: tip, secenekler,
         dogru_cevap: document.getElementById('dogru-cevap').value || '',
-        sure, gizli_oylama: document.getElementById('gizli-toggle').checked
+        sure, gizli_oylama: document.getElementById('gizli-toggle').checked,
+        gorsel_url: gorsel
       });
       renderQList();
-      // Formu temizle
       document.getElementById('soru-text').value = '';
+      document.getElementById('soru-gorsel').value = '';
+      previewGorsel('soru-gorsel', 'soru-gorsel-prev');
       document.querySelectorAll('.sik-input').forEach(el => el.value = '');
       document.getElementById('dogru-cevap').selectedIndex = 0;
       document.getElementById('ekle-sonuc').textContent = '✅ Eklendi!';
@@ -2781,11 +3709,13 @@
     function renderQList() {
       const el = document.getElementById('q-list');
       const badge = document.getElementById('q-count-badge');
+      const heroCount = document.getElementById('hero-q-count');
       badge.textContent = soruListesi.length + ' soru';
+      if (heroCount) heroCount.textContent = soruListesi.length;
       document.getElementById('btn-qr-goster').disabled = soruListesi.length === 0;
       document.getElementById('btn-baslat-direkt').disabled = soruListesi.length === 0;
       if (soruListesi.length === 0) {
-        el.innerHTML = '<div style="color:rgba(255,255,255,.2);font-size:13px;text-align:center;padding:40px 0;">Henüz soru eklenmedi.<br><span style="font-size:20px;opacity:.5;">📝</span></div>';
+        el.innerHTML = '<div class="empty-state"><div class="es-icon">📝</div><div class="es-title">Henüz soru eklenmedi</div><div class="es-sub">Soldaki formdan soru ekleyerek listeyi oluşturun.</div></div>';
         return;
       }
       el.innerHTML = soruListesi.map((s, i) => `
@@ -2797,12 +3727,14 @@
           <span class="q-badge qb-tip">${s.soru_tipi === 'acik_uclu' ? 'Açık' : 'Çoktan'}</span>
           <span class="q-badge qb-sure">⏱ ${s.sure}s</span>
           ${s.dogru_cevap ? `<span class="q-badge qb-dogru">✓ ${s.dogru_cevap}</span>` : ''}
+          ${s.gorsel_url ? `<span class="q-badge" style="background:rgba(236,72,153,.12);color:#f472b6;">🖼 Görsel</span>` : ''}
           ${s.secenekler.length > 0 ? `<span class="q-badge" style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);">${s.secenekler.length} şık</span>` : ''}
         </div>
       </div>
       <button class="btn-danger-outline" onclick="soruSil(${i})">✕</button>
     </div>
   `).join('');
+      soruSetiYerelKaydet();
     }
 
     function soruSil(i) {
@@ -2825,23 +3757,21 @@
     // ── QR LOBBY ────────────────────────────────────────
     function showQRLobby() {
       if (!soruListesi.length) { showToast('Önce soru ekleyin!', 'err'); return; }
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        showToast('Sunucuya bağlanılamadı. Sayfayı yenileyin.', 'err');
+        return;
+      }
       canliTestSession = false;
       canliKuyrukListe = soruListesi.map(x => ({ ...x }));
       renderCanliKuyruk();
-      // Soruları sunucuya kaydet
+      oyunPin = '';
       ws.send(JSON.stringify({ tip: 'test_hazirla', sorular: soruListesi }));
 
       document.getElementById('main-panel').style.display = 'none';
       document.getElementById('s-qr').style.display = 'flex';
 
-      // QR oluştur
-      const studentUrl = (typeof SERVER_HTTP !== 'undefined') ? (SERVER_HTTP + '/ogrenci.html') : ('http://' + window.location.hostname + ':9090/ogrenci.html');
-      document.getElementById('qr-url-text').textContent = studentUrl;
-      const qrDiv = document.getElementById('qr-div');
-      qrDiv.innerHTML = '';
-      try {
-        new QRCode(qrDiv, { text: studentUrl, width: 160, height: 160, colorDark: '#060d1f', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
-      } catch (e) { }
+      document.getElementById('lobby-pin').textContent = '— — — — — —';
+      renderLobbyQR();
 
       document.getElementById('lobby-count').textContent = '0';
       document.getElementById('lobby-list').innerHTML = '';
@@ -2858,6 +3788,7 @@
       canliTestSession = true;
       canliKuyrukListe = soruListesi.map(x => ({ ...x }));
       renderCanliKuyruk();
+      sfx('countdownGo');
       ws.send(JSON.stringify({ tip: 'test_baslat' }));
       showPanel();
       showTab('live', document.getElementById('tab-btn-live'));
@@ -2905,6 +3836,7 @@
       const paket = {
         soru, soru_tipi: tip, secenekler,
         dogru_cevap: document.getElementById('anlik-dogru').value || '',
+        gorsel_url: document.getElementById('anlik-gorsel')?.value.trim() || '',
         sure: parseInt(document.getElementById('anlik-sure').value) || 0,
         gizli_oylama: false
       };
@@ -2914,65 +3846,65 @@
         ws.send(JSON.stringify(Object.assign({ tip: 'soru' }, paket)));
       }
     }
-    function kilitleButonunuAcikModaGetir() {
+    function duraklatButonunuAcikModaGetir() {
+      soruDuraklatildi = false;
+      if (!soruKilitli) updateLockBanner('open');
       const btn = document.getElementById('btn-kilitle');
-      document.getElementById('btn-sonraki').classList.add('hidden');
-      btn.classList.remove('hidden');
+      btn.classList.remove('hidden', 'locked-active');
       btn.disabled = false;
-      btn.textContent = '🔒 Kilitle';
-      btn.className = 'btn btn-red btn-sm';
-      btn.onclick = soruKilitle;
+      btn.textContent = '⏸ Duraklat';
+      btn.className = 'btn btn-kahoot btn-kahoot-lock btn-sm';
+      btn.onclick = soruDuraklat;
+      document.getElementById('btn-sonraki').classList.add('hidden');
+      updateLiveHero();
     }
-    function kilitleButonunuKilitliModaGetir() {
+    function duraklatButonunuDevamModaGetir() {
+      updateLockBanner('paused');
       const btn = document.getElementById('btn-kilitle');
-      document.getElementById('btn-sonraki').classList.add('hidden');
-      btn.classList.remove('hidden');
+      btn.classList.remove('hidden', 'locked-active');
       btn.disabled = false;
-      btn.textContent = '🔓 Kilidi Aç';
-      btn.className = 'btn btn-green btn-sm';
-      btn.onclick = soruKilidiAc;
+      btn.textContent = '▶ Devam Et';
+      btn.className = 'btn btn-kahoot btn-kahoot-next btn-sm';
+      btn.onclick = soruDevam;
+      updateLiveHero();
     }
-    function soruKilitle() {
-      if (!aktivSoruId) return;
-      ws.send(JSON.stringify({ tip: 'kilitle', soru_id: aktivSoruId }));
-      kilitleButonunuKilitliModaGetir();
-      showToast('🔒 Soru kilitlendi — öğrenciler cevap değiştiremez');
-    }
-    function soruKilidiAc() {
-      if (!aktivSoruId) return;
-      ws.send(JSON.stringify({ tip: 'kilidi_ac', soru_id: aktivSoruId }));
-      if (testToplam > 1) {
-        iptalSonrakiTimer();
-        const btn = document.getElementById('btn-kilitle');
-        btn.disabled = true;
-        btn.textContent = '⏳ 2 sn...';
-        btn.onclick = null;
-        showToast('🔓 Kilit açıldı. 2 saniye sonra sıradaki soru geliyor...');
-        sonrakiZamanlayici = setTimeout(() => {
-          sonrakiZamanlayici = null;
-          ws.send(JSON.stringify({ tip: 'sonraki_soru' }));
-          document.getElementById('btn-kilitle').classList.add('hidden');
-          document.getElementById('btn-kilitle').onclick = null;
-        }, 2000);
-        return;
+    function soruSonlandiModuGetir() {
+      soruKilitli = true;
+      soruDuraklatildi = false;
+      updateLockBanner('locked');
+      const btn = document.getElementById('btn-kilitle');
+      btn.classList.add('hidden');
+      btn.disabled = true;
+      btn.onclick = null;
+      if (canliTestSession && testIndex < testToplam) {
+        document.getElementById('btn-sonraki').classList.remove('hidden');
       }
-      kilitleButonunuAcikModaGetir();
-      showToast('🔓 Soru kilidi açıldı — öğrenciler tekrar cevap verebilir');
+      updateLiveHero();
+    }
+    function soruDuraklat() {
+      if (!aktivSoruId || soruKilitli || soruDuraklatildi) return;
+      ws.send(JSON.stringify({ tip: 'kilitle', soru_id: aktivSoruId }));
+    }
+    function soruDevam() {
+      if (!aktivSoruId || soruKilitli || !soruDuraklatildi) return;
+      ws.send(JSON.stringify({ tip: 'kilidi_ac', soru_id: aktivSoruId }));
     }
     function sonrakiSoru() {
       showModalConfirm({
         title: 'Sonraki soru',
-        message: 'Sıradaki soruya geçilsin mi? (Önce soruyu kilitlemiş olmanız gerekir.)',
+        message: 'Sonuç ekranını atlayıp sıradaki soruya geçilsin mi?',
         okText: 'Geç',
         cancelText: 'İptal',
         danger: false,
         icon: '⏭️'
       }).then(ok => {
         if (!ok) return;
+        iptalSonrakiTimer();
+        sfx('next');
         ws.send(JSON.stringify({ tip: 'sonraki_soru' }));
         document.getElementById('btn-sonraki').classList.add('hidden');
-        document.getElementById('btn-kilitle').classList.add('hidden');
-        document.getElementById('btn-kilitle').onclick = null;
+        soruKilitli = false;
+        soruDuraklatildi = false;
       });
     }
     function testiBitir() {
@@ -3013,21 +3945,66 @@
     // ── LEADERBOARD ───────────────────────────────────────
     function renderLeaderboard(liste) {
       const el = document.getElementById('lb-list');
-      if (!liste || liste.length === 0) { el.innerHTML = '<div style="color:rgba(255,255,255,.2);font-size:13px;text-align:center;padding:24px 0;">Henüz puan yok.</div>'; return; }
+      const podium = document.getElementById('lb-podium');
+      if (!liste || liste.length === 0) {
+        el.innerHTML = '<div style="color:rgba(255,255,255,.2);font-size:13px;text-align:center;padding:24px 0;">Henüz puan yok.</div>';
+        if (podium) { podium.classList.add('hidden'); podium.innerHTML = ''; }
+        return;
+      }
       const medals = ['🥇', '🥈', '🥉'];
       const mClass = ['gold', 'silver', 'bronze'];
+      const top3 = liste.slice(0, 3);
+      if (podium && top3.length >= 2) {
+        podium.classList.remove('hidden');
+        const order = top3.length === 3 ? [top3[1], top3[0], top3[2]] : top3;
+        podium.innerHTML = order.map(s => {
+          const cls = mClass[s.sira - 1] || 'bronze';
+          return `<div class="podium-item">
+            <div class="podium-bar ${cls}">${medals[s.sira - 1] || s.sira}<br>${s.puan}</div>
+            <div class="podium-name">${escapeHtml(s.isim)}</div>
+          </div>`;
+        }).join('');
+      } else if (podium) {
+        podium.classList.add('hidden');
+        podium.innerHTML = '';
+      }
       el.innerHTML = liste.map((s, i) => `
     <div class="lb-item" style="${i < 3 ? 'border-color:rgba(251,191,36,.2);background:rgba(251,191,36,.04);' : ''}">
       <div class="lb-rank ${mClass[i] || 'other'}">${medals[i] || s.sira}</div>
-      <div class="lb-name">${s.isim}</div>
+      <div class="lb-name">${escapeHtml(s.isim)}${s.streak >= 2 ? ` <span class="streak-pill">🔥${s.streak}</span>` : ''}</div>
       <div class="lb-score">${s.puan}</div>
     </div>
   `).join('');
     }
 
     // ── RENDER ────────────────────────────────────────────
+    function updateLiveHero(d) {
+      const students = d?.ogrenci_sayisi ?? d?.toplam_ogrenci ?? document.getElementById('ogrenci-sayisi')?.textContent ?? 0;
+      const answers = d?.cevap_sayisi ?? document.getElementById('cevap-sayisi')?.textContent ?? 0;
+      const hs = document.getElementById('hero-live-students');
+      const ha = document.getElementById('hero-live-answers');
+      const hp = document.getElementById('hero-live-progress');
+      const hst = document.getElementById('hero-live-status');
+      if (hs) hs.textContent = students;
+      if (ha) ha.textContent = answers;
+      if (hp) {
+        hp.textContent = testToplam ? `${testIndex}/${testToplam}` : (canliTestSession ? 'Canlı' : '—');
+      }
+      if (hst) {
+        if (soruKilitli) hst.textContent = 'Kilitli';
+        else if (canliTestSession) hst.textContent = 'Aktif';
+        else hst.textContent = 'Bekliyor';
+      }
+    }
+
     function renderOgrenciler(list) {
       _tumOgrenciler = list ? list.filter(k => k.rol === 'ogrenci') : [];
+      const online = _tumOgrenciler.filter(k => k.durum === 'bagli').length;
+      const hero = document.getElementById('hero-class-count');
+      const badge = document.getElementById('class-online-badge');
+      if (hero) hero.textContent = online;
+      if (badge) badge.textContent = online + ' çevrimiçi';
+      updateLiveHero({ ogrenci_sayisi: _tumOgrenciler.length });
       araOgrenci(document.getElementById('ogrenci-search')?.value || '');
     }
 
@@ -3036,22 +4013,29 @@
       const el = document.getElementById('ogrenci-list');
       const liste = q ? _tumOgrenciler.filter(k => k.isim.toLowerCase().includes(q)) : _tumOgrenciler;
       if (!liste.length) {
-        el.innerHTML = '<div style="color:rgba(255,255,255,.2);font-size:13px;text-align:center;padding:30px;">Eşleşen öğrenci yok.</div>';
+        el.innerHTML = '<div class="empty-state"><div class="es-icon">🔍</div><div class="es-title">Eşleşen öğrenci yok</div><div class="es-sub">Farklı bir isim deneyin.</div></div>';
         return;
       }
-      el.innerHTML = liste.map(k => `
-    <div class="og-item">
-      <span>${k.isim}</span>
-      <span style="display:flex;align-items:center;gap:8px;">
-        ${k.durum === 'bagli' ? '<span class="og-on">Derste</span>' : '<span class="og-off">Koptu</span>'}
-        <span style="font-size:11px;color:rgba(255,255,255,.2);">${k.ip}</span>
-      </span>
+      el.innerHTML = '<div class="class-grid">' + liste.map(k => `
+    <div class="class-card">
+      <div class="class-av">🎓</div>
+      <div class="class-info">
+        <div class="class-name">${escapeHtml(k.isim)}</div>
+        <div class="class-ip">${k.ip || ''}</div>
+      </div>
+      ${k.durum === 'bagli' ? '<span class="og-on">Derste</span>' : '<span class="og-off">Koptu</span>'}
     </div>
-  `).join('');
+  `).join('') + '</div>';
     }
     function renderArsiv(sorular) {
       const el = document.getElementById('arsiv-list');
-      if (!sorular?.length) { el.innerHTML = '<div style="color:rgba(255,255,255,.2);font-size:13px;text-align:center;padding:30px;">Arşiv boş.</div>'; return; }
+      const hero = document.getElementById('hero-arsiv-count');
+      const count = sorular?.length || 0;
+      if (hero) hero.textContent = count;
+      if (!sorular?.length) {
+        el.innerHTML = '<div class="empty-state"><div class="es-icon">📂</div><div class="es-title">Arşiv boş</div><div class="es-sub">Tamamlanan sorular burada listelenir.</div></div>';
+        return;
+      }
       el.innerHTML = [...sorular].reverse().map(s => {
         let badges = '';
         let dogruSayisi = 0, yanlisSayisi = 0;
@@ -3059,20 +4043,22 @@
           for (const [sik, data] of Object.entries(s.istatistik.dagilim)) {
             if (s.dogru_cevap && s.dogru_cevap === sik) {
               dogruSayisi += data.adet;
-              badges += `<span class="ar-badge ${sik === 'ar-ok' ? 'ar-ok' : ''}">${sik}: ${data.yuzde}% (${data.adet})</span>`;
+              badges += `<span class="ar-badge ar-ok">${sik}: ${data.yuzde}% (${data.adet})</span>`;
             } else {
               yanlisSayisi += data.adet;
               badges += `<span class="ar-badge">${sik}: ${data.yuzde}% (${data.adet})</span>`;
             }
           }
         }
-        const ozet = s.dogru_cevap ? `✅ ${dogruSayisi} doğru | ❌ ${yanlisSayisi} yanlış` : '';
+        const ozet = s.dogru_cevap ? `✅ ${dogruSayisi} doğru · ❌ ${yanlisSayisi} yanlış` : '';
         return `<div class="ar-item">
-      <h4>${s.soru}</h4>
+      <div class="ar-head">
+        <h4>${escapeHtml(s.soru)}</h4>
+        <span class="ar-time">${s.zaman || ''}</span>
+      </div>
       <div class="ar-meta">
-        <span class="ar-badge">${s.zaman}</span>
         <span class="ar-badge">${s.soru_tipi === 'acik_uclu' ? 'Açık Uçlu' : 'Çoktan Seçmeli'}</span>
-        ${s.dogru_cevap ? `<span class="ar-badge ar-ok">Doğru: ${s.dogru_cevap}</span>` : ''}
+        ${s.dogru_cevap ? `<span class="ar-badge ar-ok">Doğru: ${escapeHtml(s.dogru_cevap)}</span>` : ''}
         ${ozet ? `<span class="ar-badge" style="background:rgba(37,99,235,.1);color:#60a5fa;font-weight:700;">${ozet}</span>` : ''}
         ${badges}
       </div>
@@ -3089,14 +4075,17 @@
     function showTab(t, btn) {
       ['builder', 'live', 'arsiv', 'ogrenciler'].forEach(id => document.getElementById('tab-' + id).classList.add('hidden'));
       document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-      document.getElementById('tab-' + t).classList.remove('hidden');
+      const panel = document.getElementById('tab-' + t);
+      panel.classList.remove('hidden');
       if (btn) btn.classList.add('active');
       if (t === 'arsiv') ws.send(JSON.stringify({ tip: 'arsiv_talep' }));
-      if (t === 'live') renderCanliKuyruk();
+      if (t === 'live') { renderCanliKuyruk(); updateLiveHero(); }
+      sfx('click');
     }
 
     // ── TOAST ─────────────────────────────────────────────
     function showToast(msg, type = 'ok') {
+      sfx(type === 'err' ? 'error' : 'toast');
       const t = document.getElementById('toast');
       document.getElementById('toast-msg').textContent = msg;
       t.style.background = type === 'err' ? 'linear-gradient(135deg,#dc2626,#ef4444)' : 'linear-gradient(135deg,#059669,#10b981)';
