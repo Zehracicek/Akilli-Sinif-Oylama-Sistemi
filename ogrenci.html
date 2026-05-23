@@ -8,8 +8,18 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap"
     rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=12">
   <script src="config.js"></script>
-  <script src="theme.js"></script>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('akillisınıf_tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
+  <script src="theme.js?v=7" defer></script>
+  <script src="sounds.js"></script>
   <style>
     :root {
       --bg: #0d0221;
@@ -139,7 +149,7 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
-      z-index: 10;
+      z-index: 20;
       transition: opacity .35s ease, transform .35s ease;
     }
 
@@ -158,7 +168,7 @@
     }
 
     /* ── LOGIN ── */
-    #s-login {
+    [data-theme="dark"] #s-login {
       background: var(--bg);
     }
 
@@ -271,7 +281,7 @@
     }
 
     /* ── AVATAR ── */
-    #s-avatar {
+    [data-theme="dark"] #s-avatar {
       background: var(--bg);
     }
 
@@ -358,7 +368,7 @@
     }
 
     /* ── LOBBY ── */
-    #s-lobby {
+    [data-theme="dark"] #s-lobby {
       background: var(--bg);
     }
 
@@ -609,8 +619,11 @@
     }
 
     /* ── SORU EKRANI ── */
-    #s-question {
+    [data-theme="dark"] #s-question {
       background: var(--bg);
+    }
+
+    #s-question {
       padding: 0;
       justify-content: flex-start;
       overflow-y: auto;
@@ -1169,8 +1182,11 @@
     }
 
     /* ── TEST BİTTİ / FİNAL ── */
-    #s-final {
+    [data-theme="dark"] #s-final {
       background: linear-gradient(135deg, #0d0221, #1a0533);
+    }
+
+    #s-final {
       overflow-y: auto;
       justify-content: flex-start;
       padding: 30px 20px 60px;
@@ -1388,20 +1404,7 @@
       z-index: 0;
     }
 
-    .bg-light-grad {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, #e0e7ff 0%, #fce7f3 40%, #dbeafe 70%, #ede9fe 100%);
-      background-size: 400% 400%;
-      animation: gradShift 12s ease infinite;
-    }
-
-    .bg-light-dots {
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(rgba(99, 102, 241, .1) 1px, transparent 1px);
-      background-size: 28px 28px;
-    }
+    /* bg-light-grad & dots → styles.css */
 
     @keyframes gradShift {
 
@@ -1415,18 +1418,39 @@
       }
     }
 
-    /* TEMA BUTONU */
-    .theme-toggle-btn {
+    /* TEMA + SES DOCK */
+    .student-util-dock {
       position: fixed;
-      top: 14px;
-      right: 14px;
+      bottom: max(14px, env(safe-area-inset-bottom));
+      right: max(12px, env(safe-area-inset-right));
       z-index: 999;
-      width: 40px;
-      height: 40px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+    }
+
+    body.student-on-question .student-util-dock {
+      bottom: max(10px, env(safe-area-inset-bottom));
+      left: max(10px, env(safe-area-inset-left));
+      right: auto;
+    }
+
+    .student-util-dock .sound-toggle-btn,
+    .student-util-dock .theme-toggle-btn {
+      position: static;
+      top: auto;
+      right: auto;
+      width: 38px;
+      height: 38px;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .theme-toggle-btn {
       border-radius: 50%;
       border: none;
       cursor: pointer;
-      font-size: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1456,7 +1480,7 @@
 
     /* --- index.html & genel --- */
     [data-theme="light"] body {
-      background: #f0f4ff;
+      background: transparent !important;
       color: #1e1b4b;
     }
 
@@ -1514,20 +1538,7 @@
       border-color: #e0e7ff;
     }
 
-    /* --- tab bar --- */
-    [data-theme="light"] .tab-bar {
-      background: #f3f4f6;
-    }
-
-    [data-theme="light"] .tab {
-      color: #9ca3af;
-    }
-
-    [data-theme="light"] .tab.active {
-      background: rgba(37, 99, 235, .12);
-      color: #2563eb;
-      box-shadow: inset 0 0 0 1px rgba(37, 99, 235, .2);
-    }
+    /* --- tab bar → styles.css --- */
 
     /* --- card --- */
     [data-theme="light"] .card {
@@ -1593,7 +1604,7 @@
 
     /* --- QR lobby --- */
     [data-theme="light"] #s-qr {
-      background: linear-gradient(135deg, #e0e7ff, #fce7f3);
+      background: transparent !important;
     }
 
     [data-theme="light"] .qr-card {
@@ -1958,7 +1969,7 @@
 
     /* --- final ekranı --- */
     [data-theme="light"] #s-final {
-      background: linear-gradient(135deg, #f0f4ff, #fce7f3) !important;
+      background: transparent !important;
     }
 
     [data-theme="light"] .final-title {
@@ -1996,6 +2007,71 @@
       background: #ede9fe !important;
       border-left-color: #7c3aed !important;
     }
+
+    /* Kahoot party arka plan — ekran katmanları şeffaf */
+    [data-theme="light"] #s-login,
+    [data-theme="light"] #s-avatar,
+    [data-theme="light"] #s-lobby,
+    [data-theme="light"] #s-question,
+    [data-theme="light"] #s-final,
+    [data-theme="light"] .screen {
+      background: transparent !important;
+    }
+
+    [data-theme="light"] .login-card h2 {
+      background: none;
+      -webkit-text-fill-color: #1e1b4b;
+      color: #1e1b4b;
+    }
+
+    [data-theme="light"] .lobby-inner {
+      background: rgba(255, 255, 255, .92);
+      border: 2px solid rgba(255, 255, 255, .96);
+      border-radius: 24px;
+      padding: 24px 18px;
+      box-shadow: 0 12px 40px rgba(99, 102, 241, .12);
+    }
+
+    @media (max-width: 520px) {
+      html, body { overflow-x: hidden; }
+      .screen {
+        padding: 12px;
+        padding-top: max(12px, env(safe-area-inset-top));
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        justify-content: flex-start;
+      }
+      #s-login, #s-avatar, #s-lobby {
+        justify-content: center;
+      }
+      .login-card, .av-card {
+        padding: 28px 18px;
+        border-radius: 22px;
+        max-width: 100%;
+      }
+      .login-card h2 { font-size: 22px; }
+      .login-icon { font-size: 52px; }
+      .inp, .btn-join { font-size: 16px; }
+      .student-util-dock .sound-toggle-btn,
+      .student-util-dock .theme-toggle-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 15px;
+      }
+      .avatar-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+      .av-btn { font-size: 26px; border-radius: 12px; }
+      .big-avatar { font-size: 64px; }
+      .player-name-big { font-size: 22px; }
+      .q-layout { padding: 10px 12px 72px; }
+      .q-text { font-size: 16px; }
+      .opt { font-size: 13px; padding: 12px 10px; min-height: 54px; border-radius: 14px; }
+      .options-grid { gap: 8px; }
+      .q-topbar { padding: 8px 10px; }
+      .tring { width: 56px; height: 56px; }
+      .tring-num { font-size: 17px; }
+      #s-login a[href="index.html"] { color: #64748b !important; }
+    }
   </style>
 </head>
 
@@ -2007,9 +2083,12 @@
     <div class="bg-light-dots"></div>
   </div>
 
-  <!-- TEMA TOGGLE BUTONU -->
-  <button class="theme-toggle-btn" onclick="ThemeManager.toggleTheme()" title="Temayı değiştir"
-    aria-label="Tema">☀️</button>
+  <!-- SES + TEMA DOCK -->
+  <div id="student-util-dock" class="student-util-dock">
+    <div id="sound-toggle-mount"></div>
+    <button type="button" class="theme-toggle-btn" onclick="ThemeManager.toggleTheme()" title="Temayı değiştir"
+      aria-label="Tema">☀️</button>
+  </div>
 
   <div class="bg">
     <div class="orb o1"></div>
@@ -2022,7 +2101,15 @@
     <div class="login-card">
       <span class="login-icon">🎮</span>
       <h2>Derse Katıl!</h2>
-      <p>Adını yaz, sınıfa gir</p>
+      <p>PIN kodunu ve adını gir</p>
+      <div class="pin-input-row" id="pin-row">
+        <input type="text" class="pin-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+        <input type="text" class="pin-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+        <input type="text" class="pin-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+        <input type="text" class="pin-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+        <input type="text" class="pin-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+        <input type="text" class="pin-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+      </div>
       <input type="text" class="inp" id="inp-name" placeholder="Adın ve soyadın..." maxlength="40">
       <button class="btn-join" onclick="goAvatar()">Devam Et →</button>
       <div class="err" id="login-err"></div>
@@ -2090,6 +2177,7 @@
       </div>
       <div class="q-tb-right">
         <div class="q-rank-pill" id="qt-rank" style="display:none;">🏆 #1</div>
+        <div class="streak-pill hidden" id="qt-streak">🔥 0</div>
         <div class="tring" id="timer-ring" style="display:none;">
           <svg width="70" height="70" viewBox="0 0 70 70">
             <circle class="trc-bg" cx="35" cy="35" r="29" />
@@ -2105,11 +2193,15 @@
     </div>
     <!-- Main layout scroll -->
     <div class="q-layout">
+      <div id="student-lock-banner" class="lock-banner open show">
+        <span>✅</span> Cevap verebilirsin
+      </div>
       <div class="q-card" id="q-card">
         <div class="q-label" id="q-label">SORU</div>
+        <img class="q-gorsel hidden" id="q-gorsel" alt="Soru görseli">
         <div class="q-text" id="q-text">Yükleniyor...</div>
       </div>
-      <div class="options-grid" id="options-grid"></div>
+      <div class="options-grid kahoot-grid" id="options-grid"></div>
       <div class="open-wrap hidden" id="open-wrap">
         <textarea id="open-inp" placeholder="Cevabınızı buraya yazın..."></textarea>
         <button class="btn-open" id="btn-open-send" onclick="sendOpen()">Cevabı Gönder ✓</button>
@@ -2146,6 +2238,7 @@
       <div class="result-sub" id="rp-sub">Harika iş!</div>
       <div class="puan-earned" id="rp-puan">+0</div>
       <div class="puan-label">puan kazandın</div>
+      <div class="combo-bonus hidden" id="rp-combo"></div>
       <div class="total-puan">Toplam: <strong id="rp-total">0</strong> puan</div>
       <div class="mini-lb" id="rp-lb"></div>
       <div class="next-pill" id="rp-next" style="display:none;">⏳ Sonraki soru geliyor...</div>
@@ -2158,11 +2251,84 @@
     // ─── STATE ──────────────────────────────────────────────────────
     const AVATARS = ['🦊', '🐯', '🐻', '🐼', '🦁', '🐸', '🦄', '🐙', '🐺', '🦋', '🦉', '🐳', '🐬', '🦀', '🐝', '🦅', '🐲', '🦖', '🦕', '🤖'];
     const CIRC = 182.2;
+    const KAHOOT_SHAPES = ['▲', '◆', '●', '■', '★', '⬡'];
+
+    function setStudentLockState(locked, msg) {
+      solutionLocked = locked;
+      const banner = document.getElementById('student-lock-banner');
+      const grid = document.getElementById('options-grid');
+      const openW = document.getElementById('open-wrap');
+      if (banner) {
+        banner.classList.remove('open', 'locked', 'waiting');
+        banner.classList.add('show', locked ? 'locked' : 'open');
+        banner.innerHTML = locked
+          ? `<span>🔒</span> ${msg || 'Soru kilitlendi — cevap değiştirilemez'}`
+          : `<span>✅</span> ${msg || 'Cevap verebilirsin'}`;
+      }
+      if (grid) grid.classList.toggle('options-locked', locked);
+      if (openW) openW.classList.toggle('options-locked', locked);
+      if (locked) lockOpts();
+    }
 
     let ws, playerName = '', playerAvatar = '🎓';
     let aktivSoruId = null, solutionLocked = false, currentSure = 0, qNum = 0, qTotal = 0;
-    let myTotalScore = 0, myRank = null;
-    let testBitti = false;
+    let myTotalScore = 0, myRank = null, myStreak = 0;
+    let testBitti = false, authFailed = false, testMode = false;
+    let lastTimerSound = -1;
+    let gamePin = '';
+
+    function getPinFromInputs() {
+      return [...document.querySelectorAll('.pin-digit')].map(i => i.value).join('');
+    }
+
+    function initPinInputs() {
+      const digits = document.querySelectorAll('.pin-digit');
+      const urlPin = new URLSearchParams(location.search).get('pin');
+      if (urlPin && /^\d{6}$/.test(urlPin)) {
+        urlPin.split('').forEach((ch, i) => { if (digits[i]) digits[i].value = ch; });
+        gamePin = urlPin;
+      }
+      digits.forEach((inp, idx) => {
+        inp.addEventListener('input', () => {
+          inp.value = inp.value.replace(/\D/g, '').slice(-1);
+          if (inp.value && digits[idx + 1]) digits[idx + 1].focus();
+          gamePin = getPinFromInputs();
+        });
+        inp.addEventListener('keydown', e => {
+          if (e.key === 'Backspace' && !inp.value && digits[idx - 1]) digits[idx - 1].focus();
+        });
+      });
+    }
+    initPinInputs();
+
+    function updateStreakUI(streak) {
+      myStreak = streak || 0;
+      const el = document.getElementById('qt-streak');
+      if (!el) return;
+      if (myStreak >= 2) {
+        el.textContent = '🔥 ' + myStreak + ' combo';
+        el.classList.remove('hidden');
+      } else {
+        el.classList.add('hidden');
+      }
+    }
+
+    function renderQuestionImage(url) {
+      const img = document.getElementById('q-gorsel');
+      if (!img) return;
+      if (url) {
+        img.src = url;
+        img.classList.remove('hidden');
+        img.onerror = () => img.classList.add('hidden');
+      } else {
+        img.classList.add('hidden');
+        img.removeAttribute('src');
+      }
+    }
+
+    function sfx(name) {
+      if (typeof SoundFX !== 'undefined' && typeof SoundFX[name] === 'function') SoundFX[name]();
+    }
 
     // ─── STARS ──────────────────────────────────────────────────────
     for (let i = 0; i < 55; i++) {
@@ -2195,6 +2361,7 @@
       });
       const el = document.getElementById(id);
       el.classList.remove('hidden');
+      document.body.classList.toggle('student-on-question', id === 's-question');
       // Scroll to top for final and question
       if (id === 's-final' || id === 's-question') el.scrollTop = 0;
     }
@@ -2204,12 +2371,20 @@
 
     function goAvatar() {
       const v = document.getElementById('inp-name').value.trim();
-      if (!v) { document.getElementById('login-err').textContent = 'Lütfen adını girin!'; return; }
+      gamePin = getPinFromInputs();
+      authFailed = false;
+      if (gamePin.length !== 6) { document.getElementById('login-err').textContent = '6 haneli PIN girin!'; sfx('error'); return; }
+      if (!v) { document.getElementById('login-err').textContent = 'Lütfen adını girin!'; sfx('error'); return; }
+      sfx('click');
       playerName = v;
+      sessionStorage.setItem('gamePin', gamePin);
       goScreen('s-avatar');
     }
 
     function doConnect() {
+      SoundFX && SoundFX.unlock();
+      sfx('join');
+      gamePin = getPinFromInputs() || sessionStorage.getItem('gamePin') || '';
       document.getElementById('lb-name').textContent = playerName;
       document.getElementById('lb-av').textContent = playerAvatar;
       document.getElementById('qt-av').textContent = playerAvatar;
@@ -2224,12 +2399,13 @@
       ws = new WebSocket(url);
       ws.onopen = () => {
         setConn(true);
-        ws.send(JSON.stringify({ rol: 'ogrenci', isim: playerName }));
+        ws.send(JSON.stringify({ rol: 'ogrenci', isim: playerName, pin: gamePin }));
       };
       ws.onclose = () => {
         setConn(false);
+        if (authFailed || testBitti) return;
         document.getElementById('conn-lost').style.display = 'block';
-        setTimeout(() => { if (!testBitti) initWS(); }, 3000);
+        setTimeout(() => { if (!testBitti && !authFailed) initWS(); }, 3000);
       };
       ws.onerror = () => setConn(false);
       ws.onmessage = e => handleMsg(JSON.parse(e.data));
@@ -2249,6 +2425,15 @@
 
     // ─── MESSAGE HANDLER ────────────────────────────────────────────
     function handleMsg(d) {
+      if (d.durum === 'hata') {
+        authFailed = true;
+        if (ws) { ws.onclose = null; ws.close(); }
+        document.getElementById('login-err').textContent = d.mesaj || 'Giriş başarısız';
+        sfx('error');
+        goScreen('s-login');
+        return;
+      }
+      authFailed = false;
       switch (d.tip) {
         case 'ogretmen_bilgi':
           document.getElementById('lb-teacher').innerHTML = `Öğretmen: <span>${d.ogretmen_ismi}</span>`;
@@ -2291,14 +2476,23 @@
         case 'zaman_bitti':
           onZamanBitti(d);
           break;
-        case 'sure_doldu':
-          onSureDoldu(d);
+        case 'soru_duraklatildi':
+          onSoruDuraklatildi(d);
           break;
-        case 'kilidi_acildi':
-          onKilidiAcildi(d);
+        case 'soru_devam_ediyor':
+          onSoruDevamEdiyor(d);
+          break;
+        case 'sure_doldu':
+        case 'soru_kilitlendi':
+          onSoruKilitlendi(d);
           break;
         case 'cevap_onay':
-          showFb('sent', '✓ Cevabın gönderildi!');
+          sfx('sent');
+          if (testMode && qTotal > 1) {
+            showFb('sent', '✓ Cevabın alındı — sonuçlar ve sonraki soru geliyor...');
+          } else {
+            showFb('sent', '✓ Cevabın gönderildi!');
+          }
           break;
         case 'sonuc':
           onSonuc(d);
@@ -2318,6 +2512,8 @@
 
     // ─── TEST BAŞLADI ────────────────────────────────────────────────
     async function onTestBasladi(d) {
+      testMode = true;
+      qTotal = d.toplam_soru || qTotal;
       goScreen('s-starting');
       document.getElementById('start-icon').textContent = '🚀';
       document.getElementById('start-title').textContent = 'Test Başlıyor!';
@@ -2328,15 +2524,19 @@
       cdEl.classList.remove('hidden');
       for (let i = 3; i >= 1; i--) {
         cdEl.textContent = i;
+        sfx('countdown');
         cdEl.style.animation = 'none'; void cdEl.offsetWidth; cdEl.style.animation = 'countPop .4s cubic-bezier(.34,1.56,.64,1) both';
         await sleep(900);
       }
+      sfx('countdownGo');
     }
 
     // ─── SORU ───────────────────────────────────────────────────────
     function onSoru(d) {
       aktivSoruId = d.soru_id;
-      solutionLocked = false;
+      lastTimerSound = -1;
+      setStudentLockState(false);
+      sfx('questionIn');
       currentSure = d.sure || 0;
       qNum = d.soru_no || qNum + 1;
       qTotal = d.toplam_soru || qTotal;
@@ -2360,6 +2560,7 @@
       // Header
       document.getElementById('q-label').textContent = `SORU ${qNum} / ${qTotal}`;
       document.getElementById('q-text').textContent = d.soru;
+      renderQuestionImage(d.gorsel_url || '');
       document.getElementById('qt-score').textContent = myTotalScore.toLocaleString() + ' puan';
 
       // Üst barında soru numarası göster
@@ -2397,7 +2598,7 @@
           const btn = document.createElement('button');
           btn.className = `opt ${COLORS[i % COLORS.length]}`;
           btn.dataset.cevap = harf;
-          btn.innerHTML = `<div class="opt-letter">${harf}</div><span>${txt}</span>`;
+          btn.innerHTML = `<div class="opt-shape">${KAHOOT_SHAPES[i % KAHOOT_SHAPES.length]}</div><span class="opt-text">${txt}</span>`;
           btn.onclick = () => pickOpt(btn, harf);
           grid.appendChild(btn);
         });
@@ -2417,6 +2618,7 @@
 
     function pickOpt(btn, cevap) {
       if (solutionLocked) return;
+      sfx('select');
       document.querySelectorAll('.opt').forEach(b => b.classList.remove('picked'));
       btn.classList.add('picked');
       ws.send(JSON.stringify({ tip: 'cevap', soru_id: aktivSoruId, cevap }));
@@ -2426,6 +2628,7 @@
       if (solutionLocked) return;
       const v = document.getElementById('open-inp').value.trim();
       if (!v) return;
+      sfx('select');
       ws.send(JSON.stringify({ tip: 'cevap', soru_id: aktivSoruId, cevap: v }));
       document.getElementById('open-inp').disabled = true;
       document.getElementById('btn-open-send').disabled = true;
@@ -2444,38 +2647,43 @@
     function onTimer(d) {
       if (d.soru_id !== aktivSoruId) return;
       setTimer(d.kalan_sure, currentSure);
+      if (d.kalan_sure <= 5 && d.kalan_sure >= 0 && d.kalan_sure !== lastTimerSound) {
+        lastTimerSound = d.kalan_sure;
+        sfx(d.kalan_sure <= 3 ? 'tickUrgent' : 'tick');
+      }
     }
     function onZamanBitti(d) {
       if (d.soru_id !== aktivSoruId) return;
       if (currentSure > 0) setTimer(0, currentSure);
-      showFb('sent', '⏰ Süre doldu — öğretmen kilitleyene kadar cevabını değiştirebilirsin.');
-    }
-    function onSureDoldu(d) {
-      if (d.soru_id !== aktivSoruId) return;
-      solutionLocked = true;
+      setStudentLockState(true, 'Süre doldu — sonuçlar hesaplanıyor');
       lockOpts();
+      showFb('timeout', '⏰ Süre doldu! Cevapların kilitlendi.');
+    }
+    function onSoruDuraklatildi(d) {
+      if (d.soru_id !== aktivSoruId) return;
+      sfx('lock');
+      setStudentLockState(true, '⏸ Öğretmen duraklattı — bekle');
+      if (typeof d.kalan_sure === 'number') setTimer(d.kalan_sure, currentSure);
+    }
+    function onSoruDevamEdiyor(d) {
+      if (d.soru_id !== aktivSoruId) return;
+      setStudentLockState(false, 'Yarışma devam ediyor — cevap verebilirsin');
+      if (typeof d.kalan_sure === 'number') {
+        currentSure = Math.max(currentSure, d.kalan_sure);
+        setTimer(d.kalan_sure, currentSure);
+        document.getElementById('timer-ring').style.display = '';
+      }
+    }
+    function onSoruKilitlendi(d) {
+      if (d.soru_id !== aktivSoruId) return;
+      sfx('lock');
+      setStudentLockState(true, 'Soru kilitlendi — sonuçlar açıklanıyor');
       document.getElementById('timer-ring').style.display = 'none';
-      // Cevap vermediyse boş feedback göster
       const hasPicked = document.querySelector('.opt.picked');
       const hasOpenSent = document.getElementById('open-inp')?.disabled;
       if (!hasPicked && !hasOpenSent) {
         showFb('timeout', '⏰ Süre doldu! Cevap verilmedi.');
       }
-    }
-
-    function onKilidiAcildi(d) {
-      if (d.soru_id !== aktivSoruId) return;
-      solutionLocked = false;
-      hideResultPopup();
-      document.querySelectorAll('.opt').forEach(b => {
-        b.disabled = false;
-        b.classList.remove('correct', 'wrong');
-      });
-      const oi = document.getElementById('open-inp');
-      const bs = document.getElementById('btn-open-send');
-      if (oi) oi.disabled = false;
-      if (bs) bs.disabled = false;
-      showFb('sent', '🔓 Öğretmen kilidi açtı — cevabını değiştirebilirsin.');
     }
 
     function lockOpts() {
@@ -2492,11 +2700,19 @@
 
     // ─── SONUÇ ──────────────────────────────────────────────────────
     function onSonuc(d) {
-      solutionLocked = true;
-      lockOpts();
+      setStudentLockState(true, 'Soru kilitlendi — sonuçlar paylaşıldı');
       document.getElementById('timer-ring').style.display = 'none';
       myTotalScore = d.toplam_puan || 0;
       myRank = d.kendi_siram || null;
+      updateStreakUI(d.streak);
+
+      const comboEl = document.getElementById('rp-combo');
+      if (d.combo_bonus > 0) {
+        comboEl.textContent = '🔥 Combo bonus: +' + d.combo_bonus;
+        comboEl.classList.remove('hidden');
+      } else {
+        comboEl.classList.add('hidden');
+      }
 
       // Renk options
       if (d.dogru_cevap) {
@@ -2507,9 +2723,9 @@
       }
 
       // Feedback satırı
-      if (d.dogru_mu === true) showFb('ok', '🎉 Doğru! +' + d.kazanilan_puan + ' puan');
-      else if (d.dogru_mu === false) showFb('bad', '❌ Yanlış! Doğru: ' + d.dogru_cevap);
-      else if (d.kendi_cevap) showFb('sent', '✓ Cevabın gönderildi');
+      if (d.dogru_mu === true) { sfx('correct'); showFb('ok', '🎉 Doğru! +' + d.kazanilan_puan + ' puan'); }
+      else if (d.dogru_mu === false) { sfx('wrong'); showFb('bad', '❌ Yanlış! Doğru: ' + d.dogru_cevap); }
+      else if (d.kendi_cevap) { sfx('sent'); showFb('sent', '✓ Cevabın gönderildi'); }
       else showFb('timeout', '⏰ Bu soruyu geçtin');
 
       // Result popup
@@ -2546,7 +2762,7 @@
       const nextEl = document.getElementById('rp-next');
       if (kalanSoru > 0 && d.test_aktif) {
         nextEl.style.display = '';
-        nextEl.textContent = '⏳ Sonraki soru ' + (kalanSoru) + ' soru kaldı...';
+        nextEl.textContent = '⏳ Sonraki soru geliyor... (' + kalanSoru + ' soru kaldı)';
       } else {
         nextEl.style.display = 'none';
       }
@@ -2565,6 +2781,7 @@
     // ─── TEST BİTTİ ─────────────────────────────────────────────────
     function onTestBitti(d) {
       testBitti = true;
+      testMode = false;
       hideResultPopup();
 
       const siralama = d.siralama || [];
@@ -2595,7 +2812,8 @@
     </div>`
       ).join('');
 
-      if (sira === 1) triggerConfetti(true);
+      if (sira === 1) { triggerConfetti(true); sfx('victory'); }
+      else sfx('toast');
 
       goScreen('s-final');
     }
